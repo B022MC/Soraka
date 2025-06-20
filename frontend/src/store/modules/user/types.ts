@@ -7,6 +7,7 @@ export interface UserState {
   id?: number;
   city?: string;
   company?: string;
+  region?: string;
   sessionTimeout?: boolean;
   createtime?: string;
 }

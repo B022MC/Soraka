@@ -70,10 +70,10 @@
 
         <!-- 用户信息 -->
         <div class="footer" :class="{ factive: current === 'setting' }" @click="handleSetting">
-          <a-avatar :size="32" src="@/assets/logo.png" />
+          <a-avatar :size="32" :src="userStore.avatar || '@/assets/logo.png'" />
           <div class="footer-text" :class="{ hidden: collapsed }">
-            <div class="footer-name">火鸡味锅巴</div>
-            <div class="footer-rank">黑色玫瑰</div>
+            <div class="footer-name">{{ userStore.nickname || '未登录' }}</div>
+            <div class="footer-rank">{{ userStore.region }}</div>
           </div>
         </div>
       </div>
@@ -88,14 +88,18 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import routerMap from '@/router/routerMap'
+import { Events } from '@wailsio/runtime'
+import { LcuService } from '/#/Soraka/service'
+import { useUserStore } from '@/store'
 
 const router = useRouter()
 const route = useRoute()
 const current = ref(route.name)
 const collapsed = ref(false)
+const userStore = useUserStore()
 
 const menulist = computed(() => routerMap.find(item => item.path === '/')?.children || [])
 
@@ -117,6 +121,33 @@ const handleSetting = () => {
 const handleTool = type => {
   console.log('工具点击', type)
 }
+
+const loadUserInfo = () => {
+  LcuService.GetCurrentUserInfo().then(info => {
+    if (!info) return
+    userStore.setInfo({
+      nickname: info.displayName,
+      avatar: `https://127.0.0.1:${info.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+      region: info.region
+    })
+  }).catch(err => {
+    console.error('[GetCurrentUserInfo]', err)
+  })
+}
+
+onMounted(() => {
+  LcuService.CheckLogin().then(([ok]) => {
+    if (ok) {
+      loadUserInfo()
+    }
+  })
+  Events.On('lcuStatus', (d: any) => {
+    const status = Array.isArray(d.data) ? d.data[0] : d.data
+    if (status) {
+      loadUserInfo()
+    }
+  })
+})
 </script>
 
 <style scoped lang="less">

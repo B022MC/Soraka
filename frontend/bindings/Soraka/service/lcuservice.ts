@@ -22,3 +22,8 @@ export function GetCredentials(): Promise<[string, string]> & { cancel(): void }
     let $resultPromise = $Call.ByID(575713125) as any;
     return $resultPromise;
 }
+
+export function GetCurrentUserInfo(): Promise<any> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2545732329) as any;
+    return $resultPromise;
+}

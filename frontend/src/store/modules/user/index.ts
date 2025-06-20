@@ -11,6 +11,7 @@ const useUserStore = defineStore('user', {
     id: 0,
     city: '',
     company: '',
+    region: '',
     sessionTimeout: false,//登录是否已过期
     createtime:"",
   }),
