@@ -5,9 +5,9 @@
     :header-style="{ paddingBottom: '0' }"
     :body-style="{ padding: '24px 20px 0 20px' }"
   >
-    <template #extra>
-      <a-link>管理</a-link>
-    </template>
+<!--    <template #extra>-->
+<!--      <a-link>管理</a-link>-->
+<!--    </template>-->
     <a-row :gutter="8">
       <template v-for="link in links" >
         <a-col :span="8" v-if="link.type=='button'" class="wrapper" @click="handleOpen(link.value)">
@@ -18,16 +18,16 @@
             {{ link.text }}
           </a-typography-paragraph>
         </a-col>
-        <a-col :span="8" v-else-if="link.type=='browser'" class="wrapper">
-            <a :wml-openURL="link.value">
-              <div class="icon">
-                <icon-font :type="link.icon" class="icon" size="26"/>
-              </div>
-              <a-typography-paragraph class="text">
-                {{ link.text }}
-              </a-typography-paragraph>
-            </a>
-        </a-col>
+<!--        <a-col :span="8" v-else-if="link.type=='browser'" class="wrapper">-->
+<!--            <a :wml-openURL="link.value">-->
+<!--              <div class="icon">-->
+<!--                <icon-font :type="link.icon" class="icon" size="26"/>-->
+<!--              </div>-->
+<!--              <a-typography-paragraph class="text">-->
+<!--                {{ link.text }}-->
+<!--              </a-typography-paragraph>-->
+<!--            </a>-->
+<!--        </a-col>-->
         <a-col :span="8" v-else-if="link.type=='a'" class="wrapper">
             <a :href="link.value"  target="_blank">
               <div class="icon">
@@ -53,9 +53,9 @@ onMounted(async()=>{
     WML.Reload()
 })
   const links = [
-    { text: '通知提醒框', icon: 'icon-filled',type:"button",value:"notification" },
-    { text: '默认浏览器', icon: 'icon-wangye',type:"browser",value:"https://Sorakas.cn"},
-    { text: 'Webview', icon: 'icon-wangye',type:"a",value:"https://v3alpha.wails.io"},
+    // { text: '通知提醒框', icon: 'icon-filled',type:"button",value:"notification" },
+    // { text: '默认浏览器', icon: 'icon-wangye',type:"browser",value:"https://Sorakas.cn"},
+    // { text: 'Webview', icon: 'icon-wangye',type:"a",value:"https://v3alpha.wails.io"},
     { text: '启动LOL', icon: 'icon-Game',type:"button",value:"startclient"},
     // { text: 'workplace.onlinePromotion', icon: 'icon-mobile' },
     // { text: 'workplace.contentPutIn', icon: 'icon-fire' },

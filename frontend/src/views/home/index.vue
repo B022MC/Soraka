@@ -4,9 +4,9 @@
       <div class="panel">
         <Welcome />
       </div>
-      <div class="panel" style="margin-top: 10px;">
-        <ContentChart />
-      </div>
+<!--      <div class="panel" style="margin-top: 10px;">-->
+<!--        <ContentChart />-->
+<!--      </div>-->
     </div>
     <div class="right-side">
       <a-grid :cols="24" :row-gap="16">
@@ -15,9 +15,9 @@
             <QuickOperation />
           </div>
         </a-grid-item>
-        <a-grid-item class="panel" :span="24">
-          <CategoriesPercent />
-        </a-grid-item>
+<!--        <a-grid-item class="panel" :span="24">-->
+<!--          <CategoriesPercent />-->
+<!--        </a-grid-item>-->
         <a-grid-item class="panel" :span="24">
 
         </a-grid-item>
@@ -29,8 +29,6 @@
 <script setup>
 import Welcome from './components/Welcome.vue'
 import QuickOperation from './components/quick-operation.vue';
-import ContentChart from './components/content-chart.vue';
-import CategoriesPercent from './components/categories-percent.vue';
 </script>
 <style scoped lang="less">
   .container {
