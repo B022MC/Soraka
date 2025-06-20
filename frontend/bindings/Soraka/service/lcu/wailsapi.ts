@@ -9,7 +9,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import {Call as $Call, Create as $Create} from "@wailsio/runtime";
+import { Call as $Call, Create as $Create } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
@@ -19,40 +19,50 @@ import * as $models from "./models.js";
  * GetAuthInfo retrieves the LCU authentication information.
  */
 export function GetAuthInfo(): Promise<$models.AuthInfo> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(3527704851) as any;
-    let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType0($result);
-    }) as any;
-    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
-    return $typingPromise;
+  let $resultPromise = $Call.ByID(3527704851) as any;
+  let $typingPromise = $resultPromise.then(($result: any) => {
+    return $$createType0($result);
+  }) as any;
+  $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+  return $typingPromise;
 }
 
 /**
  * GetCurrentSummoner returns basic info about the current summoner.
  */
-export function GetCurrentSummoner(): Promise<$models.SummonerInfo> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1692215426) as any;
-    let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType1($result);
-    }) as any;
-    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
-    return $typingPromise;
+export function GetCurrentSummoner(): Promise<$models.SummonerInfo> & {
+  cancel(): void;
+} {
+  let $resultPromise = $Call.ByID(1692215426) as any;
+  let $typingPromise = $resultPromise.then(($result: any) => {
+    return $$createType1($result);
+  }) as any;
+  $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+  return $typingPromise;
 }
 
 /**
  * Must implement Name() to satisfy application.Service interface
  */
 export function Name(): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(490243160) as any;
-    return $resultPromise;
+  let $resultPromise = $Call.ByID(490243160) as any;
+  return $resultPromise;
 }
 
 /**
  * StartClient attempts to start the League client if required.
  */
 export function StartClient(): Promise<void> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1731175274) as any;
-    return $resultPromise;
+  let $resultPromise = $Call.ByID(1731175274) as any;
+  return $resultPromise;
+}
+
+/**
+ * GetClientPath returns the League of Legends executable path.
+ */
+export function GetClientPath(): Promise<string> & { cancel(): void } {
+  let $resultPromise = $Call.ByID(329842285) as any;
+  return $resultPromise;
 }
 
 // Private type creation functions

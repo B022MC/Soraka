@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"os/exec"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -122,6 +123,30 @@ func (api Api) GetLcuAuthInfo(c *gin.Context) {
 		"token": token,
 		"port":  port,
 	})
+}
+
+func (api Api) GetClientPath(c *gin.Context) {
+	app := ginApp.GetApp(c)
+	path, err := lcu.FindLolPath()
+	if err != nil {
+		app.CommonError(err)
+		return
+	}
+	app.Data(gin.H{"path": path})
+}
+
+func (api Api) StartClient(c *gin.Context) {
+	app := ginApp.GetApp(c)
+	path, err := lcu.FindLolPath()
+	if err != nil {
+		app.CommonError(err)
+		return
+	}
+	if err = exec.Command(path).Start(); err != nil {
+		app.CommonError(err)
+		return
+	}
+	app.Success()
 }
 func (api Api) LcuProxy(c *gin.Context) {
 	app := ginApp.GetApp(c)

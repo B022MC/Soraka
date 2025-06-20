@@ -1,5 +1,9 @@
 package lcu
 
+import (
+	"os/exec"
+)
+
 // WailsAPI exposes methods for the frontend via Wails service
 // to interact with the local League client.
 type WailsAPI struct{}
@@ -16,6 +20,11 @@ type SummonerInfo struct {
 	DisplayName   string `json:"displayName"`
 	ProfileIconId int    `json:"profileIconId"`
 	Region        string `json:"region"`
+}
+
+// GetClientPath returns the League of Legends executable path.
+func (WailsAPI) GetClientPath() (string, error) {
+	return FindLolPath()
 }
 
 // GetAuthInfo retrieves the LCU authentication information.
@@ -43,6 +52,10 @@ func (WailsAPI) GetCurrentSummoner() (SummonerInfo, error) {
 
 // StartClient attempts to start the League client if required.
 func (WailsAPI) StartClient() error {
-	// Add real implementation here if needed
-	return nil
+	path, err := FindLolPath()
+	if err != nil {
+		return err
+	}
+	cmd := exec.Command(path)
+	return cmd.Start()
 }
