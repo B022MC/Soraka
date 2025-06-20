@@ -46,8 +46,9 @@
 
 <script lang="ts" setup>
 import {onMounted } from 'vue';
-import { Notification } from '@arco-design/web-vue';
+import { Notification, Message } from '@arco-design/web-vue';
 import {WML} from "@wailsio/runtime";
+import { ClientService } from "/#/Soraka/service";
 onMounted(async()=>{
     WML.Reload()
 })
@@ -55,6 +56,7 @@ onMounted(async()=>{
     { text: '通知提醒框', icon: 'icon-filled',type:"button",value:"notification" },
     { text: '默认浏览器', icon: 'icon-wangye',type:"browser",value:"https://Sorakas.cn"},
     { text: 'Webview', icon: 'icon-wangye',type:"a",value:"https://v3alpha.wails.io"},
+    { text: '启动LOL', icon: 'icon-Game',type:"button",value:"startclient"},
     // { text: 'workplace.onlinePromotion', icon: 'icon-mobile' },
     // { text: 'workplace.contentPutIn', icon: 'icon-fire' },
   ];
@@ -66,6 +68,19 @@ onMounted(async()=>{
           content: 'This is a notification!',
           position: 'bottomRight',
           closable: true,
+        })
+    } else if(val=="startclient") {
+        Message.loading({content:'启动中，请稍后', id:'startclient', duration:0})
+        ClientService.StartClient().then((err:string)=>{
+            if(err){
+                Notification.error({title:'启动失败',content:err,position:'bottomRight'})
+                Message.error({content:'启动失败', id:'startclient', duration:2000})
+            }else{
+                Message.success({content:'启动成功', id:'startclient', duration:2000})
+            }
+        }).catch((e:any)=>{
+            Notification.error({title:'启动失败',content:String(e),position:'bottomRight'})
+            Message.error({content:'启动失败', id:'startclient', duration:2000})
         })
     }
   }

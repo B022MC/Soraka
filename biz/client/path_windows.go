@@ -1,6 +1,6 @@
 //go:build windows
 
-package service
+package client
 
 import (
 	"path/filepath"
