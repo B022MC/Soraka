@@ -23,6 +23,9 @@
               <span v-else class="waiting">等待连接</span>
             </span>
           </p>
+          <p v-if="appStore.lcuPort">
+            端口：{{ appStore.lcuPort }} Token：{{ appStore.lcuToken }}
+          </p>
         </div>
       </a-space>
     </a-row>

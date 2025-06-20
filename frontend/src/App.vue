@@ -33,6 +33,12 @@ Events.On("clientPath", (e: any) => {
 Events.On("lcuStatus", (e: any) => {
   appStore.lcuOnline = !!e.data;
 });
+// 接收LCU端口和token
+Events.On("lcuCreds", (e: any) => {
+  const data = e.data as { port: string; token: string };
+  appStore.lcuPort = data.port;
+  appStore.lcuToken = data.token;
+});
 
 // 控制窗口
 const WindowMinimise = () => {

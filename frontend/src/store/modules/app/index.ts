@@ -8,6 +8,8 @@ const useAppStore = defineStore("app", {
       theme: "light",
       clientPath: "",
       lcuOnline: false,
+      lcuPort: "",
+      lcuToken: "",
     };
   },
   getters: {

@@ -30,6 +30,11 @@ func getCredentials() (port, password string, err error) {
 	return port, password, nil
 }
 
+// GetCredentials exposes the current LCU port and auth token.
+func GetCredentials() (string, string, error) {
+	return getCredentials()
+}
+
 func call(port, pass, path string) bool {
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://127.0.0.1:%s%s", port, path), nil)
 	if err != nil {

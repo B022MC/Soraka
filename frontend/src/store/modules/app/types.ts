@@ -3,4 +3,6 @@ export interface AppState {
   sysTime: string;
   clientPath: string;
   lcuOnline: boolean;
+  lcuPort: string;
+  lcuToken: string;
 }

@@ -82,6 +82,16 @@ func main() {
 		// 开始监听LCU状态变化
 		lcu.WatchLogin(context.Background(), 5*time.Second, func(ok bool) {
 			app.EmitEvent("lcuStatus", ok)
+			if ok {
+				port, token, err := lcu.GetCredentials()
+				if err == nil {
+					app.EmitEvent("lcuCreds", map[string]string{"port": port, "token": token})
+				} else {
+					app.EmitEvent("lcuCreds", map[string]string{"port": "", "token": ""})
+				}
+			} else {
+				app.EmitEvent("lcuCreds", map[string]string{"port": "", "token": ""})
+			}
 		})
 	}()
 
