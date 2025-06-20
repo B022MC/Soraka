@@ -20,7 +20,7 @@ func NewRouter() *Router {
 // Handler returns the HTTP handler for this router.
 func (r *Router) Handler() http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/events", r.broker)
+	mux.Handle("/events", withCORS(r.broker))
 	return mux
 }
 
@@ -39,5 +39,23 @@ func (r *Router) Start(ctx context.Context) {
 		} else {
 			r.broker.Broadcast("lcuCreds", map[string]string{"port": "", "token": ""})
 		}
+	})
+}
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		// 添加 CORS 相关响应头
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// 如果是预检请求则直接返回
+		if req.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// 正常请求继续
+		next.ServeHTTP(w, req)
 	})
 }
