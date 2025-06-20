@@ -16,7 +16,13 @@
               appStore.sysTime ? appStore.sysTime[0] : "---"
             }}</span>
           </p>
-          <p>客户端路径：{{ appStore.clientPath || "未找到" }}</p>
+          <p>
+            客户端路径：{{ appStore.clientPath || "未找到" }}
+            <span class="status">
+              <a-tag v-if="appStore.lcuOnline" color="green">已连接LCU</a-tag>
+              <span v-else class="waiting">等待连接</span>
+            </span>
+          </p>
         </div>
       </a-space>
     </a-row>
@@ -52,6 +58,32 @@ const userStore = useUserStore();
         font-size: 1.25rem;
         color: var(--color-neutral-8);
         margin-bottom: 10px;
+      }
+      .status {
+        margin-left: 8px;
+      }
+      .waiting {
+        display: inline-block;
+        position: relative;
+        padding-right: 1.4em;
+      }
+      .waiting::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 0.8em;
+        height: 0.8em;
+        margin-top: -0.4em;
+        border: 2px solid var(--color-neutral-6);
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
     }
   }
