@@ -31,6 +31,7 @@ func main() {
 			application.NewService(&service.OpenWindow{}),
 			application.NewService(&service.HttpService{}),
 			application.NewService(&service.ClientService{}),
+			application.NewService(&service.LcuService{}),
 		},
 
 		Assets: application.AssetOptions{

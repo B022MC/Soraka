@@ -14,6 +14,11 @@
               </a-form-item>
             </a-col>
             <a-col :span="8">
+              <a-form-item field="concurrency" label="LCU并发数">
+                <a-input-number v-model="formData.concurrency" :min="1" :max="10" @change="saveConcurrency" />
+              </a-form-item>
+            </a-col>
+            <a-col :span="8">
               <a-form-item field="SetAlwaysOnTop" label="置顶窗口">
                 <a-switch type="round" @change="changeSetAlwaysOnTop">
                   <template #checked>
@@ -93,14 +98,15 @@
   import { ref,computed,onMounted } from 'vue';
   import { useAppStore } from '@/store';
   import {System,Window} from "@wailsio/runtime";
-  import {GreetService} from "/#/Soraka/service";
+  import {GreetService, ClientService} from "/#/Soraka/service";
   import { Message } from '@arco-design/web-vue';
   const appStore = useAppStore();
   const theme = computed(() => {
     return appStore.theme;
   });
   const formData=ref({
-    theme: theme.value
+    theme: theme.value,
+    concurrency: 1
   })
   const windowsname=ref("")
   const IsWindows=ref(false)
@@ -110,6 +116,7 @@
     IsWindows.value= await System.IsWindows()
     Osinfo.value= await System.Environment()
     console.log(Osinfo.value)
+    formData.value.concurrency = await ClientService.GetConcurrency()
   })
   //切换主题
   const handleTheme=async()=>{
@@ -144,6 +151,10 @@
   const changeSetResizable=(value:any)=>{
     Window.SetResizable(value)
     Message.success({content:value?"窗口可调整大小":"窗口不可调整大小",id:"setting"})
+  }
+
+  const saveConcurrency=async(value:number)=>{
+    await ClientService.SaveConcurrency(value)
   }
 </script>
 
