@@ -20,9 +20,6 @@ var assets embed.FS
 //go:embed build/logo.png
 var trayIcon []byte
 
-// 记录窗口位置
-var lastX, lastY int
-
 func main() {
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
@@ -59,7 +56,7 @@ func main() {
 		},
 		Windows: application.WindowsWindow{
 			Theme:                             0,
-			BackdropType:                      application.Acrylic, // ✅ 毛玻璃支持
+			BackdropType:                      application.Acrylic,
 			HiddenOnTaskbar:                   false,
 			DisableFramelessWindowDecorations: false, // 允许拖动阴影
 		},

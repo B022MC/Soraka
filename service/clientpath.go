@@ -64,7 +64,7 @@ func GetClientPath() string {
 	if cfg.Path != "" {
 		return cfg.Path
 	}
-	path := detectClientPath()
+	path := getLoLPathByRegistry()
 	if path != "" {
 		cfg.Path = path
 		saveClientConfig()
