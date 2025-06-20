@@ -49,10 +49,15 @@ func (b *SSEBroker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	notify := r.Context().Done()
+	keepAlive := time.NewTicker(15 * time.Second)
+	defer keepAlive.Stop()
 	for {
 		select {
 		case <-notify:
 			return
+		case <-keepAlive.C:
+			fmt.Fprint(w, ": heartbeat\n\n")
+			flusher.Flush()
 		case msg := <-ch:
 			fmt.Fprintf(w, "event: %s\n", msg.event)
 			fmt.Fprintf(w, "data: %s\n\n", msg.data)
