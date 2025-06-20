@@ -17,12 +17,13 @@ var (
 )
 
 func init() {
-	exe, err := os.Executable()
-	if err == nil {
-		configFile = filepath.Join(filepath.Dir(exe), "clientconfig.json")
-	} else {
-		configFile = "clientconfig.json"
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		dir, _ = os.UserHomeDir()
 	}
+	configDir := filepath.Join(dir, "Soraka")
+	_ = os.MkdirAll(configDir, 0755)
+	configFile = filepath.Join(configDir, "clientconfig.json")
 	loadClientConfig()
 }
 

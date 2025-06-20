@@ -58,6 +58,10 @@ Take a moment to familiarize yourself with your project structure:
 
 Happy coding with Wails3! If you encounter any issues or have questions, don't hesitate to consult the documentation or reach out to the Wails community.
 
+## Client path detection
+
+On Windows, the application automatically attempts to locate the Riot Client path via the registry on startup. The detected path is saved to `clientconfig.json` under your system's configuration directory so subsequent launches do not need to query the registry again.
+
 ## 打包
 ```
 wails3 package
