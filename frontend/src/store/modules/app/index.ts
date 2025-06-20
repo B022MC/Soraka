@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { AppState } from "./types";
-//获取本地保存配置
-const settingsval = localStorage.getItem("settingsval");
+
 const useAppStore = defineStore("app", {
   state: (): AppState => {
     return {

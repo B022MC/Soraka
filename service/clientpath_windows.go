@@ -6,7 +6,7 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-// GetClientPath attempts to locate the client installation path via the Windows registry.
+// detectClientPath attempts to locate the client installation path via the Windows registry.
 func detectClientPath() string {
 	// Try the 64bit location first
 	k, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Riot Games\RiotClientInstalls`, registry.QUERY_VALUE)
