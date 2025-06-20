@@ -19,3 +19,13 @@ export function StartClient(): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3526024695) as any;
     return $resultPromise;
 }
+
+export function GetConcurrency(): Promise<number> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2350127255) as any;
+    return $resultPromise;
+}
+
+export function SaveConcurrency(arg0: number): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2057276356, arg0) as any;
+    return $resultPromise;
+}

@@ -29,6 +29,10 @@ Events.On("time", (time: any) => {
 Events.On("clientPath", (e: any) => {
   appStore.clientPath = e.data as string;
 });
+// 接收LCU连接状态事件
+Events.On("lcuStatus", (e: any) => {
+  appStore.lcuOnline = !!e.data;
+});
 
 // 控制窗口
 const WindowMinimise = () => {

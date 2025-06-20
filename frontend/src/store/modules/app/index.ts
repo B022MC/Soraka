@@ -7,6 +7,7 @@ const useAppStore = defineStore("app", {
       sysTime: "",
       theme: "light",
       clientPath: "",
+      lcuOnline: false,
     };
   },
   getters: {

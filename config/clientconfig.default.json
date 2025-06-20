@@ -1,3 +1,4 @@
 {
-  "path": ""
+  "path": "",
+  "concurrency": 2
 }

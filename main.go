@@ -2,7 +2,9 @@ package main
 
 import (
 	"Soraka/biz/client"
+	"Soraka/biz/lcu"
 	"Soraka/service"
+	"context"
 	"embed"
 	"fmt"
 	"log"
@@ -31,6 +33,7 @@ func main() {
 			application.NewService(&service.OpenWindow{}),
 			application.NewService(&service.HttpService{}),
 			application.NewService(&service.ClientService{}),
+			application.NewService(&service.LcuService{}),
 		},
 
 		Assets: application.AssetOptions{
@@ -76,6 +79,10 @@ func main() {
 		time.Sleep(2 * time.Second)
 		path := client.GetClientPath()
 		app.EmitEvent("clientPath", path)
+		// 开始监听LCU状态变化
+		lcu.WatchLogin(context.Background(), 5*time.Second, func(ok bool) {
+			app.EmitEvent("lcuStatus", ok)
+		})
 	}()
 
 	// 双击左键：显示窗口
