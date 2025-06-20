@@ -21,6 +21,13 @@ func NewRouter() *Router {
 func (r *Router) Handler() http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/events", withCORS(r.broker))
+	mux.Handle("/heartbeat", withCORS(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	})))
 	return mux
 }
 

@@ -4,13 +4,17 @@ export class SSEClient {
   private source: EventSource | null = null;
   private reconnectTimer: number | null = null;
   private listeners: Record<string, SSECallback> = {};
+  private heartbeatTimer: number | null = null;
 
-  constructor(private url: string, private retry = 3000) {}
+  constructor(
+    private url: string,
+    private retry = 3000,
+  ) {}
 
   private init() {
     this.source = new EventSource(this.url);
     // ignore broker heartbeat events
-    this.source.addEventListener('ping', () => {});
+    this.source.addEventListener("ping", () => {});
     for (const [name, cb] of Object.entries(this.listeners)) {
       this.source.addEventListener(name, (e: MessageEvent) => {
         try {
@@ -40,12 +44,21 @@ export class SSEClient {
   connect(events: Record<string, SSECallback>) {
     this.listeners = events;
     this.init();
+    if (this.heartbeatTimer === null) {
+      this.heartbeatTimer = window.setInterval(() => {
+        fetch("/heartbeat", { method: "POST" }).catch(() => {});
+      }, 10000);
+    }
   }
 
   close() {
     if (this.reconnectTimer) {
       window.clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
+    }
+    if (this.heartbeatTimer) {
+      window.clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
     }
     this.source?.close();
   }
