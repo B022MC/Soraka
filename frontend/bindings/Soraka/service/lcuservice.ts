@@ -10,6 +10,10 @@
 // @ts-ignore: Unused imports
 import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as $models from "./models.js";
+
 /**
  * CheckLogin returns the login status along with LCU credentials.
  */
@@ -23,7 +27,17 @@ export function GetCredentials(): Promise<[string, string]> & { cancel(): void }
     return $resultPromise;
 }
 
-export function GetCurrentUserInfo(): Promise<any> & { cancel(): void } {
+/**
+ * GetCurrentUserInfo fetches current summoner info and region from the LCU.
+ */
+export function GetCurrentUserInfo(): Promise<$models.UserInfo> & { cancel(): void } {
     let $resultPromise = $Call.ByID(2545732329) as any;
-    return $resultPromise;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType0($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
 }
+
+// Private type creation functions
+const $$createType0 = $models.UserInfo.createFrom;

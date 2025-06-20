@@ -7,11 +7,15 @@ import * as HttpService from "./httpservice.js";
 import * as LcuService from "./lcuservice.js";
 import * as MessageService from "./messageservice.js";
 import * as OpenWindow from "./openwindow.js";
+import * as ResourceService from "./resourceservice.js";
 export {
     ClientService,
     GreetService,
     HttpService,
     LcuService,
     MessageService,
-    OpenWindow
+    OpenWindow,
+    ResourceService
 };
+
+export * from "./models.js";

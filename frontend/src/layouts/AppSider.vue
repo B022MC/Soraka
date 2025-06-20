@@ -87,7 +87,7 @@
   </a-layout>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import routerMap from '@/router/routerMap'
