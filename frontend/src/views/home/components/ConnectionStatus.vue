@@ -7,31 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, computed } from "vue";
-import { LcuService } from "/#/Soraka/service";
+import { computed } from "vue";
 import { useAppStore } from "@/store";
 
 const appStore = useAppStore();
 const online = computed(() => appStore.lcuOnline);
-
-let timer: number | undefined;
-
-const update = async () => {
-  try {
-    appStore.lcuOnline = await LcuService.CheckLogin();
-  } catch {
-    appStore.lcuOnline = false;
-  }
-};
-
-onMounted(() => {
-  update();
-  timer = window.setInterval(update, 5000);
-});
-
-onUnmounted(() => {
-  if (timer) window.clearInterval(timer);
-});
 </script>
 
 <style scoped>
