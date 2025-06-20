@@ -17,7 +17,7 @@ import { Events } from "@wailsio/runtime";
 const online = ref(false);
 
 onMounted(() => {
-  LcuService.CheckLogin().then((ok) => {
+  LcuService.CheckLogin().then(([ok]) => {
     online.value = ok;
   });
   Events.On("lcuStatus", (e: any) => {

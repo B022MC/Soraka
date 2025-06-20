@@ -5,7 +5,8 @@ import "Soraka/biz/lcu"
 // LcuService exposes LCU related helpers.
 type LcuService struct{}
 
-func (LcuService) CheckLogin() bool {
+// CheckLogin returns the login status along with LCU credentials.
+func (LcuService) CheckLogin() (bool, string, string) {
 	return lcu.CheckLogin()
 }
 

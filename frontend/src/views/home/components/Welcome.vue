@@ -23,9 +23,7 @@
               <span v-else class="waiting">等待连接</span>
             </span>
           </p>
-          <p v-if="lcuPort">
-            端口：{{ lcuPort }} Token：{{ lcuToken }}
-          </p>
+          <p v-if="lcuPort">端口：{{ lcuPort }} Token：{{ lcuToken }}</p>
         </div>
       </a-space>
     </a-row>
@@ -33,36 +31,38 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import { Events } from '@wailsio/runtime';
-import { ClientService, LcuService } from '/#/Soraka/service';
+import { ref, onMounted } from "vue";
+import { Events } from "@wailsio/runtime";
+import { ClientService, LcuService } from "/#/Soraka/service";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 const userStore = useUserStore();
 
-const sysTime = ref('');
-const clientPath = ref('');
+const sysTime = ref("");
+const clientPath = ref("");
 const lcuOnline = ref(false);
-const lcuPort = ref('');
-const lcuToken = ref('');
+const lcuPort = ref("");
+const lcuToken = ref("");
 
 onMounted(() => {
-  ClientService.GetClientPath().then(p => {
+  ClientService.GetClientPath().then((p) => {
     clientPath.value = p;
   });
-  LcuService.CheckLogin().then(ok => {
+  LcuService.CheckLogin().then(([ok, port, token]) => {
     lcuOnline.value = ok;
+    lcuPort.value = port;
+    lcuToken.value = token;
   });
-  Events.On('time', (time: any) => {
+  Events.On("time", (time: any) => {
     sysTime.value = time.data as string;
   });
-  Events.On('clientPath', (p: any) => {
+  Events.On("clientPath", (p: any) => {
     clientPath.value = p.data as string;
   });
-  Events.On('lcuStatus', (d: any) => {
+  Events.On("lcuStatus", (d: any) => {
     lcuOnline.value = !!d.data;
   });
-  Events.On('lcuCreds', (d: any) => {
+  Events.On("lcuCreds", (d: any) => {
     lcuPort.value = d.data.port;
     lcuToken.value = d.data.token;
   });
