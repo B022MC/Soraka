@@ -10,19 +10,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { Events } from "@wailsio/runtime";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { LcuService } from "/#/Soraka/service";
+import { SSEClient } from "@/utils/sse";
 
 const online = ref(false);
+let sse: SSEClient | null = null;
 
 onMounted(() => {
   LcuService.CheckLogin().then((ok) => {
     online.value = ok;
   });
-  Events.On("lcuStatus", (e: any) => {
-    online.value = !!e.data;
+  sse = new SSEClient("http://localhost:8233/events");
+  sse.connect({
+    lcuStatus: (d) => {
+      online.value = !!d;
+    },
   });
+});
+
+onBeforeUnmount(() => {
+  sse?.close();
 });
 </script>
 

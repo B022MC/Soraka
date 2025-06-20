@@ -3,11 +3,13 @@ package main
 import (
 	"Soraka/biz/client"
 	"Soraka/biz/lcu"
+	"Soraka/router"
 	"Soraka/service"
 	"context"
 	"embed"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -79,24 +81,14 @@ func main() {
 		time.Sleep(2 * time.Second)
 		path := client.GetClientPath()
 		app.EmitEvent("clientPath", path)
-		// 持续轮询客户端路径
-		client.WatchPath(context.Background(), 10*time.Second, func(p string) {
-			app.EmitEvent("clientPath", p)
-		})
-		// 开始监听LCU状态变化
-		lcu.WatchLogin(context.Background(), 5*time.Second, func(ok bool) {
-			app.EmitEvent("lcuStatus", ok)
-			if ok {
-				port, token, err := lcu.GetCredentials()
-				if err == nil {
-					app.EmitEvent("lcuCreds", map[string]string{"port": port, "token": token})
-				} else {
-					app.EmitEvent("lcuCreds", map[string]string{"port": "", "token": ""})
-				}
-			} else {
-				app.EmitEvent("lcuCreds", map[string]string{"port": "", "token": ""})
-			}
-		})
+	}()
+
+	// 启动后台路由并SSE推送状态
+	r := router.NewRouter()
+	go r.Start(context.Background())
+	go func() {
+		srv := &http.Server{Addr: ":8233", Handler: r.Handler()}
+		_ = srv.ListenAndServe()
 	}()
 
 	// 双击左键：显示窗口
