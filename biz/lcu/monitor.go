@@ -5,31 +5,29 @@ import (
 	"time"
 )
 
-// WatchLogin periodically checks login status and notifies via callback when it changes.
+// WatchLogin periodically checks login status and notifies via callback.
+// The callback is invoked on every tick to act as a heartbeat.
 func WatchLogin(ctx context.Context, interval time.Duration, cb func(bool)) {
-        go func() {
-                ticker := time.NewTicker(interval)
-                defer ticker.Stop()
+       go func() {
+               ticker := time.NewTicker(interval)
+               defer ticker.Stop()
 
-                // send initial status
-                prev := CheckLogin()
-                if cb != nil {
-                        cb(prev)
-                }
+               // send initial status immediately
+               status := CheckLogin()
+               if cb != nil {
+                       cb(status)
+               }
 
-                for {
-                        select {
-                        case <-ctx.Done():
-                                return
-                        case <-ticker.C:
-                                curr := CheckLogin()
-                                if curr != prev {
-                                        prev = curr
-                                        if cb != nil {
-                                                cb(curr)
-                                        }
-                                }
-                        }
-                }
-        }()
+               for {
+                       select {
+                       case <-ctx.Done():
+                               return
+                       case <-ticker.C:
+                               status = CheckLogin()
+                               if cb != nil {
+                                       cb(status)
+                               }
+                       }
+               }
+       }()
 }
