@@ -92,7 +92,8 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import routerMap from '@/router/routerMap'
 import { Events } from '@wailsio/runtime'
-import { getCurrentSummoner, getLcuAuthInfo, type AuthInfo } from '@/api/lcu'
+import type { AuthInfo } from '@/api/lcu'
+import { LcuApi } from '/#/Soraka/service'
 import { useUserStore } from '@/store'
 
 const router = useRouter()
@@ -124,7 +125,7 @@ const handleTool = type => {
 }
 
 const loadUserInfo = () => {
-  getCurrentSummoner().then(info => {
+  LcuApi.GetCurrentSummoner().then((info: any) => {
     if (!info || !authInfo.value) return
     userStore.setInfo({
       nickname: info.displayName,
@@ -137,7 +138,7 @@ const loadUserInfo = () => {
 }
 
 onMounted(() => {
-  getLcuAuthInfo().then((info) => {
+  LcuApi.GetAuthInfo().then((info: AuthInfo) => {
     authInfo.value = info
     loadUserInfo()
   }).catch(() => {
@@ -146,7 +147,7 @@ onMounted(() => {
   Events.On('lcuStatus', (d: any) => {
     const status = Array.isArray(d.data) ? d.data[0] : d.data
     if (status) {
-      getLcuAuthInfo().then(info => {
+      LcuApi.GetAuthInfo().then((info: AuthInfo) => {
         authInfo.value = info
         loadUserInfo()
       })

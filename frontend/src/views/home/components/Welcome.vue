@@ -33,7 +33,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
-import { getLcuAuthInfo, getCurrentSummoner, type AuthInfo } from "@/api/lcu";
+import type { AuthInfo } from "@/api/lcu";
+import { LcuApi } from "/#/Soraka/service";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 
@@ -48,7 +49,7 @@ const authInfo = ref<AuthInfo | null>(null);
 
 onMounted(() => {
   // 初始化获取 LCU 凭证
-  getLcuAuthInfo().then(info => {
+  LcuApi.GetAuthInfo().then((info: AuthInfo) => {
     authInfo.value = info
     lcuOnline.value = true
     lcuPort.value = String(info.port)
@@ -58,7 +59,7 @@ onMounted(() => {
   })
 
   // 获取当前召唤师信息
-  getCurrentSummoner().then(info => {
+  LcuApi.GetCurrentSummoner().then((info: any) => {
     if (info && authInfo.value) {
       userStore.setInfo({
         nickname: info.displayName,

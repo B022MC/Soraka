@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/wailsapp/wails/v3/pkg/application"
+       "github.com/wailsapp/wails/v3/pkg/application"
 
-	"Soraka"
+"Soraka"
+example "Soraka/service/example"
+lcuService "Soraka/service/lcu"
 )
 
 // 前端构建产物
@@ -26,7 +28,10 @@ func main() {
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
-		Services:    []application.Service{},
+               Services:    []application.Service{
+                       &example.API{},
+                       &lcuService.WailsAPI{},
+               },
 
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
