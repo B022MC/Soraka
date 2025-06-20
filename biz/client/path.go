@@ -8,7 +8,8 @@ import (
 
 // clientConfig stores persisted settings.
 type clientConfig struct {
-	Path string `json:"path"`
+	Path        string `json:"path"`
+	Concurrency int    `json:"concurrency"`
 }
 
 var (
@@ -48,7 +49,7 @@ func loadClientConfig() {
 }
 
 func saveClientConfig() {
-	if cfg.Path == defaultCfg.Path || cfg.Path == "" {
+	if cfg.Path == defaultCfg.Path && cfg.Concurrency == defaultCfg.Concurrency {
 		_ = os.Remove(configFile)
 		return
 	}
@@ -75,5 +76,16 @@ func GetClientPath() string {
 // SaveClientPath allows the frontend to persist a user-specified path.
 func SaveClientPath(path string) {
 	cfg.Path = path
+	saveClientConfig()
+}
+
+// GetConcurrency returns concurrency setting.
+func GetConcurrency() int {
+	return cfg.Concurrency
+}
+
+// SaveConcurrency persists concurrency setting.
+func SaveConcurrency(c int) {
+	cfg.Concurrency = c
 	saveClientConfig()
 }

@@ -15,3 +15,11 @@ func (ClientService) StartClient() string {
 	}
 	return ""
 }
+
+func (ClientService) GetConcurrency() int {
+	return client.GetConcurrency()
+}
+
+func (ClientService) SaveConcurrency(c int) {
+	client.SaveConcurrency(c)
+}
