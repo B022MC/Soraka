@@ -15,29 +15,35 @@
 </template>
 
 <script lang="ts" setup>
-import { Events, Window } from '@wailsio/runtime'
-import { useAppStore } from '@/store'
+import { Events, Window } from "@wailsio/runtime";
+import { useAppStore } from "@/store";
 
 // pinia store
-const appStore = useAppStore()
+const appStore = useAppStore();
 
 // 接收后端事件
-Events.On('time', (time: any) => {
-  appStore.sysTime = time.data
-})
+Events.On("time", (time: any) => {
+  appStore.sysTime = time.data;
+});
+// 接收客户端路径事件
+Events.On("clientPath", (e: any) => {
+  appStore.clientPath = e.data as string;
+});
 
 // 控制窗口
 const WindowMinimise = () => {
-  Window.Minimise()
-}
+  Window.Minimise();
+};
 const WindowClose = () => {
-  Window.Hide()
-}
+  Window.Hide();
+};
 </script>
 
 <style lang="less">
 /* 布局基础 */
-html, body, #app {
+html,
+body,
+#app {
   margin: 0;
   padding: 0;
   height: 100%;

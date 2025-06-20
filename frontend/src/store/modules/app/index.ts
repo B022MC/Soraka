@@ -1,17 +1,18 @@
-import { defineStore } from 'pinia';
-import { AppState } from './types';
+import { defineStore } from "pinia";
+import { AppState } from "./types";
 //获取本地保存配置
-const settingsval=localStorage.getItem("settingsval");
-const useAppStore = defineStore('app', {
+const settingsval = localStorage.getItem("settingsval");
+const useAppStore = defineStore("app", {
   state: (): AppState => {
     return {
-      sysTime:"",
-      theme: 'light',
-    }
+      sysTime: "",
+      theme: "light",
+      clientPath: "",
+    };
   },
   getters: {
     //获取主题
-    getTheme():string{
+    getTheme(): string {
       return this.theme;
     },
   },
@@ -20,19 +21,18 @@ const useAppStore = defineStore('app', {
     //设置主题
     toggleTheme(dark: boolean) {
       if (dark) {
-        this.theme = 'dark'
-        document.body.setAttribute('arco-theme', 'dark')
+        this.theme = "dark";
+        document.body.setAttribute("arco-theme", "dark");
       } else {
-        this.theme = 'light'
-        document.body.removeAttribute('arco-theme')
+        this.theme = "light";
+        document.body.removeAttribute("arco-theme");
       }
 
       // ✅ 刷新图标
       setTimeout(() => {
-        window.dispatchEvent(new Event('resize')) // 或强制刷新组件
-      }, 0)
-    }
-    ,
+        window.dispatchEvent(new Event("resize")); // 或强制刷新组件
+      }, 0);
+    },
   },
 });
 
