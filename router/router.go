@@ -40,7 +40,8 @@ func (r *Router) Start(ctx context.Context) {
 			r.broker.Broadcast("lcuCreds", map[string]string{"port": "", "token": ""})
 		}
 	})
-	r.broker.StartHeartbeat(30 * time.Second)
+	// keep connections alive even when no events flow
+	r.broker.StartHeartbeat(10 * time.Second)
 }
 func withCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

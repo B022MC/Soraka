@@ -9,6 +9,8 @@ export class SSEClient {
 
   private init() {
     this.source = new EventSource(this.url);
+    // ignore broker heartbeat events
+    this.source.addEventListener('ping', () => {});
     for (const [name, cb] of Object.entries(this.listeners)) {
       this.source.addEventListener(name, (e: MessageEvent) => {
         try {
