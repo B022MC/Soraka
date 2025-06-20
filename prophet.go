@@ -1,4 +1,4 @@
-package Soraka
+package main
 
 import (
 	"Soraka/dal/lcu/models"

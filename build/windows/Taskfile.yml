@@ -4,6 +4,23 @@ includes:
   common: ../Taskfile.yml
 
 tasks:
+  kill:ports:
+    summary: Kill processes using ports 9245 and 8200
+    silent: true
+    cmds:
+      - powershell -Command "
+        $ports = @(9245, 8200);
+        foreach ($port in $ports) {
+        $conns = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue;
+        foreach ($conn in $conns) {
+        $pid = $conn.OwningProcess;
+        if ($pid) {
+        Write-Host 'Killing process on port' $port 'with PID' $pid;
+        Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue;
+        }
+        }
+        }"
+
   build:
     summary: Builds the application for Windows
     deps:

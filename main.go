@@ -1,37 +1,48 @@
 package main
 
 import (
+	service "Soraka/service/greet"
 	"embed"
 	"fmt"
 	"log"
+	"net"
 	"time"
 
 	"github.com/gin-gonic/gin"
-       "github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/application"
 
-"Soraka"
-example "Soraka/service/example"
-lcuService "Soraka/service/lcu"
+	example "Soraka/service/example"
+	lcuService "Soraka/service/lcu"
 )
 
 // 前端构建产物
 //
-//go:embed all:../frontend/dist
+//go:embed all:frontend/dist
 var assets embed.FS
 
 // 托盘图标
 //
-//go:embed logo.png
+//go:embed build/logo.png
 var trayIcon []byte
 
+func mustCheckPortAvailable(port string) {
+	ln, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatalf("端口 %s 已被占用，请关闭其他实例后重试", port)
+	}
+	_ = ln.Close()
+}
 func main() {
+	mustCheckPortAvailable("8200") // Gin API
+	mustCheckPortAvailable("9245") // Vite Dev Server
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
-               Services:    []application.Service{
-                       &example.API{},
-                       &lcuService.WailsAPI{},
-               },
+		Services: []application.Service{
+			application.NewService(&example.API{}),
+			application.NewService(&lcuService.WailsAPI{}),
+			application.NewService(&service.GreetService{}),
+		},
 
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -79,8 +90,8 @@ func main() {
 	// start API server for frontend calls
 	go func() {
 		r := gin.Default()
-		api := &Soraka.Api{}
-		Soraka.RegisterRoutes(r, api)
+		api := &Api{}
+		RegisterRoutes(r, api)
 		if err := r.Run(":8200"); err != nil {
 			log.Fatal(err)
 		}

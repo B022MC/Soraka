@@ -12,6 +12,31 @@ vars:
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
 
 tasks:
+  kill:ports:
+    summary: Kill processes listening on ports 9245 and 8200
+    cmds:
+      - |
+        powershell -NoProfile -ExecutionPolicy Bypass -Command '
+        $ports = @(9245, 8200)
+        foreach ($port in $ports) {
+          $conns = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
+          foreach ($conn in $conns) {
+            $processId = $conn.OwningProcess
+            if ($processId) {
+              Write-Host "Killing process on port $port with PID $processId"
+              Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
+            }
+          }
+        }'
+    platforms: [windows]
+
+  dev:
+    summary: Runs the application in development mode
+    deps:
+      - kill:ports
+    cmds:
+      - wails3 dev -config ./build/config.yml -port {{.VITE_PORT}}
+
   build:
     summary: Builds the application
     cmds:
@@ -26,9 +51,3 @@ tasks:
     summary: Runs the application
     cmds:
       - task: "{{OS}}:run"
-
-  dev:
-    summary: Runs the application in development mode
-    cmds:
-      - wails3 dev -config ./build/config.yml -port {{.VITE_PORT}}
-

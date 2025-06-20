@@ -48,7 +48,7 @@
 import {onMounted } from 'vue';
 import { Notification, Message } from '@arco-design/web-vue';
 import {WML} from "@wailsio/runtime";
-import { LcuApi } from "/#/Soraka/service";
+import { WailsAPI } from "/#/Soraka/service/lcu";
 onMounted(async()=>{
     WML.Reload()
 })
@@ -71,7 +71,7 @@ onMounted(async()=>{
         })
     } else if(val=="startclient") {
         Message.loading({content:'启动中，请稍后', id:'startclient', duration:0})
-        LcuApi.StartClient().then(() => {
+        WailsAPI.StartClient().then(() => {
             Message.success({content:'启动成功', id:'startclient', duration:2000})
         }).catch((e:any)=>{
             Notification.error({title:'启动失败',content:String(e),position:'bottomRight'})

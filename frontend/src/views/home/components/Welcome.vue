@@ -34,7 +34,7 @@
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
 import type { AuthInfo } from "@/api/lcu";
-import { LcuApi } from "/#/Soraka/service";
+import { WailsAPI } from "/#/Soraka/service/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 
@@ -49,7 +49,7 @@ const authInfo = ref<AuthInfo | null>(null);
 
 onMounted(() => {
   // 初始化获取 LCU 凭证
-  LcuApi.GetAuthInfo().then((info: AuthInfo) => {
+  WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
     authInfo.value = info
     lcuOnline.value = true
     lcuPort.value = String(info.port)
@@ -59,7 +59,7 @@ onMounted(() => {
   })
 
   // 获取当前召唤师信息
-  LcuApi.GetCurrentSummoner().then((info: any) => {
+  WailsAPI.GetCurrentSummoner().then((info: any) => {
     if (info && authInfo.value) {
       userStore.setInfo({
         nickname: info.displayName,

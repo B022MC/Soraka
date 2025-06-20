@@ -1,4 +1,4 @@
-package Soraka
+package main
 
 type ApplyOption func(o *options)
 
