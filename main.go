@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Soraka/biz/client"
 	"Soraka/service"
 	"embed"
 	"fmt"
@@ -29,6 +30,7 @@ func main() {
 			application.NewService(&service.MessageService{}),
 			application.NewService(&service.OpenWindow{}),
 			application.NewService(&service.HttpService{}),
+			application.NewService(&service.ClientService{}),
 		},
 
 		Assets: application.AssetOptions{
@@ -72,7 +74,7 @@ func main() {
 	go func() {
 		// 等待窗口加载完成再发送
 		time.Sleep(2 * time.Second)
-		path := service.GetClientPath()
+		path := client.GetClientPath()
 		app.EmitEvent("clientPath", path)
 	}()
 

@@ -5,9 +5,11 @@ import * as GreetService from "./greetservice.js";
 import * as HttpService from "./httpservice.js";
 import * as MessageService from "./messageservice.js";
 import * as OpenWindow from "./openwindow.js";
+import * as ClientService from "./clientservice.js";
 export {
     GreetService,
     HttpService,
     MessageService,
     OpenWindow
+    ,ClientService
 };
