@@ -4,9 +4,9 @@ package lcu
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
+	"github.com/shirou/gopsutil/v3/process"
 	"os/exec"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -70,29 +70,32 @@ func isLolGameProcessExist(path string) bool {
 }
 
 // getPortTokenServerByPid retrieves LCU port, token and server from cmdline.
-func getPortTokenServerByPid(pid int) (string, string, string, error) {
-	out, err := exec.Command("wmic", "process", "where", "processid="+strconv.Itoa(pid), "get", "commandline").Output()
+
+func getPortTokenServerByPid(pid int32) (string, string, string, error) {
+	proc, err := process.NewProcess(pid)
 	if err != nil {
 		return "", "", "", err
 	}
-	s := string(out)
-	rePort := regexp.MustCompile(`--app-port=([0-9]+)`)
-	reToken := regexp.MustCompile(`--remoting-auth-token=([^\s"']+)`)
-	reServer := regexp.MustCompile(`--rso_platform_id=([^\s"']+)`)
-	port := ""
-	token := ""
-	server := ""
-	if m := rePort.FindStringSubmatch(s); len(m) > 1 {
-		port = m[1]
+	cmds, err := proc.CmdlineSlice()
+	if err != nil {
+		return "", "", "", err
 	}
-	if m := reToken.FindStringSubmatch(s); len(m) > 1 {
-		token = m[1]
-	}
-	if m := reServer.FindStringSubmatch(s); len(m) > 1 {
-		server = m[1]
+
+	var port, token, server string
+	for _, arg := range cmds {
+		arg = strings.Trim(arg, `"`)
+		if strings.HasPrefix(arg, "--app-port=") {
+			port = strings.TrimPrefix(arg, "--app-port=")
+		}
+		if strings.HasPrefix(arg, "--remoting-auth-token=") {
+			token = strings.TrimPrefix(arg, "--remoting-auth-token=")
+		}
+		if strings.HasPrefix(arg, "--rso_platform_id=") {
+			server = strings.TrimPrefix(arg, "--rso_platform_id=")
+		}
 	}
 	if port == "" || token == "" {
-		return "", "", "", errors.New("unable to parse command line")
+		return "", "", "", fmt.Errorf("missing port or token")
 	}
 	return port, token, server, nil
 }

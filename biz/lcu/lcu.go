@@ -23,7 +23,7 @@ func getCredentials() (port, password string, err error) {
 	if len(pids) == 0 {
 		return "", "", fmt.Errorf("client not running")
 	}
-	port, password, _, err = getPortTokenServerByPid(pids[0])
+	port, password, _, err = getPortTokenServerByPid(int32(pids[0]))
 	if err != nil {
 		return "", "", err
 	}
