@@ -15,9 +15,7 @@
             <QuickOperation />
           </div>
         </a-grid-item>
-        <a-grid-item class="panel" :span="24">
-          <ConnectionStatus />
-        </a-grid-item>
+
         <!--        <a-grid-item class="panel" :span="24">-->
         <!--          <CategoriesPercent />-->
         <!--        </a-grid-item>-->
@@ -29,7 +27,6 @@
 <script setup>
 import Welcome from "./components/Welcome.vue";
 import QuickOperation from "./components/quick-operation.vue";
-import ConnectionStatus from "./components/ConnectionStatus.vue";
 </script>
 <style scoped lang="less">
 .container {

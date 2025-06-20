@@ -36,6 +36,7 @@ import { Events } from "@wailsio/runtime";
 import { ClientService, LcuService } from "/#/Soraka/service";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
+
 const userStore = useUserStore();
 
 const sysTime = ref("");
@@ -45,27 +46,62 @@ const lcuPort = ref("");
 const lcuToken = ref("");
 
 onMounted(() => {
+  // 初始化获取 clientPath
   ClientService.GetClientPath().then((p) => {
+    console.log("[Init] GetClientPath 返回:", p);
     clientPath.value = p;
   });
+
+  // 初始化获取 LCU 状态和凭证
   LcuService.CheckLogin().then(([ok, port, token]) => {
+    console.log("[Init] CheckLogin 返回:", ok, port, token);
     lcuOnline.value = ok;
     lcuPort.value = port;
     lcuToken.value = token;
   });
+
+  // 监听系统时间事件
   Events.On("time", (time: any) => {
+    // console.log("[Event] time 收到:", time);
     sysTime.value = time.data as string;
   });
+
+  // 监听 clientPath 事件
   Events.On("clientPath", (p: any) => {
+    console.log("[Event] clientPath 收到:", p);
     clientPath.value = p.data as string;
   });
+
+  // 监听 lcuStatus 事件
   Events.On("lcuStatus", (d: any) => {
-    lcuOnline.value = !!d.data;
+    console.log("[Event] lcuStatus 收到:", d);
+    const status = Array.isArray(d.data) ? d.data[0] : d.data;
+    if (typeof status === 'boolean') {
+      lcuOnline.value = status;
+    } else {
+      console.warn("[Event] lcuStatus 数据格式异常:", d.data);
+      lcuOnline.value = false;  // 或保留上次值
+    }
+    console.log("[状态] 更新 lcuOnline:", lcuOnline.value);
   });
+
+
+  // 监听 lcuCreds 事件
   Events.On("lcuCreds", (d: any) => {
-    lcuPort.value = d.data.port;
-    lcuToken.value = d.data.token;
+    console.log("[Event] lcuCreds 收到:", d);
+    const creds = Array.isArray(d.data) ? d.data[0] : d.data;
+    if (creds && typeof creds === 'object') {
+      lcuPort.value = creds.port ?? "";
+      lcuToken.value = creds.token ?? "";
+      console.log("[状态] 更新 lcuPort:", lcuPort.value, "lcuToken:", lcuToken.value);
+    } else {
+      console.warn("[Event] lcuCreds 数据格式异常:", d.data);
+      lcuPort.value = "";
+      lcuToken.value = "";
+    }
   });
+
+
 });
 </script>
 
