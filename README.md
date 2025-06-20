@@ -1,65 +1,44 @@
-# Welcome to Your New Wails3 Project!
+# Soraka 桌面客户端
 
-Congratulations on generating your Wails3 application! This README will guide you through the next steps to get your project up and running.
+本项目基于 [Wails3](https://wails.io/) 构建，用于演示桌面应用框架的搭建。
 
-## Getting Started
+## 目录结构
 
-1. Navigate to your project directory in the terminal.
-
-2. To run your application in development mode, use the following command:
-
-   ```
-   wails3 dev
-   ```
-
-   This will start your application and enable hot-reloading for both frontend and backend changes.
-
-3. To build your application for production, use:
-
-   ```
-   wails3 build
-   ```
-
-   This will create a production-ready executable in the `build` directory.
-
-## Exploring Wails3 Features
-
-Now that you have your project set up, it's time to explore the features that Wails3 offers:
-
-1. **Check out the examples**: The best way to learn is by example. Visit the `examples` directory in the `v3/examples` directory to see various sample applications.
-
-2. **Run an example**: To run any of the examples, navigate to the example's directory and use:
-
-   ```
-   go run .
-   ```
-
-   Note: Some examples may be under development during the alpha phase.
-
-3. **Explore the documentation**: Visit the [Wails3 documentation](https://v3alpha.wails.io/) for in-depth guides and API references.
-
-4. **Join the community**: Have questions or want to share your progress? Join the [Wails Discord](https://discord.gg/JDdSxwjhGf) or visit the [Wails discussions on GitHub](https://github.com/wailsapp/wails/discussions).
-
-## Project Structure
-
-Take a moment to familiarize yourself with your project structure:
-
-- `frontend/`: Contains your frontend code (HTML, CSS, JavaScript/TypeScript)
-- `main.go`: The entry point of your Go backend
-- `app.go`: Define your application structure and methods here
-- `wails.json`: Configuration file for your Wails project
-
-## Next Steps
-
-1. Modify the frontend in the `frontend/` directory to create your desired UI.
-2. Add backend functionality in `main.go`.
-3. Use `wails3 dev` to see your changes in real-time.
-4. When ready, build your application with `wails3 build`.
-
-Happy coding with Wails3! If you encounter any issues or have questions, don't hesitate to consult the documentation or reach out to the Wails community.
-
-## 打包
 ```
+.
+├── build/                # 打包与任务脚本
+├── config/               # 配置文件目录
+├── frontend/             # 前端 Vue3 代码
+├── service/              # Go 后端服务
+├── main.go               # 应用入口
+└── Taskfile.yml          # 开发辅助任务
+```
+
+`config` 目录中包含 `clientconfig.default.json`，为默认配置。用户修改后会生成 `clientconfig.json` 保存在本地，不会被纳入版本控制。
+
+## 已实现功能
+
+- 启动时自动从注册表搜索 Riot Client 路径，并发送到前端显示
+- 客户端路径保存到 `config/clientconfig.json`，下次启动无需再次搜索
+- 托盘菜单与基础窗口控制
+
+## 开发与调试
+
+```bash
+# 安装依赖并启动前后端热重载
+wails3 dev
+```
+
+构建发布版本：
+
+```bash
+wails3 build
+```
+
+如需打包安装包，可执行：
+
+```bash
 wails3 package
-
 ```
+
+

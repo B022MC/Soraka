@@ -71,6 +71,14 @@ func main() {
 	tray.SetIcon(trayIcon)
 	tray.SetDarkModeIcon(trayIcon)
 
+	// 在启动后尝试查找客户端路径并发送给前端
+	go func() {
+		// 等待窗口加载完成再发送
+		time.Sleep(2 * time.Second)
+		path := service.GetClientPath()
+		app.EmitEvent("clientPath", path)
+	}()
+
 	// 双击左键：显示窗口
 	tray.OnDoubleClick(func() {
 		mainWin.Show()

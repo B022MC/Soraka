@@ -1,30 +1,39 @@
 <template>
   <a-card class="card" :bordered="false">
-    <a-row  wrap :gutter="[{ xs: 0, sm: 14, md: 14, lg: 14, xl: 14, xxl: 14 }, 16]" class="content">
+    <a-row
+      wrap
+      :gutter="[{ xs: 0, sm: 14, md: 14, lg: 14, xl: 14, xxl: 14 }, 16]"
+      class="content"
+    >
       <a-space size="medium">
-        <a-avatar style="padding: 2px;" :size="68">
-          <img src="@/assets/logo.png">
+        <a-avatar style="padding: 2px" :size="68">
+          <img src="@/assets/logo.png" />
         </a-avatar>
         <div class="welcome">
           <p class="hello">{{ goodTimeText() }}！{{ userStore.nickname }}</p>
-          <p>当前时间：<span class="datetime">{{ appStore.sysTime?appStore.sysTime[0]:"---" }}</span></p>
+          <p>
+            当前时间：<span class="datetime">{{
+              appStore.sysTime ? appStore.sysTime[0] : "---"
+            }}</span>
+          </p>
+          <p>客户端路径：{{ appStore.clientPath || "未找到" }}</p>
         </div>
       </a-space>
     </a-row>
   </a-card>
 </template>
 
-<script lang="ts" setup >
-  // import { ref } from 'vue';
-  import { useUserStore,useAppStore } from '@/store';
-  import { goodTimeText } from '@/utils'
-  const appStore = useAppStore();
-  // import {Events} from "@wailsio/runtime";
-  // const innerText=ref("")
-  // Events.On('time', (time) => {
-  //     innerText.value = time.data;
-  // });
-const userStore = useUserStore()
+<script lang="ts" setup>
+// import { ref } from 'vue';
+import { useUserStore, useAppStore } from "@/store";
+import { goodTimeText } from "@/utils";
+const appStore = useAppStore();
+// import {Events} from "@wailsio/runtime";
+// const innerText=ref("")
+// Events.On('time', (time) => {
+//     innerText.value = time.data;
+// });
+const userStore = useUserStore();
 </script>
 
 <style scoped lang="less">
