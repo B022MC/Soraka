@@ -6,7 +6,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
+
+	"Soraka"
 )
 
 // 前端构建产物
@@ -67,6 +70,16 @@ func main() {
 		mainWin.Show()
 		mainWin.Focus()
 	})
+
+	// start API server for frontend calls
+	go func() {
+		r := gin.Default()
+		api := &Soraka.Api{}
+		Soraka.RegisterRoutes(r, api)
+		if err := r.Run(":8200"); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	// 每秒发送时间事件
 	go func() {
