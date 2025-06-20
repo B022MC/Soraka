@@ -1,14 +1,14 @@
 package main
 
 import (
-        "Soraka/biz/client"
-        "Soraka/router"
-        "Soraka/service"
-        "context"
-        "embed"
-        "fmt"
-        "log"
-        "time"
+	"Soraka/biz/client"
+	"Soraka/router"
+	"Soraka/service"
+	"context"
+	"embed"
+	"fmt"
+	"log"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -34,6 +34,7 @@ func main() {
 			application.NewService(&service.HttpService{}),
 			application.NewService(&service.ClientService{}),
 			application.NewService(&service.LcuService{}),
+			application.NewService(&service.ResourceService{}),
 		},
 
 		Assets: application.AssetOptions{
@@ -81,9 +82,9 @@ func main() {
 		app.EmitEvent("clientPath", path)
 	}()
 
-        // 启动后台状态监控并推送事件
-        r := router.NewRouter(app)
-        go r.Start(context.Background())
+	// 启动后台状态监控并推送事件
+	r := router.NewRouter(app)
+	go r.Start(context.Background())
 
 	// 双击左键：显示窗口
 	tray.OnDoubleClick(func() {
