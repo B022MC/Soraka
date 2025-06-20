@@ -33,10 +33,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Events } from '@wailsio/runtime';
 import { ClientService, LcuService } from '/#/Soraka/service';
-import { SSEClient } from '@/utils/sse';
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 const userStore = useUserStore();
@@ -46,7 +45,6 @@ const clientPath = ref('');
 const lcuOnline = ref(false);
 const lcuPort = ref('');
 const lcuToken = ref('');
-let sse: SSEClient | null = null;
 
 onMounted(() => {
   ClientService.GetClientPath().then(p => {
@@ -58,23 +56,16 @@ onMounted(() => {
   Events.On('time', (time: any) => {
     sysTime.value = time.data as string;
   });
-  sse = new SSEClient('http://localhost:8233/events');
-  sse.connect({
-    clientPath: (d) => {
-      clientPath.value = d as string;
-    },
-    lcuStatus: (d) => {
-      lcuOnline.value = !!d;
-    },
-    lcuCreds: (d) => {
-      lcuPort.value = d.port;
-      lcuToken.value = d.token;
-    },
+  Events.On('clientPath', (p: any) => {
+    clientPath.value = p.data as string;
   });
-});
-
-onBeforeUnmount(() => {
-  sse?.close();
+  Events.On('lcuStatus', (d: any) => {
+    lcuOnline.value = !!d.data;
+  });
+  Events.On('lcuCreds', (d: any) => {
+    lcuPort.value = d.data.port;
+    lcuToken.value = d.data.token;
+  });
 });
 </script>
 

@@ -1,15 +1,14 @@
 package main
 
 import (
-	"Soraka/biz/client"
-	"Soraka/router"
-	"Soraka/service"
-	"context"
-	"embed"
-	"fmt"
-	"log"
-	"net/http"
-	"time"
+        "Soraka/biz/client"
+        "Soraka/router"
+        "Soraka/service"
+        "context"
+        "embed"
+        "fmt"
+        "log"
+        "time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -82,13 +81,9 @@ func main() {
 		app.EmitEvent("clientPath", path)
 	}()
 
-	// 启动后台路由并SSE推送状态
-	r := router.NewRouter()
-	go r.Start(context.Background())
-	go func() {
-		srv := &http.Server{Addr: ":8233", Handler: r.Handler()}
-		_ = srv.ListenAndServe()
-	}()
+        // 启动后台状态监控并推送事件
+        r := router.NewRouter(app)
+        go r.Start(context.Background())
 
 	// 双击左键：显示窗口
 	tray.OnDoubleClick(func() {
