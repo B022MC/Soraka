@@ -1,12 +1,11 @@
 package lcu
 
 import (
+	"Soraka/dal/lcu/models"
 	"fmt"
 	"strconv"
 
 	"github.com/pkg/errors"
-
-	"Soraka/pkg"
 )
 
 const (
