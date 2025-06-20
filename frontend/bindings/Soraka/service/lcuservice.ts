@@ -14,3 +14,8 @@ export function CheckLogin(): Promise<boolean> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3719369374) as any;
     return $resultPromise;
 }
+
+export function GetCredentials(): Promise<{port: string, token: string}> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(2781735375) as any;
+    return $resultPromise;
+}

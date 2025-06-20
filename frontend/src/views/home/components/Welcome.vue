@@ -13,18 +13,18 @@
           <p class="hello">{{ goodTimeText() }}！{{ userStore.nickname }}</p>
           <p>
             当前时间：<span class="datetime">{{
-              appStore.sysTime ? appStore.sysTime[0] : "---"
+              sysTime ? sysTime[0] : "---"
             }}</span>
           </p>
           <p>
-            客户端路径：{{ appStore.clientPath || "未找到" }}
+            客户端路径：{{ clientPath || "未找到" }}
             <span class="status">
-              <a-tag v-if="appStore.lcuOnline" color="green">已连接LCU</a-tag>
+              <a-tag v-if="lcuOnline" color="green">已连接LCU</a-tag>
               <span v-else class="waiting">等待连接</span>
             </span>
           </p>
-          <p v-if="appStore.lcuPort">
-            端口：{{ appStore.lcuPort }} Token：{{ appStore.lcuToken }}
+          <p v-if="lcuPort">
+            端口：{{ lcuPort }} Token：{{ lcuToken }}
           </p>
         </div>
       </a-space>
@@ -33,16 +33,41 @@
 </template>
 
 <script lang="ts" setup>
-// import { ref } from 'vue';
-import { useUserStore, useAppStore } from "@/store";
+import { ref, onMounted } from 'vue';
+import { Events } from '@wailsio/runtime';
+import { ClientService, LcuService } from '/#/Soraka/service';
+import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
-const appStore = useAppStore();
-// import {Events} from "@wailsio/runtime";
-// const innerText=ref("")
-// Events.On('time', (time) => {
-//     innerText.value = time.data;
-// });
 const userStore = useUserStore();
+
+const sysTime = ref('');
+const clientPath = ref('');
+const lcuOnline = ref(false);
+const lcuPort = ref('');
+const lcuToken = ref('');
+
+onMounted(() => {
+  ClientService.GetClientPath().then(p => {
+    clientPath.value = p;
+  });
+  LcuService.CheckLogin().then(ok => {
+    lcuOnline.value = ok;
+  });
+  Events.On('time', (time: any) => {
+    sysTime.value = time.data as string;
+  });
+  Events.On('clientPath', (e: any) => {
+    clientPath.value = e.data as string;
+  });
+  Events.On('lcuStatus', (e: any) => {
+    lcuOnline.value = !!e.data;
+  });
+  Events.On('lcuCreds', (e: any) => {
+    const data = e.data as { port: string; token: string };
+    lcuPort.value = data.port;
+    lcuToken.value = data.token;
+  });
+});
 </script>
 
 <style scoped lang="less">

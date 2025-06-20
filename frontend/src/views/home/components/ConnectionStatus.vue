@@ -10,11 +10,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useAppStore } from "@/store";
+import { ref, onMounted } from "vue";
+import { Events } from "@wailsio/runtime";
+import { LcuService } from "/#/Soraka/service";
 
-const appStore = useAppStore();
-const online = computed(() => appStore.lcuOnline);
+const online = ref(false);
+
+onMounted(() => {
+  LcuService.CheckLogin().then((ok) => {
+    online.value = ok;
+  });
+  Events.On("lcuStatus", (e: any) => {
+    online.value = !!e.data;
+  });
+});
 </script>
 
 <style scoped>

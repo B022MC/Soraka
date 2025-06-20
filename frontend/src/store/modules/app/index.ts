@@ -4,12 +4,7 @@ import { AppState } from "./types";
 const useAppStore = defineStore("app", {
   state: (): AppState => {
     return {
-      sysTime: "",
       theme: "light",
-      clientPath: "",
-      lcuOnline: false,
-      lcuPort: "",
-      lcuToken: "",
     };
   },
   getters: {

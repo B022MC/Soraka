@@ -15,30 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Events, Window } from "@wailsio/runtime";
-import { useAppStore } from "@/store";
-
-// pinia store
-const appStore = useAppStore();
-
-// 接收后端事件
-Events.On("time", (time: any) => {
-  appStore.sysTime = time.data;
-});
-// 接收客户端路径事件
-Events.On("clientPath", (e: any) => {
-  appStore.clientPath = e.data as string;
-});
-// 接收LCU连接状态事件
-Events.On("lcuStatus", (e: any) => {
-  appStore.lcuOnline = !!e.data;
-});
-// 接收LCU端口和token
-Events.On("lcuCreds", (e: any) => {
-  const data = e.data as { port: string; token: string };
-  appStore.lcuPort = data.port;
-  appStore.lcuToken = data.token;
-});
+import { Window } from "@wailsio/runtime";
 
 // 控制窗口
 const WindowMinimise = () => {

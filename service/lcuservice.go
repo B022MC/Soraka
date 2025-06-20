@@ -8,3 +8,7 @@ type LcuService struct{}
 func (LcuService) CheckLogin() bool {
 	return lcu.CheckLogin()
 }
+
+func (LcuService) GetCredentials() (string, string, error) {
+	return lcu.GetCredentials()
+}
