@@ -73,3 +73,14 @@ func (b *SSEBroker) Broadcast(event string, v interface{}) {
 	}
 	b.mu.Unlock()
 }
+
+// StartHeartbeat periodically sends a ping event to all clients to keep connections alive.
+func (b *SSEBroker) StartHeartbeat(interval time.Duration) {
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for range ticker.C {
+			b.Broadcast("ping", "pong")
+		}
+	}()
+}

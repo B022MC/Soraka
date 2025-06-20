@@ -2,11 +2,14 @@ export type SSECallback = (data: any) => void;
 
 export class SSEClient {
   private source: EventSource | null = null;
-  constructor(private url: string) {}
+  private reconnectTimer: number | null = null;
+  private listeners: Record<string, SSECallback> = {};
 
-  connect(events: Record<string, SSECallback>) {
+  constructor(private url: string, private retry = 3000) {}
+
+  private init() {
     this.source = new EventSource(this.url);
-    for (const [name, cb] of Object.entries(events)) {
+    for (const [name, cb] of Object.entries(this.listeners)) {
       this.source.addEventListener(name, (e: MessageEvent) => {
         try {
           cb(JSON.parse(e.data));
@@ -15,9 +18,26 @@ export class SSEClient {
         }
       });
     }
+    this.source.onerror = () => {
+      if (this.source && this.source.readyState === EventSource.CLOSED && this.reconnectTimer === null) {
+        this.reconnectTimer = window.setTimeout(() => {
+          this.reconnectTimer = null;
+          this.init();
+        }, this.retry);
+      }
+    };
+  }
+
+  connect(events: Record<string, SSECallback>) {
+    this.listeners = events;
+    this.init();
   }
 
   close() {
+    if (this.reconnectTimer) {
+      window.clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     this.source?.close();
   }
 }
