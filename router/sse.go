@@ -32,7 +32,7 @@ func (b *SSEBroker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Content-Type", "text/event-stream; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
@@ -48,8 +48,12 @@ func (b *SSEBroker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		b.mu.Unlock()
 	}()
 
+	// send an initial comment so proxies establish the stream immediately
+	fmt.Fprint(w, ": connected\n\n")
+	flusher.Flush()
+
 	notify := r.Context().Done()
-	keepAlive := time.NewTicker(15 * time.Second)
+	keepAlive := time.NewTicker(10 * time.Second)
 	defer keepAlive.Stop()
 	for {
 		select {

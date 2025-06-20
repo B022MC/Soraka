@@ -19,11 +19,18 @@ export class SSEClient {
       });
     }
     this.source.onerror = () => {
-      if (this.source && this.source.readyState === EventSource.CLOSED && this.reconnectTimer === null) {
+      if (this.reconnectTimer === null) {
         this.reconnectTimer = window.setTimeout(() => {
           this.reconnectTimer = null;
+          this.source?.close();
           this.init();
         }, this.retry);
+      }
+    };
+    this.source.onopen = () => {
+      if (this.reconnectTimer) {
+        window.clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
       }
     };
   }
