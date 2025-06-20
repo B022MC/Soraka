@@ -48,7 +48,7 @@
 import {onMounted } from 'vue';
 import { Notification, Message } from '@arco-design/web-vue';
 import {WML} from "@wailsio/runtime";
-import { ClientService } from "/#/Soraka/service";
+import { startClient } from "@/api/lcu";
 onMounted(async()=>{
     WML.Reload()
 })
@@ -71,13 +71,8 @@ onMounted(async()=>{
         })
     } else if(val=="startclient") {
         Message.loading({content:'启动中，请稍后', id:'startclient', duration:0})
-        ClientService.StartClient().then((err:string)=>{
-            if(err){
-                Notification.error({title:'启动失败',content:err,position:'bottomRight'})
-                Message.error({content:'启动失败', id:'startclient', duration:2000})
-            }else{
-                Message.success({content:'启动成功', id:'startclient', duration:2000})
-            }
+        startClient().then(() => {
+            Message.success({content:'启动成功', id:'startclient', duration:2000})
         }).catch((e:any)=>{
             Notification.error({title:'启动失败',content:String(e),position:'bottomRight'})
             Message.error({content:'启动失败', id:'startclient', duration:2000})

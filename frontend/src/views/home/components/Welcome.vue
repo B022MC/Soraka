@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
-import { ClientService, LcuService } from "/#/Soraka/service";
+import { getLcuAuthInfo, getCurrentSummoner, type AuthInfo } from "@/api/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 
@@ -44,21 +44,29 @@ const clientPath = ref("");
 const lcuOnline = ref(false);
 const lcuPort = ref("");
 const lcuToken = ref("");
+const authInfo = ref<AuthInfo | null>(null);
 
 onMounted(() => {
-  // 初始化获取 clientPath
-  ClientService.GetClientPath().then((p) => {
-    console.log("[Init] GetClientPath 返回:", p);
-    clientPath.value = p;
-  });
+  // 初始化获取 LCU 凭证
+  getLcuAuthInfo().then(info => {
+    authInfo.value = info
+    lcuOnline.value = true
+    lcuPort.value = String(info.port)
+    lcuToken.value = info.token
+  }).catch(() => {
+    lcuOnline.value = false
+  })
 
-  // 初始化获取 LCU 状态和凭证
-  LcuService.CheckLogin().then(([ok, port, token]) => {
-    console.log("[Init] CheckLogin 返回:", ok, port, token);
-    lcuOnline.value = ok;
-    lcuPort.value = port;
-    lcuToken.value = token;
-  });
+  // 获取当前召唤师信息
+  getCurrentSummoner().then(info => {
+    if (info && authInfo.value) {
+      userStore.setInfo({
+        nickname: info.displayName,
+        avatar: `https://127.0.0.1:${authInfo.value.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+        region: info.region
+      })
+    }
+  })
 
   // 监听系统时间事件
   Events.On("time", (time: any) => {

@@ -92,7 +92,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import routerMap from '@/router/routerMap'
 import { Events } from '@wailsio/runtime'
-import { LcuService } from '/#/Soraka/service'
+import { getCurrentSummoner, getLcuAuthInfo, type AuthInfo } from '@/api/lcu'
 import { useUserStore } from '@/store'
 
 const router = useRouter()
@@ -102,6 +102,7 @@ const collapsed = ref(false)
 const userStore = useUserStore()
 
 const menulist = computed(() => routerMap.find(item => item.path === '/')?.children || [])
+const authInfo = ref<AuthInfo | null>(null)
 
 watch(() => route.name, name => (current.value = name))
 
@@ -123,28 +124,32 @@ const handleTool = type => {
 }
 
 const loadUserInfo = () => {
-  LcuService.GetCurrentUserInfo().then(info => {
-    if (!info) return
+  getCurrentSummoner().then(info => {
+    if (!info || !authInfo.value) return
     userStore.setInfo({
       nickname: info.displayName,
-      avatar: `https://127.0.0.1:${info.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+      avatar: `https://127.0.0.1:${authInfo.value.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
       region: info.region
     })
   }).catch(err => {
-    console.error('[GetCurrentUserInfo]', err)
+    console.error('[getCurrentSummoner]', err)
   })
 }
 
 onMounted(() => {
-  LcuService.CheckLogin().then(([ok]) => {
-    if (ok) {
-      loadUserInfo()
-    }
+  getLcuAuthInfo().then((info) => {
+    authInfo.value = info
+    loadUserInfo()
+  }).catch(() => {
+    console.error('failed to get auth info')
   })
   Events.On('lcuStatus', (d: any) => {
     const status = Array.isArray(d.data) ? d.data[0] : d.data
     if (status) {
-      loadUserInfo()
+      getLcuAuthInfo().then(info => {
+        authInfo.value = info
+        loadUserInfo()
+      })
     }
   })
 })
