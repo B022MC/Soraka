@@ -26,16 +26,16 @@
               </a-form-item>
             </a-col>
             <a-col :span="12">
-              <a-form-item field="SetFrameless" label="无边框窗口">
-                <a-switch type="round" @change="changeSetFrameless">
-                  <template #checked>
-                    开启
-                  </template>
-                  <template #unchecked>
-                    关闭
-                  </template>
-                </a-switch>
-              </a-form-item>
+<!--              <a-form-item field="SetFrameless" label="无边框窗口">-->
+<!--                <a-switch type="round" @change="changeSetFrameless">-->
+<!--                  <template #checked>-->
+<!--                    开启-->
+<!--                  </template>-->
+<!--                  <template #unchecked>-->
+<!--                    关闭-->
+<!--                  </template>-->
+<!--                </a-switch>-->
+<!--              </a-form-item>-->
             </a-col>
             <a-col :span="12">
               <a-form-item field="SetFullscreenButtonEnabled" label="窗口是否可调整大小">

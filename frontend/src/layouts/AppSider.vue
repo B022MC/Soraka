@@ -36,7 +36,6 @@
           </template>
         </a-menu>
 
-        <!-- 底部工具栏（改为菜单结构） -->
         <a-menu
             class="footer-tools"
             theme="light"
@@ -125,8 +124,8 @@ const handleTool = type => {
   height: 100vh;
 
   .layout-sider {
-    border-right: 1px solid var(--color-neutral-3);
-    background: #fff;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-menu-light-bg);
     transition: all 0.3s ease;
     will-change: width;
     z-index: 9;
@@ -147,6 +146,7 @@ const handleTool = type => {
       display: flex;
       align-items: center;
       padding: 0 16px;
+      background: var(--color-menu-light-bg);
 
       .logo-avatar {
         flex-shrink: 0;
@@ -156,6 +156,7 @@ const handleTool = type => {
         font-size: 14px;
         font-weight: bold;
         margin-left: 12px;
+        color: var(--color-text);
         transition: opacity 0.3s, width 0.3s;
         white-space: nowrap;
       }
@@ -171,10 +172,10 @@ const handleTool = type => {
       flex: 1;
       overflow-y: auto;
 
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE 10+ */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       &::-webkit-scrollbar {
-        display: none; /* Chrome/Safari */
+        display: none;
       }
 
       :deep(.arco-menu-item) {
@@ -182,6 +183,7 @@ const handleTool = type => {
         height: 48px;
         display: flex;
         align-items: center;
+        color: var(--color-text);
 
         .menu-item-inner {
           display: flex;
@@ -204,6 +206,7 @@ const handleTool = type => {
             margin-left: 12px;
             transition: opacity 0.3s, width 0.3s;
             white-space: nowrap;
+            color: var(--color-text);
           }
 
           .hidden {
@@ -211,6 +214,15 @@ const handleTool = type => {
             width: 0;
             overflow: hidden;
           }
+        }
+
+        &:hover {
+          background-color: var(--color-fill-2);
+        }
+
+        &.arco-menu-selected {
+          background-color: var(--color-fill-2);
+          color: var(--color-primary);
         }
       }
     }
@@ -229,6 +241,7 @@ const handleTool = type => {
         height: 48px;
         display: flex;
         align-items: center;
+        color: var(--color-text);
 
         .menu-item-inner {
           display: flex;
@@ -251,6 +264,7 @@ const handleTool = type => {
             margin-left: 12px;
             transition: opacity 0.3s, width 0.3s;
             white-space: nowrap;
+            color: var(--color-text);
           }
 
           .hidden {
@@ -275,7 +289,7 @@ const handleTool = type => {
       align-items: center;
       height: 60px;
       padding: 0 16px;
-      border-top: 1px solid var(--color-neutral-3);
+      border-top: 1px solid var(--color-border);
       cursor: pointer;
       transition: background 0.3s;
 
@@ -299,11 +313,12 @@ const handleTool = type => {
         .footer-name {
           font-weight: 500;
           font-size: 13px;
+          color: var(--color-text);
         }
 
         .footer-rank {
           font-size: 12px;
-          color: #999;
+          color: var(--color-text-2);
         }
 
         &.hidden {
@@ -320,7 +335,8 @@ const handleTool = type => {
   }
 
   .layout-content {
-    background: var(--color-menu-light-bg);
+    background: var(--color-bg-1);
+    color: var(--color-text);
     padding: 16px;
   }
 
@@ -383,10 +399,8 @@ const handleTool = type => {
       padding: 0;
     }
   }
-
-
-
 }
+
 
 
 </style>

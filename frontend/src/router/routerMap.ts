@@ -51,16 +51,16 @@ const constantRouterMap = [
       },
 
       // 设置页面，走底部按钮跳转，不显示在侧边栏
-      // {
-      //   path: '/setting',
-      //   name: 'setting',
-      //   component: () => import('@/views/setting/index.vue'),
-      //   meta: {
-      //     title: '设置',
-      //     icon: 'icon-xitong',
-      //     hideInMenu: true
-      //   }
-      // }
+      {
+        path: '/setting',
+        name: 'setting',
+        component: () => import('@/views/setting/index.vue'),
+        meta: {
+          title: '设置',
+          icon: 'icon-xitong',
+          hideInMenu: true
+        }
+      }
     ]
   }
 ]
