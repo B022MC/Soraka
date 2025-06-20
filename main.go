@@ -79,6 +79,10 @@ func main() {
 		time.Sleep(2 * time.Second)
 		path := client.GetClientPath()
 		app.EmitEvent("clientPath", path)
+		// 持续轮询客户端路径
+		client.WatchPath(context.Background(), 10*time.Second, func(p string) {
+			app.EmitEvent("clientPath", p)
+		})
 		// 开始监听LCU状态变化
 		lcu.WatchLogin(context.Background(), 5*time.Second, func(ok bool) {
 			app.EmitEvent("lcuStatus", ok)
