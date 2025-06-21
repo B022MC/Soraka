@@ -1,65 +1,73 @@
-import { defineStore } from 'pinia';
-import { UserState} from './types';
-import { setToken,getToken, clearToken } from '@/utils/auth';
+import { defineStore } from 'pinia'
+import { setToken, getToken, clearToken } from '@/utils/auth'
+
+export interface UserState {
+    nickname?: string
+    avatar?: string
+    region?: string
+    tag?: string // 召唤师标识 #12345
+    rank?: string // 当前段位
+    winRate?: number // 胜率（百分比）
+    wins?: number // 胜场
+    losses?: number // 败场
+    totalGames?: number // 总场次
+    createtime: string
+
+    level?: number // 等级
+    xpSinceLastLevel?: number // 当前等级已获得经验
+    xpUntilNextLevel?: number // 到下一级需要经验
+}
+
 const useUserStore = defineStore('user', {
-  state:(): UserState => ({
-    name: undefined,
-    nickname: undefined,
-    mobile: undefined,
-    email: undefined,
-    avatar: undefined,
-    id: 0,
-    city: '',
-    company: '',
-    region: '',
-    sessionTimeout: false,//登录是否已过期
-    createtime:"",
-  }),
+    state: (): UserState => ({
+        nickname: undefined,
+        avatar: undefined,
+        region: '',
+        tag: '',
+        rank: '',
+        winRate: undefined,
+        wins: undefined,
+        losses: undefined,
+        totalGames: undefined,
+        createtime: '',
+    }),
 
-  getters: {
-    userInfo(state: UserState): UserState {
-      return { ...state };
-    },
-  },
-
-  actions: {
-    setTokenData(info: string | undefined) {
-      setToken(info);
-    },
-    setSessionTimeout(flag: boolean) {
-      this.sessionTimeout = flag;
-    },
-    // Set user's information
-    setInfo(partial: Partial<UserState>) {
-      this.$patch(partial);
-    },
-    // Reset user's information
-    resetInfo() {
-      this.$reset();
-    },
-  
-   //设置token
-   async setTokenArr(token:any) {
-      setToken(token);
-    },
-    // 这里请求用户信息数据
-    async info() {
-      // const res = await getUserInfo();
-      // this.setInfo(res);
+    getters: {
+        userInfo(state): UserState {
+            return { ...state }
+        },
     },
 
-    // Login
-    async login() {
-      setToken(undefined);
-    },
-    // Logout
-    async logout(goLogin = false) {
-    },
-     //清除登录信息
-     clearloginfo() {
-      clearToken();
-     }
-  },
-});
+    actions: {
+        setInfo(partial: Partial<UserState>) {
+            this.$patch(partial)
+        },
 
-export default useUserStore;
+        resetInfo() {
+            this.$reset()
+        },
+
+        async setTokenArr(token: string) {
+            setToken(token)
+        },
+
+        async info() {
+            // const res = await getUserInfo()
+            // this.setInfo(res)
+        },
+
+        async login() {
+            setToken(undefined)
+        },
+
+        async logout(goLogin = false) {
+            // TODO: 清空信息，跳转登录页等
+        },
+
+        clearloginfo() {
+            clearToken()
+        },
+    },
+})
+
+export default useUserStore

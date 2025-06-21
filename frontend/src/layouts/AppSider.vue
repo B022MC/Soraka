@@ -22,11 +22,11 @@
         <a-menu
             class="menu-item"
             theme="light"
-            mode="inline"
-            :selectedKeys="[current]"
+            mode="vertical"
+            :selected-keys="[current]"
             @menu-item-click="menuHandle"
         >
-          <template v-for="menuInfo in menulist" :key="menuInfo.name">
+        <template v-for="menuInfo in menulist" :key="menuInfo.name">
             <a-menu-item v-if="!menuInfo.meta?.hideInMenu" :key="menuInfo.name">
               <div class="menu-item-inner">
                 <icon-font :type="menuInfo.meta.icon" class="menu-icon" />
@@ -39,10 +39,10 @@
         <a-menu
             class="footer-tools"
             theme="light"
-            mode="inline"
-            :selectedKeys="current === 'setting' ? ['setting'] : []"
+            mode="vertical"
+            :selected-keys="current === 'setting' ? ['setting'] : []"
         >
-          <a-menu-item key="opgg" @click="handleTool('opgg')">
+        <a-menu-item key="opgg" @click="handleTool('opgg')">
             <div class="menu-item-inner">
               <img src="@/assets/images/opgg.svg" class="menu-icon" />
               <span class="menu-text" :class="{ hidden: collapsed }">OP.GG</span>
@@ -69,7 +69,7 @@
         </a-menu>
 
         <!-- 用户信息 -->
-        <div class="footer" :class="{ factive: current === 'setting' }" @click="handleSetting">
+        <div class="footer">
           <a-avatar :size="32" :src="userStore.avatar || '@/assets/logo.png'" />
           <div class="footer-text" :class="{ hidden: collapsed }">
             <div class="footer-name">{{ userStore.nickname || '未登录' }}</div>
@@ -107,20 +107,21 @@ const authInfo = ref<AuthInfo | null>(null)
 
 watch(() => route.name, name => (current.value = name))
 
-const menuHandle = key => {
+const menuHandle = (key: string) => {
   current.value = key
   const target = menulist.value.find(i => i.name === key)
   if (target) {
-    router.push({ name: target.name, params: target.params })
+    router.push({ name: target.name })
   }
 }
+
 
 const handleSetting = () => {
   current.value = 'setting'
   router.push({ name: 'setting' })
 }
 
-const handleTool = type => {
+const handleTool = (type :string)=> {
   console.log('工具点击', type)
 }
 
