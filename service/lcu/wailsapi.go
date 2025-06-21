@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
+	"time"
 )
 
 // WailsAPI exposes methods for the frontend via Wails service
@@ -20,9 +22,20 @@ type AuthInfo struct {
 }
 
 type SummonerInfo struct {
-	DisplayName   string `json:"displayName"`
-	ProfileIconId int    `json:"profileIconId"`
-	Region        string `json:"region"`
+	DisplayName      string  `json:"displayName"`
+	ProfileIconId    int     `json:"profileIconId"`
+	Region           string  `json:"region"`
+	Avatar           string  `json:"avatar"`
+	Tag              string  `json:"tag"`
+	Rank             string  `json:"rank"`
+	WinRate          float64 `json:"winRate"`
+	Wins             int     `json:"wins"`
+	Losses           int     `json:"losses"`
+	TotalGames       int     `json:"totalGames"`
+	Createtime       string  `json:"createtime"`
+	Level            int     `json:"level"`
+	XpSinceLastLevel int     `json:"xpSinceLastLevel"`
+	XpUntilNextLevel int     `json:"xpUntilNextLevel"`
 }
 
 // GetClientPath returns the League of Legends executable path.
@@ -45,10 +58,39 @@ func (WailsAPI) GetCurrentSummoner() (SummonerInfo, error) {
 	if err != nil {
 		return SummonerInfo{}, err
 	}
+	profile, err := GetSummonerProfile()
+	if err != nil {
+		return SummonerInfo{}, err
+	}
+	wins, _ := strconv.Atoi(profile.Lol.RankedWins)
+	losses, _ := strconv.Atoi(profile.Lol.RankedLosses)
+	total := wins + losses
+	winRate := 0.0
+	if total > 0 {
+		winRate = float64(wins) * 100 / float64(total)
+	}
+	rank := profile.Lol.RankedLeagueTier
+	if profile.Lol.RankedLeagueDivision != "" {
+		rank = fmt.Sprintf("%s %s", rank, profile.Lol.RankedLeagueDivision)
+	}
+	port, _, _ := GetLolClientApiInfo()
 	info := SummonerInfo{
-		DisplayName:   summoner.DisplayName,
-		ProfileIconId: summoner.ProfileIconId,
-		Region:        summoner.TagLine,
+		DisplayName:      summoner.DisplayName,
+		ProfileIconId:    summoner.ProfileIconId,
+		Region:           summoner.TagLine,
+		Tag:              "#" + summoner.GameTag,
+		Rank:             rank,
+		WinRate:          winRate,
+		Wins:             wins,
+		Losses:           losses,
+		TotalGames:       total,
+		Createtime:       time.Now().Format(time.DateTime),
+		Level:            summoner.SummonerLevel,
+		XpSinceLastLevel: summoner.XpSinceLastLevel,
+		XpUntilNextLevel: summoner.XpUntilNextLevel,
+	}
+	if port > 0 {
+		info.Avatar = fmt.Sprintf("https://127.0.0.1:%d/lol-game-data/assets/v1/profile-icons/%d.jpg", port, summoner.ProfileIconId)
 	}
 	return info, nil
 }

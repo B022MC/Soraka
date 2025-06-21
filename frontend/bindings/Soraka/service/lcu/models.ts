@@ -3,58 +3,104 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import {Create as $Create} from "@wailsio/runtime";
+import { Create as $Create } from "@wailsio/runtime";
 
 export class AuthInfo {
-    "port": number;
-    "token": string;
+  "port": number;
+  "token": string;
 
-    /** Creates a new AuthInfo instance. */
-    constructor($$source: Partial<AuthInfo> = {}) {
-        if (!("port" in $$source)) {
-            this["port"] = 0;
-        }
-        if (!("token" in $$source)) {
-            this["token"] = "";
-        }
-
-        Object.assign(this, $$source);
+  /** Creates a new AuthInfo instance. */
+  constructor($$source: Partial<AuthInfo> = {}) {
+    if (!("port" in $$source)) {
+      this["port"] = 0;
+    }
+    if (!("token" in $$source)) {
+      this["token"] = "";
     }
 
-    /**
-     * Creates a new AuthInfo instance from a string or object.
-     */
-    static createFrom($$source: any = {}): AuthInfo {
-        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        return new AuthInfo($$parsedSource as Partial<AuthInfo>);
-    }
+    Object.assign(this, $$source);
+  }
+
+  /**
+   * Creates a new AuthInfo instance from a string or object.
+   */
+  static createFrom($$source: any = {}): AuthInfo {
+    let $$parsedSource =
+      typeof $$source === "string" ? JSON.parse($$source) : $$source;
+    return new AuthInfo($$parsedSource as Partial<AuthInfo>);
+  }
 }
 
 export class SummonerInfo {
-    "displayName": string;
-    "profileIconId": number;
-    "region": string;
+  "displayName": string;
+  "profileIconId": number;
+  "region": string;
+  "avatar": string;
+  "tag": string;
+  "rank": string;
+  "winRate": number;
+  "wins": number;
+  "losses": number;
+  "totalGames": number;
+  "createtime": string;
+  "level": number;
+  "xpSinceLastLevel": number;
+  "xpUntilNextLevel": number;
 
-    /** Creates a new SummonerInfo instance. */
-    constructor($$source: Partial<SummonerInfo> = {}) {
-        if (!("displayName" in $$source)) {
-            this["displayName"] = "";
-        }
-        if (!("profileIconId" in $$source)) {
-            this["profileIconId"] = 0;
-        }
-        if (!("region" in $$source)) {
-            this["region"] = "";
-        }
-
-        Object.assign(this, $$source);
+  /** Creates a new SummonerInfo instance. */
+  constructor($$source: Partial<SummonerInfo> = {}) {
+    if (!("displayName" in $$source)) {
+      this["displayName"] = "";
+    }
+    if (!("profileIconId" in $$source)) {
+      this["profileIconId"] = 0;
+    }
+    if (!("region" in $$source)) {
+      this["region"] = "";
+    }
+    if (!("avatar" in $$source)) {
+      this["avatar"] = "";
+    }
+    if (!("tag" in $$source)) {
+      this["tag"] = "";
+    }
+    if (!("rank" in $$source)) {
+      this["rank"] = "";
+    }
+    if (!("winRate" in $$source)) {
+      this["winRate"] = 0;
+    }
+    if (!("wins" in $$source)) {
+      this["wins"] = 0;
+    }
+    if (!("losses" in $$source)) {
+      this["losses"] = 0;
+    }
+    if (!("totalGames" in $$source)) {
+      this["totalGames"] = 0;
+    }
+    if (!("createtime" in $$source)) {
+      this["createtime"] = "";
+    }
+    if (!("level" in $$source)) {
+      this["level"] = 0;
+    }
+    if (!("xpSinceLastLevel" in $$source)) {
+      this["xpSinceLastLevel"] = 0;
+    }
+    if (!("xpUntilNextLevel" in $$source)) {
+      this["xpUntilNextLevel"] = 0;
     }
 
-    /**
-     * Creates a new SummonerInfo instance from a string or object.
-     */
-    static createFrom($$source: any = {}): SummonerInfo {
-        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
-        return new SummonerInfo($$parsedSource as Partial<SummonerInfo>);
-    }
+    Object.assign(this, $$source);
+  }
+
+  /**
+   * Creates a new SummonerInfo instance from a string or object.
+   */
+  static createFrom($$source: any = {}): SummonerInfo {
+    let $$parsedSource =
+      typeof $$source === "string" ? JSON.parse($$source) : $$source;
+    return new SummonerInfo($$parsedSource as Partial<SummonerInfo>);
+  }
 }

@@ -99,8 +99,18 @@ onMounted(() => {
     if (info && typeof info === "object") {
       userStore.setInfo({
         nickname: info.displayName,
-        avatar: `https://127.0.0.1:${lcuPort.value}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+        avatar: info.avatar,
         region: info.region,
+        tag: info.tag,
+        rank: info.rank,
+        winRate: info.winRate,
+        wins: info.wins,
+        losses: info.losses,
+        totalGames: info.totalGames,
+        createtime: info.createtime,
+        level: info.level,
+        xpSinceLastLevel: info.xpSinceLastLevel,
+        xpUntilNextLevel: info.xpUntilNextLevel,
       });
     }
   });

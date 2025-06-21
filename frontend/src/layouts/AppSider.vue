@@ -1,13 +1,13 @@
 <template>
   <a-layout id="app-layout-sider">
     <a-layout-sider
-        v-model:collapsed="collapsed"
-        :width="220"
-        :collapsed-width="64"
-        collapsible
-        theme="light"
-        class="layout-sider"
-        :class="{ 'collapsed-sider': collapsed }"
+      v-model:collapsed="collapsed"
+      :width="220"
+      :collapsed-width="64"
+      collapsible
+      theme="light"
+      class="layout-sider"
+      :class="{ 'collapsed-sider': collapsed }"
     >
       <div class="sider-menu">
         <!-- 顶部 logo 与标题 -->
@@ -20,38 +20,44 @@
 
         <!-- 主菜单 -->
         <a-menu
-            class="menu-item"
-            theme="light"
-            mode="vertical"
-            :selected-keys="[current]"
-            @menu-item-click="menuHandle"
+          class="menu-item"
+          theme="light"
+          mode="vertical"
+          :selected-keys="[current]"
+          @menu-item-click="menuHandle"
         >
-        <template v-for="menuInfo in menulist" :key="menuInfo.name">
+          <template v-for="menuInfo in menulist" :key="menuInfo.name">
             <a-menu-item v-if="!menuInfo.meta?.hideInMenu" :key="menuInfo.name">
               <div class="menu-item-inner">
                 <icon-font :type="menuInfo.meta.icon" class="menu-icon" />
-                <span class="menu-text" :class="{ hidden: collapsed }">{{ menuInfo.meta.title }}</span>
+                <span class="menu-text" :class="{ hidden: collapsed }">{{
+                  menuInfo.meta.title
+                }}</span>
               </div>
             </a-menu-item>
           </template>
         </a-menu>
 
         <a-menu
-            class="footer-tools"
-            theme="light"
-            mode="vertical"
-            :selected-keys="current === 'setting' ? ['setting'] : []"
+          class="footer-tools"
+          theme="light"
+          mode="vertical"
+          :selected-keys="current === 'setting' ? ['setting'] : []"
         >
-        <a-menu-item key="opgg" @click="handleTool('opgg')">
+          <a-menu-item key="opgg" @click="handleTool('opgg')">
             <div class="menu-item-inner">
               <img src="@/assets/images/opgg.svg" class="menu-icon" />
-              <span class="menu-text" :class="{ hidden: collapsed }">OP.GG</span>
+              <span class="menu-text" :class="{ hidden: collapsed }"
+                >OP.GG</span
+              >
             </div>
           </a-menu-item>
           <a-menu-item key="fix" @click="handleTool('fix')">
             <div class="menu-item-inner">
               <icon-font type="icon-ArrowCircle" class="menu-icon" />
-              <span class="menu-text" :class="{ hidden: collapsed }">修复无限加载</span>
+              <span class="menu-text" :class="{ hidden: collapsed }"
+                >修复无限加载</span
+              >
             </div>
           </a-menu-item>
           <a-menu-item key="notice" @click="handleTool('notice')">
@@ -72,7 +78,7 @@
         <div class="footer">
           <a-avatar :size="32" :src="userStore.avatar || '@/assets/logo.png'" />
           <div class="footer-text" :class="{ hidden: collapsed }">
-            <div class="footer-name">{{ userStore.nickname || '未登录' }}</div>
+            <div class="footer-name">{{ userStore.nickname || "未登录" }}</div>
             <div class="footer-rank">{{ userStore.region }}</div>
           </div>
         </div>
@@ -88,73 +94,91 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import routerMap from '@/router/routerMap'
-import { Events } from '@wailsio/runtime'
-import type { AuthInfo } from '@/api/lcu'
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import routerMap from "@/router/routerMap";
+import { Events } from "@wailsio/runtime";
+import type { AuthInfo } from "@/api/lcu";
 import { WailsAPI } from "/#/Soraka/service/lcu";
-import { useUserStore } from '@/store'
+import { useUserStore } from "@/store";
 
-const router = useRouter()
-const route = useRoute()
-const current = ref(route.name)
-const collapsed = ref(false)
-const userStore = useUserStore()
+const router = useRouter();
+const route = useRoute();
+const current = ref(route.name);
+const collapsed = ref(false);
+const userStore = useUserStore();
 
-const menulist = computed(() => routerMap.find(item => item.path === '/')?.children || [])
-const authInfo = ref<AuthInfo | null>(null)
+const menulist = computed(
+  () => routerMap.find((item) => item.path === "/")?.children || [],
+);
+const authInfo = ref<AuthInfo | null>(null);
 
-watch(() => route.name, name => (current.value = name))
+watch(
+  () => route.name,
+  (name) => (current.value = name),
+);
 
 const menuHandle = (key: string) => {
-  current.value = key
-  const target = menulist.value.find(i => i.name === key)
+  current.value = key;
+  const target = menulist.value.find((i) => i.name === key);
   if (target) {
-    router.push({ name: target.name })
+    router.push({ name: target.name });
   }
-}
-
+};
 
 const handleSetting = () => {
-  current.value = 'setting'
-  router.push({ name: 'setting' })
-}
+  current.value = "setting";
+  router.push({ name: "setting" });
+};
 
-const handleTool = (type :string)=> {
-  console.log('工具点击', type)
-}
+const handleTool = (type: string) => {
+  console.log("工具点击", type);
+};
 
 const loadUserInfo = () => {
-  WailsAPI.GetCurrentSummoner().then((info: any) => {
-    if (!info || !authInfo.value) return
-    userStore.setInfo({
-      nickname: info.displayName,
-      avatar: `https://127.0.0.1:${authInfo.value.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
-      region: info.region
+  WailsAPI.GetCurrentSummoner()
+    .then((info: any) => {
+      if (!info || !authInfo.value) return;
+      userStore.setInfo({
+        nickname: info.displayName,
+        avatar: info.avatar,
+        region: info.region,
+        tag: info.tag,
+        rank: info.rank,
+        winRate: info.winRate,
+        wins: info.wins,
+        losses: info.losses,
+        totalGames: info.totalGames,
+        createtime: info.createtime,
+        level: info.level,
+        xpSinceLastLevel: info.xpSinceLastLevel,
+        xpUntilNextLevel: info.xpUntilNextLevel,
+      });
     })
-  }).catch(err => {
-    console.error('[getCurrentSummoner]', err)
-  })
-}
+    .catch((err) => {
+      console.error("[getCurrentSummoner]", err);
+    });
+};
 
 onMounted(() => {
-  WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
-    authInfo.value = info
-    loadUserInfo()
-  }).catch(() => {
-    console.error('failed to get auth info')
-  })
-  Events.On('lcuStatus', (d: any) => {
-    const status = Array.isArray(d.data) ? d.data[0] : d.data
+  WailsAPI.GetAuthInfo()
+    .then((info: AuthInfo) => {
+      authInfo.value = info;
+      loadUserInfo();
+    })
+    .catch(() => {
+      console.error("failed to get auth info");
+    });
+  Events.On("lcuStatus", (d: any) => {
+    const status = Array.isArray(d.data) ? d.data[0] : d.data;
     if (status) {
       WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
-        authInfo.value = info
-        loadUserInfo()
-      })
+        authInfo.value = info;
+        loadUserInfo();
+      });
     }
-  })
-})
+  });
+});
 </script>
 
 <style scoped lang="less">
@@ -195,7 +219,9 @@ onMounted(() => {
         font-weight: bold;
         margin-left: 12px;
         color: var(--color-text);
-        transition: opacity 0.3s, width 0.3s;
+        transition:
+          opacity 0.3s,
+          width 0.3s;
         white-space: nowrap;
       }
 
@@ -242,7 +268,9 @@ onMounted(() => {
           .menu-text {
             font-size: 14px;
             margin-left: 12px;
-            transition: opacity 0.3s, width 0.3s;
+            transition:
+              opacity 0.3s,
+              width 0.3s;
             white-space: nowrap;
             color: var(--color-text);
           }
@@ -300,7 +328,9 @@ onMounted(() => {
           .menu-text {
             font-size: 14px;
             margin-left: 12px;
-            transition: opacity 0.3s, width 0.3s;
+            transition:
+              opacity 0.3s,
+              width 0.3s;
             white-space: nowrap;
             color: var(--color-text);
           }
@@ -345,7 +375,9 @@ onMounted(() => {
 
       .footer-text {
         margin-left: 12px;
-        transition: opacity 0.3s, width 0.3s;
+        transition:
+          opacity 0.3s,
+          width 0.3s;
         white-space: nowrap;
 
         .footer-name {
@@ -438,7 +470,4 @@ onMounted(() => {
     }
   }
 }
-
-
-
 </style>
