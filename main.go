@@ -1,16 +1,18 @@
 package main
 
 import (
-        "Soraka/biz/client"
-        "Soraka/router"
-        "Soraka/service"
-        "context"
-        "embed"
-        "fmt"
-        "log"
-        "time"
+	service "Soraka/service/greet"
+	"embed"
+	"fmt"
+	"log"
+	"net"
+	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
+
+	example "Soraka/service/example"
+	lcuService "Soraka/service/lcu"
 )
 
 // 前端构建产物
@@ -23,17 +25,23 @@ var assets embed.FS
 //go:embed build/logo.png
 var trayIcon []byte
 
+func mustCheckPortAvailable(port string) {
+	ln, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatalf("端口 %s 已被占用，请关闭其他实例后重试", port)
+	}
+	_ = ln.Close()
+}
 func main() {
+	mustCheckPortAvailable("8200") // Gin API
+	mustCheckPortAvailable("9245") // Vite Dev Server
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
 		Services: []application.Service{
+			application.NewService(&example.API{}),
+			application.NewService(&lcuService.WailsAPI{}),
 			application.NewService(&service.GreetService{}),
-			application.NewService(&service.MessageService{}),
-			application.NewService(&service.OpenWindow{}),
-			application.NewService(&service.HttpService{}),
-			application.NewService(&service.ClientService{}),
-			application.NewService(&service.LcuService{}),
 		},
 
 		Assets: application.AssetOptions{
@@ -73,23 +81,21 @@ func main() {
 	tray.SetIcon(trayIcon)
 	tray.SetDarkModeIcon(trayIcon)
 
-	// 在启动后尝试查找客户端路径并发送给前端
-	go func() {
-		// 等待窗口加载完成再发送
-		time.Sleep(2 * time.Second)
-		path := client.GetClientPath()
-		app.EmitEvent("clientPath", path)
-	}()
-
-        // 启动后台状态监控并推送事件
-        r := router.NewRouter(app)
-        go r.Start(context.Background())
-
 	// 双击左键：显示窗口
 	tray.OnDoubleClick(func() {
 		mainWin.Show()
 		mainWin.Focus()
 	})
+
+	// start API server for frontend calls
+	go func() {
+		r := gin.Default()
+		api := &Api{}
+		RegisterRoutes(r, api)
+		if err := r.Run(":8200"); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	// 每秒发送时间事件
 	go func() {

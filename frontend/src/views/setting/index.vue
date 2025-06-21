@@ -128,7 +128,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useAppStore } from "@/store";
 import { System, Window } from "@wailsio/runtime";
-import { GreetService, ClientService } from "/#/Soraka/service";
+import { GreetService } from "/#/Soraka/service/greet";
 import { Message } from "@arco-design/web-vue";
 const appStore = useAppStore();
 const theme = computed(() => {
@@ -146,7 +146,7 @@ onMounted(async () => {
   IsWindows.value = await System.IsWindows();
   Osinfo.value = await System.Environment();
   console.log(Osinfo.value);
-  formData.value.concurrency = await ClientService.GetConcurrency();
+  // formData.value.concurrency = await ClientService.GetConcurrency();
 });
 //切换主题
 const handleTheme = async () => {

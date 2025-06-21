@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
   import {Dialogs} from "@wailsio/runtime";
-  import {MessageService,GreetService} from "/#/Soraka/service";
+  import {MessageService,GreetService, ExampleApi} from "/#/Soraka/service";
   import { Message,Notification } from '@arco-design/web-vue';
   const links = [
     { text: '提示弹框', icon: 'icon-filled',event:"info"},
@@ -32,6 +32,7 @@
     { text: '选择文件', icon: 'icon-wenjian',event:"file"},
     { text: '系统提示', icon: 'icon-lirunfenxikuangjia',event:"sys"},
     { text: '调用函数', icon: 'icon-go',event:"service"},
+    { text: '示例API', icon: 'icon-go',event:"wapi"},
     // { text: 'workplace.contentPutIn', icon: 'icon-fire' },
   ];
   //执行事件
@@ -60,6 +61,19 @@
       }).catch((err) => {
           Message.error({content:err,id:"greet",duration:2000})
           console.log("错误：",err);
+      });
+    }else if(event=="wapi"){
+      Message.loading({content:"调用中·请稍后",id:"wapi",duration:0})
+      ExampleApi.Hello("前端调用").then((result) => {
+        Notification.info({
+          title: '调用函数结果',
+          content: result,
+          position: 'bottomRight',
+          closable: true,
+        })
+        Message.success({content:"调用成功",id:"wapi",duration:2000})
+      }).catch((err) => {
+          Message.error({content:err,id:"wapi",duration:2000})
       });
     }
   }
