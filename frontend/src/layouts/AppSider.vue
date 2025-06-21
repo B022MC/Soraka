@@ -76,10 +76,20 @@
 
         <!-- 用户信息 -->
         <div class="footer">
-          <a-avatar :size="32" :src="userStore.avatar || '@/assets/logo.png'" />
+          <img
+              :src="userStore.avatar || defaultAvatar"
+              style="width: 32px; height: 32px; border-radius: 50%"
+          />
+
+
           <div class="footer-text" :class="{ hidden: collapsed }">
-            <div class="footer-name">{{ userStore.nickname || "未登录" }}</div>
-            <div class="footer-rank">{{ userStore.region }}</div>
+            <div class="footer-name">
+              {{ userStore.nickname || '未登录' }}
+              <span v-if="userStore.tag" class="tag">{{ userStore.tag }}</span>
+            </div>
+            <div class="footer-rank">
+              <span v-if="userStore.server">{{ userStore.server }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -112,6 +122,7 @@ const menulist = computed(
   () => routerMap.find((item) => item.path === "/")?.children || [],
 );
 const authInfo = ref<AuthInfo | null>(null);
+const defaultAvatar = new URL('@/assets/logo.png', import.meta.url).href;
 
 watch(
   () => route.name,
@@ -134,32 +145,6 @@ const handleSetting = () => {
 const handleTool = (type: string) => {
   console.log("工具点击", type);
 };
-
-const loadUserInfo = () => {
-  WailsAPI.GetCurrentSummoner()
-    .then((info: any) => {
-      if (!info || !authInfo.value) return;
-      userStore.setInfo({
-        nickname: info.displayName,
-        avatar: info.avatar,
-        region: info.region,
-        tag: info.tag,
-        rank: info.rank,
-        winRate: info.winRate,
-        wins: info.wins,
-        losses: info.losses,
-        totalGames: info.totalGames,
-        createtime: info.createtime,
-        level: info.level,
-        xpSinceLastLevel: info.xpSinceLastLevel,
-        xpUntilNextLevel: info.xpUntilNextLevel,
-      });
-    })
-    .catch((err) => {
-      console.error("[getCurrentSummoner]", err);
-    });
-};
-
 onMounted(() => {
   WailsAPI.GetAuthInfo()
     .then((info: AuthInfo) => {

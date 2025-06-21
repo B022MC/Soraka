@@ -1,6 +1,7 @@
 package lcu
 
 import (
+	"Soraka/dal/lcu/models"
 	"fmt"
 	"os"
 	"os/exec"
@@ -25,6 +26,7 @@ type SummonerInfo struct {
 	DisplayName      string  `json:"displayName"`
 	ProfileIconId    int     `json:"profileIconId"`
 	Region           string  `json:"region"`
+	Server           string  `json:"server"`
 	Avatar           string  `json:"avatar"`
 	Tag              string  `json:"tag"`
 	Rank             string  `json:"rank"`
@@ -52,33 +54,42 @@ func (WailsAPI) GetAuthInfo() (AuthInfo, error) {
 	return AuthInfo{Port: port, Token: token}, nil
 }
 
-// GetCurrentSummoner returns basic info about the current summoner.
 func (WailsAPI) GetCurrentSummoner() (SummonerInfo, error) {
 	summoner, err := GetCurrSummoner()
 	if err != nil {
 		return SummonerInfo{}, err
 	}
+
 	profile, err := GetSummonerProfile()
 	if err != nil {
 		return SummonerInfo{}, err
 	}
+
 	wins, _ := strconv.Atoi(profile.Lol.RankedWins)
 	losses, _ := strconv.Atoi(profile.Lol.RankedLosses)
 	total := wins + losses
+
 	winRate := 0.0
 	if total > 0 {
 		winRate = float64(wins) * 100 / float64(total)
 	}
+
 	rank := profile.Lol.RankedLeagueTier
 	if profile.Lol.RankedLeagueDivision != "" {
 		rank = fmt.Sprintf("%s %s", rank, profile.Lol.RankedLeagueDivision)
 	}
-	port, _, _ := GetLolClientApiInfo()
+
+	avatarURL := ""
+	if summoner.ProfileIconId > 0 {
+		avatarURL = fmt.Sprintf("http://localhost:8200/v1/lcu/proxy/lol-game-data/assets/v1/profile-icons/%d.jpg", summoner.ProfileIconId)
+	}
+
 	info := SummonerInfo{
-		DisplayName:      summoner.DisplayName,
+		DisplayName:      summoner.GameName,
 		ProfileIconId:    summoner.ProfileIconId,
 		Region:           summoner.TagLine,
-		Tag:              "#" + summoner.GameTag,
+		Server:           models.PlatformMap[profile.PlatformId],
+		Tag:              "#" + summoner.TagLine,
 		Rank:             rank,
 		WinRate:          winRate,
 		Wins:             wins,
@@ -88,10 +99,9 @@ func (WailsAPI) GetCurrentSummoner() (SummonerInfo, error) {
 		Level:            summoner.SummonerLevel,
 		XpSinceLastLevel: summoner.XpSinceLastLevel,
 		XpUntilNextLevel: summoner.XpUntilNextLevel,
+		Avatar:           avatarURL, // ✅ 改为 URL
 	}
-	if port > 0 {
-		info.Avatar = fmt.Sprintf("https://127.0.0.1:%d/lol-game-data/assets/v1/profile-icons/%d.jpg", port, summoner.ProfileIconId)
-	}
+
 	return info, nil
 }
 

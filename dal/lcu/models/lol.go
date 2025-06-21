@@ -113,11 +113,52 @@ const (
 	TeamIDStrRed  TeamIDStr = "200" // 红色方
 )
 
-// 大区id
+// 平台大区 ID（用于 profile.PlatformId）
 const (
-	PlatformIDDX1 = "HN1" // 艾欧尼亚
-	PlatformIDDX2 = "HN2" // 祖安
+	PlatformIDHN1  = "HN1"  // 艾欧尼亚
+	PlatformIDHN2  = "HN2"  // 祖安
+	PlatformIDHN3  = "HN3"  // 诺克萨斯
+	PlatformIDHN4  = "HN4"  // 班德尔城
+	PlatformIDHN5  = "HN5"  // 皮尔特沃夫
+	PlatformIDHN6  = "HN6"  // 战争学院
+	PlatformIDHN7  = "HN7"  // 巨神峰
+	PlatformIDHN8  = "HN8"  // 雷瑟守备
+	PlatformIDHN9  = "HN9"  // 裁决之地
+	PlatformIDHN10 = "HN10" // 黑色玫瑰
+	PlatformIDHN11 = "HN11" // 暗影岛
+	PlatformIDHN12 = "HN12" // 钢铁烈阳
+	PlatformIDHN13 = "HN13" // 水晶之痕
+	PlatformIDHN14 = "HN14" // 均衡教派
+	PlatformIDHN15 = "HN15" // 影流
+	PlatformIDHN16 = "HN16" // 守望之海
+	PlatformIDHN17 = "HN17" // 征服之海
+	PlatformIDHN18 = "HN18" // 卡拉曼达
+	PlatformIDHN19 = "HN19" // 皮城警备
+	PlatformIDHN20 = "HN20" // 巨龙之巢
 )
+
+var PlatformMap = map[string]string{
+	PlatformIDHN1:  "艾欧尼亚",
+	PlatformIDHN2:  "祖安",
+	PlatformIDHN3:  "诺克萨斯",
+	PlatformIDHN4:  "班德尔城",
+	PlatformIDHN5:  "皮尔特沃夫",
+	PlatformIDHN6:  "战争学院",
+	PlatformIDHN7:  "巨神峰",
+	PlatformIDHN8:  "雷瑟守备",
+	PlatformIDHN9:  "裁决之地",
+	PlatformIDHN10: "黑色玫瑰",
+	PlatformIDHN11: "暗影岛",
+	PlatformIDHN12: "钢铁烈阳",
+	PlatformIDHN13: "水晶之痕",
+	PlatformIDHN14: "均衡教派",
+	PlatformIDHN15: "影流",
+	PlatformIDHN16: "守望之海",
+	PlatformIDHN17: "征服之海",
+	PlatformIDHN18: "卡拉曼达",
+	PlatformIDHN19: "皮城警备",
+	PlatformIDHN20: "巨龙之巢",
+}
 
 // 召唤师技能
 const (

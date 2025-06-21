@@ -12,7 +12,7 @@ export interface UserState {
   losses?: number; // 败场
   totalGames?: number; // 总场次
   createtime: string;
-
+  server: string;
   level?: number; // 等级
   xpSinceLastLevel?: number; // 当前等级已获得经验
   xpUntilNextLevel?: number; // 到下一级需要经验
@@ -26,6 +26,7 @@ const useUserStore = defineStore("user", {
     tag: "",
     rank: "",
     winRate: undefined,
+    server:"",
     wins: undefined,
     losses: undefined,
     totalGames: undefined,
