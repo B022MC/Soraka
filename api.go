@@ -25,6 +25,9 @@ type (
 	summonerNameReq struct {
 		SummonerName string `json:"summonerName"`
 	}
+	matchListReq struct {
+		Limit int `json:"limit"`
+	}
 )
 
 func (api Api) ProphetActiveMid(c *gin.Context) {
@@ -149,6 +152,21 @@ func (api Api) StartClient(c *gin.Context) {
 		return
 	}
 	app.Success()
+}
+
+func (api Api) ListRecentMatches(c *gin.Context) {
+	app := ginApp.GetApp(c)
+	req := &matchListReq{}
+	if err := c.ShouldBind(req); err != nil {
+		app.ValidError(err)
+		return
+	}
+	list, err := lcu.ListRecentMatches(req.Limit)
+	if err != nil {
+		app.CommonError(err)
+		return
+	}
+	app.Data(list)
 }
 func (api Api) LcuProxy(c *gin.Context) {
 	if api.p == nil {
