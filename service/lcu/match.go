@@ -72,46 +72,48 @@ func ListRecentMatches(limit int) ([]MatchBrief, error) {
 				break
 			}
 		}
-		var user models.Participant
+		if partID == 0 {
+			continue
+		}
 		for _, p := range g.Participants {
-			if p.ParticipantId == partID {
-				user = p
-				break
-			}
-		}
-		result := "lose"
-		if user.Stats.Win {
-			result = "win"
-		}
-		items := []string{}
-		it := []int{user.Stats.Item0, user.Stats.Item1, user.Stats.Item2, user.Stats.Item3, user.Stats.Item4, user.Stats.Item5}
-		for _, id := range it {
-			if id == 0 {
+			if p.ParticipantId != partID {
 				continue
 			}
-			items = append(items, fmt.Sprintf("%s/items/%d.png", base, id))
+			result := "lose"
+			if p.Stats.Win {
+				result = "win"
+			}
+			items := []string{}
+			it := []int{p.Stats.Item0, p.Stats.Item1, p.Stats.Item2, p.Stats.Item3, p.Stats.Item4, p.Stats.Item5}
+			for _, id := range it {
+				if id == 0 {
+					continue
+				}
+				items = append(items, fmt.Sprintf("%s/items/%d.png", base, id))
+			}
+			spells := []string{
+				fmt.Sprintf("%s/summoner-spells/%d.png", base, p.Spell1Id),
+				fmt.Sprintf("%s/summoner-spells/%d.png", base, p.Spell2Id),
+			}
+			mb := MatchBrief{
+				ID:       g.GameId,
+				Result:   result,
+				Mode:     mapMode(g.GameMode),
+				Kills:    p.Stats.Kills,
+				Deaths:   p.Stats.Deaths,
+				Assists:  p.Stats.Assists,
+				CS:       p.Stats.TotalMinionsKilled + p.Stats.NeutralMinionsKilled,
+				Gold:     p.Stats.GoldEarned,
+				Time:     time.UnixMilli(g.GameCreation).Format("2006/01/02 15:04"),
+				Level:    p.Stats.ChampLevel,
+				Champion: fmt.Sprintf("%s/champion-icons/%d.png", base, p.ChampionId),
+				Spells:   spells,
+				Items:    items,
+				Map:      mapMap(models.MapID(g.MapId)),
+			}
+			list = append(list, mb)
+			break
 		}
-		spells := []string{
-			fmt.Sprintf("%s/summoner-spells/%d.png", base, user.Spell1Id),
-			fmt.Sprintf("%s/summoner-spells/%d.png", base, user.Spell2Id),
-		}
-		mb := MatchBrief{
-			ID:       g.GameId,
-			Result:   result,
-			Mode:     mapMode(g.GameMode),
-			Kills:    user.Stats.Kills,
-			Deaths:   user.Stats.Deaths,
-			Assists:  user.Stats.Assists,
-			CS:       user.Stats.TotalMinionsKilled + user.Stats.NeutralMinionsKilled,
-			Gold:     user.Stats.GoldEarned,
-			Time:     time.UnixMilli(g.GameCreation).Format("2006/01/02 15:04"),
-			Level:    user.Stats.ChampLevel,
-			Champion: fmt.Sprintf("%s/champion-icons/%d.png", base, user.ChampionId),
-			Spells:   spells,
-			Items:    items,
-			Map:      mapMap(g.MapId),
-		}
-		list = append(list, mb)
 	}
 	return list, nil
 }
