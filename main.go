@@ -1,18 +1,15 @@
 package main
 
 import (
+	example "Soraka/service/example"
 	service "Soraka/service/greet"
+	lcuService "Soraka/service/lcu"
 	"embed"
 	"fmt"
-	"log"
-	"net"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
-
-	example "Soraka/service/example"
-	lcuService "Soraka/service/lcu"
+	"log"
+	"net"
 )
 
 // 前端构建产物
@@ -90,22 +87,37 @@ func main() {
 	// start API server for frontend calls
 	go func() {
 		r := gin.Default()
-		api := &Api{}
+
+		// 初始化 LCU 端口和 token
+		port, token, err := lcuService.GetLolClientApiInfo()
+		if err != nil {
+			log.Printf("初始化 LCU 代理失败: %v", err)
+			// 这里可以考虑降级处理或延迟初始化
+		}
+
+		var rp *lcuService.RP
+		if port > 0 && token != "" {
+			rp, err = lcuService.NewRP(port, token)
+			if err != nil {
+				log.Printf("创建 LCU 反向代理失败: %v", err)
+			}
+		}
+
+		api := &Api{
+			p: &Prophet{
+				LcuActive: true,
+				lcuRP:     rp,
+			},
+		}
+
 		RegisterRoutes(r, api)
+
 		if err := r.Run(":8200"); err != nil {
 			log.Fatal(err)
 		}
 	}()
 
-	// 每秒发送时间事件
-	go func() {
-		fmt.Println("窗口id：", mainWin.ID())
-		for {
-			app.EmitEvent("time", time.Now().Format(time.DateTime))
-			time.Sleep(time.Second)
-		}
-	}()
-
+	lcuService.StartNotifier(mainWin)
 	// 监听前端事件
 	app.OnEvent("myevent", func(e *application.CustomEvent) {
 		fmt.Println("main监听事件：", e)

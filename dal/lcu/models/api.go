@@ -26,10 +26,12 @@ type (
 	}
 	CurrSummoner struct {
 		AccountId                   int64  `json:"accountId"`
+		GameName                    string `json:"gameName"`
 		DisplayName                 string `json:"displayName"`
 		InternalName                string `json:"internalName"`
 		NameChangeFlag              bool   `json:"nameChangeFlag"`
 		PercentCompleteForNextLevel int    `json:"percentCompleteForNextLevel"`
+		Privacy                     string `json:"privacy"`
 		ProfileIconId               int    `json:"profileIconId"`
 		Puuid                       string `json:"puuid"`
 		RerollPoints                struct {
@@ -40,7 +42,6 @@ type (
 			PointsToReroll   int `json:"pointsToReroll"`
 		} `json:"rerollPoints"`
 		SummonerId       int64  `json:"summonerId"`
-		GameName         string `json:"gameName"`
 		TagLine          string `json:"tagLine"`
 		SummonerLevel    int    `json:"summonerLevel"`
 		Unnamed          bool   `json:"unnamed"`
@@ -741,9 +742,13 @@ type (
 		GameName                string      `json:"gameName"`
 		GameTag                 string      `json:"gameTag"`
 		Icon                    int         `json:"icon"`
-		Id                      string      `json:"id"`
-		LastSeenOnlineTimestamp interface{} `json:"lastSeenOnlineTimestamp"`
+		ID                      string      `json:"id"`
+		LastSeenOnlineTimestamp interface{} `json:"lastSeenOnlineTimestamp"` // 可以是 null
 		Lol                     struct {
+			BannerIdSelected         string `json:"bannerIdSelected"`
+			ChallengeCrystalLevel    string `json:"challengeCrystalLevel"`
+			ChallengePoints          string `json:"challengePoints"`
+			ChallengeTokensSelected  string `json:"challengeTokensSelected"`
 			ChampionId               string `json:"championId"`
 			CompanionId              string `json:"companionId"`
 			DamageSkinId             string `json:"damageSkinId"`
@@ -754,6 +759,7 @@ type (
 			Level                    string `json:"level"`
 			MapId                    string `json:"mapId"`
 			MapSkinId                string `json:"mapSkinId"`
+			PlayerTitleSelected      string `json:"playerTitleSelected"`
 			Puuid                    string `json:"puuid"`
 			RankedLeagueDivision     string `json:"rankedLeagueDivision"`
 			RankedLeagueQueue        string `json:"rankedLeagueQueue"`
