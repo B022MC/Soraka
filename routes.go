@@ -21,6 +21,7 @@ func initV1Module(r *gin.Engine, api *Api) {
 	v1.POST("lcu/getAuthInfo", api.GetLcuAuthInfo)
 	v1.POST("game/getPath", api.GetClientPath)
 	v1.POST("game/start", api.StartClient)
+	v1.POST("lcu/recentMatches", api.ListRecentMatches)
 	// 获取app信息
 	v1.POST("app/getInfo", api.GetAppInfo)
 	// 复制马匹信息到剪切板

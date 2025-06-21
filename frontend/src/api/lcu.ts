@@ -38,3 +38,27 @@ export function getCurrentSummoner() {
 export function startClient() {
   return defHttp.post({ url: "/v1/client/start" });
 }
+
+export interface MatchItem {
+  id: number;
+  result: "win" | "lose";
+  mode: string;
+  kills: number;
+  deaths: number;
+  assists: number;
+  cs: number;
+  gold: number;
+  time: string;
+  level: number;
+  champion: string;
+  spells: string[];
+  items: string[];
+  map: string;
+}
+
+export function getRecentMatches(limit = 10) {
+  return defHttp.post<MatchItem[]>({
+    url: "/v1/lcu/recentMatches",
+    params: { limit },
+  });
+}
