@@ -22,11 +22,11 @@
         <a-menu
             class="menu-item"
             theme="light"
-            mode="inline"
-            :selectedKeys="[current]"
+            mode="vertical"
+            :selected-keys="[current]"
             @menu-item-click="menuHandle"
         >
-          <template v-for="menuInfo in menulist" :key="menuInfo.name">
+        <template v-for="menuInfo in menulist" :key="menuInfo.name">
             <a-menu-item v-if="!menuInfo.meta?.hideInMenu" :key="menuInfo.name">
               <div class="menu-item-inner">
                 <icon-font :type="menuInfo.meta.icon" class="menu-icon" />
@@ -39,10 +39,10 @@
         <a-menu
             class="footer-tools"
             theme="light"
-            mode="inline"
-            :selectedKeys="current === 'setting' ? ['setting'] : []"
+            mode="vertical"
+            :selected-keys="current === 'setting' ? ['setting'] : []"
         >
-          <a-menu-item key="opgg" @click="handleTool('opgg')">
+        <a-menu-item key="opgg" @click="handleTool('opgg')">
             <div class="menu-item-inner">
               <img src="@/assets/images/opgg.svg" class="menu-icon" />
               <span class="menu-text" :class="{ hidden: collapsed }">OP.GG</span>
@@ -69,11 +69,11 @@
         </a-menu>
 
         <!-- 用户信息 -->
-        <div class="footer" :class="{ factive: current === 'setting' }" @click="handleSetting">
-          <a-avatar :size="32" src="@/assets/logo.png" />
+        <div class="footer">
+          <a-avatar :size="32" :src="userStore.avatar || '@/assets/logo.png'" />
           <div class="footer-text" :class="{ hidden: collapsed }">
-            <div class="footer-name">火鸡味锅巴</div>
-            <div class="footer-rank">黑色玫瑰</div>
+            <div class="footer-name">{{ userStore.nickname || '未登录' }}</div>
+            <div class="footer-rank">{{ userStore.region }}</div>
           </div>
         </div>
       </div>
@@ -87,36 +87,74 @@
   </a-layout>
 </template>
 
-<script setup>
-import { ref, computed, watch } from 'vue'
+<script lang="ts" setup>
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import routerMap from '@/router/routerMap'
+import { Events } from '@wailsio/runtime'
+import type { AuthInfo } from '@/api/lcu'
+import { WailsAPI } from "/#/Soraka/service/lcu";
+import { useUserStore } from '@/store'
 
 const router = useRouter()
 const route = useRoute()
 const current = ref(route.name)
 const collapsed = ref(false)
+const userStore = useUserStore()
 
 const menulist = computed(() => routerMap.find(item => item.path === '/')?.children || [])
+const authInfo = ref<AuthInfo | null>(null)
 
 watch(() => route.name, name => (current.value = name))
 
-const menuHandle = key => {
+const menuHandle = (key: string) => {
   current.value = key
   const target = menulist.value.find(i => i.name === key)
   if (target) {
-    router.push({ name: target.name, params: target.params })
+    router.push({ name: target.name })
   }
 }
+
 
 const handleSetting = () => {
   current.value = 'setting'
   router.push({ name: 'setting' })
 }
 
-const handleTool = type => {
+const handleTool = (type :string)=> {
   console.log('工具点击', type)
 }
+
+const loadUserInfo = () => {
+  WailsAPI.GetCurrentSummoner().then((info: any) => {
+    if (!info || !authInfo.value) return
+    userStore.setInfo({
+      nickname: info.displayName,
+      avatar: `https://127.0.0.1:${authInfo.value.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+      region: info.region
+    })
+  }).catch(err => {
+    console.error('[getCurrentSummoner]', err)
+  })
+}
+
+onMounted(() => {
+  WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
+    authInfo.value = info
+    loadUserInfo()
+  }).catch(() => {
+    console.error('failed to get auth info')
+  })
+  Events.On('lcuStatus', (d: any) => {
+    const status = Array.isArray(d.data) ? d.data[0] : d.data
+    if (status) {
+      WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
+        authInfo.value = info
+        loadUserInfo()
+      })
+    }
+  })
+})
 </script>
 
 <style scoped lang="less">

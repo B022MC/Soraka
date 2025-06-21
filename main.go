@@ -1,13 +1,18 @@
 package main
 
 import (
-	"Soraka/service"
+	service "Soraka/service/greet"
 	"embed"
 	"fmt"
 	"log"
+	"net"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
+
+	example "Soraka/service/example"
+	lcuService "Soraka/service/lcu"
 )
 
 // 前端构建产物
@@ -20,18 +25,23 @@ var assets embed.FS
 //go:embed build/logo.png
 var trayIcon []byte
 
-// 记录窗口位置
-var lastX, lastY int
-
+func mustCheckPortAvailable(port string) {
+	ln, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatalf("端口 %s 已被占用，请关闭其他实例后重试", port)
+	}
+	_ = ln.Close()
+}
 func main() {
+	mustCheckPortAvailable("8200") // Gin API
+	mustCheckPortAvailable("9245") // Vite Dev Server
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
 		Services: []application.Service{
+			application.NewService(&example.API{}),
+			application.NewService(&lcuService.WailsAPI{}),
 			application.NewService(&service.GreetService{}),
-			application.NewService(&service.MessageService{}),
-			application.NewService(&service.OpenWindow{}),
-			application.NewService(&service.HttpService{}),
 		},
 
 		Assets: application.AssetOptions{
@@ -59,7 +69,7 @@ func main() {
 		},
 		Windows: application.WindowsWindow{
 			Theme:                             0,
-			BackdropType:                      application.Acrylic, // ✅ 毛玻璃支持
+			BackdropType:                      application.Acrylic,
 			HiddenOnTaskbar:                   false,
 			DisableFramelessWindowDecorations: false, // 允许拖动阴影
 		},
@@ -76,6 +86,16 @@ func main() {
 		mainWin.Show()
 		mainWin.Focus()
 	})
+
+	// start API server for frontend calls
+	go func() {
+		r := gin.Default()
+		api := &Api{}
+		RegisterRoutes(r, api)
+		if err := r.Run(":8200"); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	// 每秒发送时间事件
 	go func() {
