@@ -35,9 +35,6 @@ export function GetClientPath(): Promise<string> & { cancel(): void } {
     return $resultPromise;
 }
 
-/**
- * GetCurrentSummoner returns basic info about the current summoner.
- */
 export function GetCurrentSummoner(): Promise<$models.SummonerInfo> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1692215426) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {

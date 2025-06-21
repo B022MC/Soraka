@@ -7,8 +7,10 @@
     >
       <a-space size="medium">
         <a-avatar style="padding: 2px" :size="68">
-          <img src="@/assets/logo.png" />
-        </a-avatar>
+          <img
+              :src="userStore.avatar || defaultAvatar"
+              @error="(e) => e.target.src = defaultAvatar"
+          />        </a-avatar>
         <div class="welcome">
           <p class="hello">{{ goodTimeText() }}！{{ userStore.nickname }}</p>
           <p>
@@ -33,7 +35,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
-import type { AuthInfo } from "@/api/lcu";
 import { WailsAPI } from "/#/Soraka/service/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
@@ -45,38 +46,39 @@ const clientPath = ref("");
 const lcuOnline = ref(false);
 const lcuPort = ref("");
 const lcuToken = ref("");
-const authInfo = ref<AuthInfo | null>(null);
+
+// const loadUserInfo = () => {
+//   WailsAPI.GetCurrentSummoner()
+//     .then((info: any) => {
+//       if (!info) return;
+//       userStore.setInfo({
+//         nickname: info.displayName,
+//         avatar: info.avatar,
+//         region: info.region,
+//         tag: info.tag,
+//         rank: info.rank,
+//         winRate: info.winRate,
+//         wins: info.wins,
+//         losses: info.losses,
+//         totalGames: info.totalGames,
+//         createtime: info.createtime,
+//         level: info.level,
+//         xpSinceLastLevel: info.xpSinceLastLevel,
+//         xpUntilNextLevel: info.xpUntilNextLevel,
+//       });
+//     })
+//     .catch((err) => {
+//       console.error("[GetCurrentSummoner]", err);
+//     });
+// };
+const defaultAvatar = new URL('@/assets/logo.png', import.meta.url).href;
 
 onMounted(() => {
-  // 初始化获取 LCU 凭证
-  WailsAPI.GetAuthInfo()
-    .then((info: AuthInfo) => {
-      authInfo.value = info;
-      lcuOnline.value = true;
-      lcuPort.value = String(info.port);
-      lcuToken.value = info.token;
-    })
-    .catch(() => {
-      lcuOnline.value = false;
-    });
-
-  // 获取当前召唤师信息
-  WailsAPI.GetCurrentSummoner().then((info: any) => {
-    if (info && authInfo.value) {
-      userStore.setInfo({
-        nickname: info.displayName,
-        avatar: `https://127.0.0.1:${authInfo.value.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
-        region: info.region,
-      });
-    }
-  });
-
   // 监听系统时间事件
   Events.On("time", (time: any) => {
-    // console.log("[Event] time 收到:", time);
     sysTime.value = time.data as string;
   });
-
+  // loadUserInfo
   // 获取客户端路径
   WailsAPI.GetClientPath()
     .then((p: string) => {
@@ -88,36 +90,56 @@ onMounted(() => {
 
   // 监听 lcuStatus 事件
   Events.On("lcuStatus", (d: any) => {
-    console.log("[Event] lcuStatus 收到:", d);
-    const status = Array.isArray(d.data) ? d.data[0] : d.data;
-    if (typeof status === "boolean") {
-      lcuOnline.value = status;
-    } else {
-      console.warn("[Event] lcuStatus 数据格式异常:", d.data);
-      lcuOnline.value = false; // 或保留上次值
+    const payload = Array.isArray(d.data) ? d.data[0] : d.data;
+    console.log("[Event] lcuStatus 收到:", payload);
+    if (typeof payload?.status === "boolean") {
+      lcuOnline.value = payload.status;
     }
-    console.log("[状态] 更新 lcuOnline:", lcuOnline.value);
   });
+
 
   // 监听 lcuCreds 事件
   Events.On("lcuCreds", (d: any) => {
-    console.log("[Event] lcuCreds 收到:", d);
-    const creds = Array.isArray(d.data) ? d.data[0] : d.data;
-    if (creds && typeof creds === "object") {
-      lcuPort.value = creds.port ?? "";
-      lcuToken.value = creds.token ?? "";
-      console.log(
-        "[状态] 更新 lcuPort:",
-        lcuPort.value,
-        "lcuToken:",
-        lcuToken.value,
-      );
-    } else {
-      console.warn("[Event] lcuCreds 数据格式异常:", d.data);
-      lcuPort.value = "";
-      lcuToken.value = "";
+    const payload = Array.isArray(d.data) ? d.data[0] : d.data;
+    console.log("[Event] lcuCreds 收到:", payload);
+    if (typeof payload?.port === "number" && typeof payload?.token === "string") {
+      lcuPort.value = payload.port.toString();
+      lcuToken.value = payload.token;
     }
   });
+
+  // 接收当前召唤师信息
+  Events.On("summonerInfo", (d: any) => {
+    console.log("[Event] summonerInfo 原始:", d);
+
+    const info = Array.isArray(d.data) ? d.data[0] : d.data;
+    console.log("[Event] 解析后的 info:", info, "类型是", typeof info);
+
+    if (info && typeof info === "object") {
+      console.log("[Event] summonerInfo 收到:", info);
+      userStore.setInfo({
+        nickname: info.displayName,
+        avatar: info.avatar,
+        region: info.region,
+        tag: info.tag,
+        rank: info.rank,
+        winRate: info.winRate,
+        wins: info.wins,
+        losses: info.losses,
+        totalGames: info.totalGames,
+        createtime: info.createtime,
+        server: info.server,
+        level: info.level,
+        xpSinceLastLevel: info.xpSinceLastLevel,
+        xpUntilNextLevel: info.xpUntilNextLevel,
+      });
+    } else {
+      console.warn("[Event] summonerInfo 无效数据:", info);
+    }
+
+    console.log("userStore.avatar:", userStore.avatar);
+  });
+
 });
 </script>
 

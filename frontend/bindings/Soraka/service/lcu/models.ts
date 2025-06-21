@@ -34,6 +34,18 @@ export class SummonerInfo {
     "displayName": string;
     "profileIconId": number;
     "region": string;
+    "server": string;
+    "avatar": string;
+    "tag": string;
+    "rank": string;
+    "winRate": number;
+    "wins": number;
+    "losses": number;
+    "totalGames": number;
+    "createtime": string;
+    "level": number;
+    "xpSinceLastLevel": number;
+    "xpUntilNextLevel": number;
 
     /** Creates a new SummonerInfo instance. */
     constructor($$source: Partial<SummonerInfo> = {}) {
@@ -45,6 +57,42 @@ export class SummonerInfo {
         }
         if (!("region" in $$source)) {
             this["region"] = "";
+        }
+        if (!("server" in $$source)) {
+            this["server"] = "";
+        }
+        if (!("avatar" in $$source)) {
+            this["avatar"] = "";
+        }
+        if (!("tag" in $$source)) {
+            this["tag"] = "";
+        }
+        if (!("rank" in $$source)) {
+            this["rank"] = "";
+        }
+        if (!("winRate" in $$source)) {
+            this["winRate"] = 0;
+        }
+        if (!("wins" in $$source)) {
+            this["wins"] = 0;
+        }
+        if (!("losses" in $$source)) {
+            this["losses"] = 0;
+        }
+        if (!("totalGames" in $$source)) {
+            this["totalGames"] = 0;
+        }
+        if (!("createtime" in $$source)) {
+            this["createtime"] = "";
+        }
+        if (!("level" in $$source)) {
+            this["level"] = 0;
+        }
+        if (!("xpSinceLastLevel" in $$source)) {
+            this["xpSinceLastLevel"] = 0;
+        }
+        if (!("xpUntilNextLevel" in $$source)) {
+            this["xpUntilNextLevel"] = 0;
         }
 
         Object.assign(this, $$source);

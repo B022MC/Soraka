@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"os/exec"
 	"strings"
 
@@ -149,13 +151,18 @@ func (api Api) StartClient(c *gin.Context) {
 	app.Success()
 }
 func (api Api) LcuProxy(c *gin.Context) {
-	app := ginApp.GetApp(c)
-	path := c.Param("any")
-	c.Request.URL.Path = path
-	rp := api.p.lcuRP
-	if rp == nil {
-		app.ErrorMsg("反向代理未初始化")
+	if api.p == nil {
+		fmt.Println("[错误] api.p 是 nil")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "LCU代理未初始化 [p]"})
 		return
 	}
-	rp.ServeHTTP(c.Writer, c.Request)
+	if api.p.lcuRP == nil {
+		fmt.Println("[错误] api.p.lcuRP 是 nil")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "LCU代理未初始化 [lcuRP]"})
+		return
+	}
+
+	path := c.Param("any")
+	c.Request.URL.Path = path
+	api.p.lcuRP.ServeHTTP(c.Writer, c.Request)
 }
