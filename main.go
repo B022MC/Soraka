@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -107,61 +106,8 @@ func main() {
 		}
 	}()
 
-	// 实时发送LCU状态、凭证以及当前召唤师信息
-	go func() {
-		var lastStatus bool
-		var lastPort int
-		var lastToken string
-		for {
-			port, token, err := lcuService.GetLolClientApiInfo()
-			status := err == nil
-			if status != lastStatus {
-				app.EmitEvent("lcuStatus", status)
-				lastStatus = status
-			}
-			if status {
-				if port != lastPort || token != lastToken {
-					app.EmitEvent("lcuCreds", lcuService.AuthInfo{Port: port, Token: token})
-					lcuService.InitCli(port, token)
-					if summoner, err := lcuService.GetCurrSummoner(); err == nil {
-						if profile, err := lcuService.GetSummonerProfile(); err == nil {
-							wins, _ := strconv.Atoi(profile.Lol.RankedWins)
-							losses, _ := strconv.Atoi(profile.Lol.RankedLosses)
-							total := wins + losses
-							winRate := 0.0
-							if total > 0 {
-								winRate = float64(wins) * 100 / float64(total)
-							}
-							rank := profile.Lol.RankedLeagueTier
-							if profile.Lol.RankedLeagueDivision != "" {
-								rank = fmt.Sprintf("%s %s", rank, profile.Lol.RankedLeagueDivision)
-							}
-							info := lcuService.SummonerInfo{
-								DisplayName:      summoner.DisplayName,
-								ProfileIconId:    summoner.ProfileIconId,
-								Region:           summoner.TagLine,
-								Avatar:           fmt.Sprintf("https://127.0.0.1:%d/lol-game-data/assets/v1/profile-icons/%d.jpg", port, summoner.ProfileIconId),
-								Tag:              "#" + summoner.GameTag,
-								Rank:             rank,
-								WinRate:          winRate,
-								Wins:             wins,
-								Losses:           losses,
-								TotalGames:       total,
-								Createtime:       time.Now().Format(time.DateTime),
-								Level:            summoner.SummonerLevel,
-								XpSinceLastLevel: summoner.XpSinceLastLevel,
-								XpUntilNextLevel: summoner.XpUntilNextLevel,
-							}
-							app.EmitEvent("summonerInfo", info)
-						}
-					}
-					lastPort = port
-					lastToken = token
-				}
-			}
-			time.Sleep(time.Second)
-		}
-	}()
+	// 启动LCU状态监控
+	lcuService.StartNotifier(app)
 
 	// 监听前端事件
 	app.OnEvent("myevent", func(e *application.CustomEvent) {

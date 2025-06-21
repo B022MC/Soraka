@@ -45,6 +45,31 @@ const lcuOnline = ref(false);
 const lcuPort = ref("");
 const lcuToken = ref("");
 
+const loadUserInfo = () => {
+  WailsAPI.GetCurrentSummoner()
+    .then((info: any) => {
+      if (!info) return;
+      userStore.setInfo({
+        nickname: info.displayName,
+        avatar: info.avatar,
+        region: info.region,
+        tag: info.tag,
+        rank: info.rank,
+        winRate: info.winRate,
+        wins: info.wins,
+        losses: info.losses,
+        totalGames: info.totalGames,
+        createtime: info.createtime,
+        level: info.level,
+        xpSinceLastLevel: info.xpSinceLastLevel,
+        xpUntilNextLevel: info.xpUntilNextLevel,
+      });
+    })
+    .catch((err) => {
+      console.error("[GetCurrentSummoner]", err);
+    });
+};
+
 onMounted(() => {
   // 监听系统时间事件
   Events.On("time", (time: any) => {
@@ -67,6 +92,9 @@ onMounted(() => {
     const status = Array.isArray(d.data) ? d.data[0] : d.data;
     if (typeof status === "boolean") {
       lcuOnline.value = status;
+      if (status) {
+        loadUserInfo();
+      }
     } else {
       console.warn("[Event] lcuStatus 数据格式异常:", d.data);
       lcuOnline.value = false; // 或保留上次值
@@ -87,6 +115,9 @@ onMounted(() => {
         "lcuToken:",
         lcuToken.value,
       );
+      if (lcuOnline.value) {
+        loadUserInfo();
+      }
     } else {
       console.warn("[Event] lcuCreds 数据格式异常:", d.data);
       lcuPort.value = "";
