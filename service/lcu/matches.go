@@ -89,53 +89,54 @@ func FetchRecentMatches(limit int) ([]MatchHistory, error) {
 		if pid == 0 {
 			continue
 		}
-		var participant models.Participant
+		found := false
 		for _, p := range game.Participants {
-			if p.ParticipantId == pid {
-				participant = p
-				break
+			if p.ParticipantId != pid {
+				continue
 			}
+			result := "lose"
+			if p.Stats.Win {
+				result = "win"
+			}
+			match := MatchHistory{
+				ID:       game.GameId,
+				Result:   result,
+				Mode:     queueNameMap[models.GameQueueID(game.QueueId)],
+				Kills:    p.Stats.Kills,
+				Deaths:   p.Stats.Deaths,
+				Assists:  p.Stats.Assists,
+				CS:       p.Stats.TotalMinionsKilled,
+				Gold:     p.Stats.GoldEarned,
+				Level:    p.Stats.ChampLevel,
+				Time:     game.GameCreationDate.Format("2006/01/02 15:04"),
+				Champion: championIcon(p.ChampionId),
+				Spells: []string{
+					spellIcon(p.Spell1Id),
+					spellIcon(p.Spell2Id),
+				},
+				Items: []string{
+					itemIcon(p.Stats.Item0),
+					itemIcon(p.Stats.Item1),
+					itemIcon(p.Stats.Item2),
+					itemIcon(p.Stats.Item3),
+					itemIcon(p.Stats.Item4),
+					itemIcon(p.Stats.Item5),
+				},
+				Map: mapNameMap[models.MapID(game.MapId)],
+			}
+			if match.Mode == "" {
+				match.Mode = string(game.GameMode)
+			}
+			if match.Map == "" {
+				match.Map = strconv.Itoa(game.MapId)
+			}
+			matches = append(matches, match)
+			found = true
+			break
 		}
-		if participant.ParticipantId == 0 {
+		if !found {
 			continue
 		}
-		result := "lose"
-		if participant.Stats.Win {
-			result = "win"
-		}
-		match := MatchHistory{
-			ID:       game.GameId,
-			Result:   result,
-			Mode:     queueNameMap[models.GameQueueID(game.QueueId)],
-			Kills:    participant.Stats.Kills,
-			Deaths:   participant.Stats.Deaths,
-			Assists:  participant.Stats.Assists,
-			CS:       participant.Stats.TotalMinionsKilled,
-			Gold:     participant.Stats.GoldEarned,
-			Level:    participant.Stats.ChampLevel,
-			Time:     game.GameCreationDate.Format("2006/01/02 15:04"),
-			Champion: championIcon(participant.ChampionId),
-			Spells: []string{
-				spellIcon(participant.Spell1Id),
-				spellIcon(participant.Spell2Id),
-			},
-			Items: []string{
-				itemIcon(participant.Stats.Item0),
-				itemIcon(participant.Stats.Item1),
-				itemIcon(participant.Stats.Item2),
-				itemIcon(participant.Stats.Item3),
-				itemIcon(participant.Stats.Item4),
-				itemIcon(participant.Stats.Item5),
-			},
-			Map: mapNameMap[models.MapID(game.MapId)],
-		}
-		if match.Mode == "" {
-			match.Mode = string(game.GameMode)
-		}
-		if match.Map == "" {
-			match.Map = strconv.Itoa(game.MapId)
-		}
-		matches = append(matches, match)
 	}
 	return matches, nil
 }
