@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type (
 	GameMode      string // 游戏模式
 	GameQueueID   int    // 游戏队列模式id
@@ -186,3 +188,44 @@ const (
 const (
 	PlatformIdHN1 PlatformId = "HN1"
 )
+
+// LCU 静态资源路径模板
+const (
+	LCUAssetBase = "http://localhost:8200/v1/lcu/proxy/lol-game-data/assets/v1"
+	ItemIconTpl  = LCUAssetBase + "/items/%d.png"           // 正确路径
+	SpellIconTpl = LCUAssetBase + "/summoner-spells/%d.png" // 正确路径
+	ChampIconTpl = LCUAssetBase + "/champion-icons/%d.png"  // 正确路径
+	MapIconTpl   = LCUAssetBase + "/map-icons/%d.png"       // 如果你有地图图标
+)
+
+// 构建物品图标 URL
+func ItemIconURL(itemID int) string {
+	if itemID <= 0 {
+		return ""
+	}
+	return fmt.Sprintf(ItemIconTpl, itemID)
+}
+
+// 构建召唤师技能图标 URL
+func SpellIconURL(spellID int) string {
+	if spellID <= 0 {
+		return ""
+	}
+	return fmt.Sprintf(SpellIconTpl, spellID)
+}
+
+// 构建英雄图标 URL
+func ChampionIconURL(champID int) string {
+	if champID <= 0 {
+		return ""
+	}
+	return fmt.Sprintf(ChampIconTpl, champID)
+}
+
+// 构建地图图标 URL（如需要）
+func MapIconURL(mapID int) string {
+	if mapID <= 0 {
+		return ""
+	}
+	return fmt.Sprintf(MapIconTpl, mapID)
+}

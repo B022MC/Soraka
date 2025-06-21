@@ -63,7 +63,6 @@ func ListRecentMatches(limit int) ([]MatchBrief, error) {
 		return nil, err
 	}
 	list := make([]MatchBrief, 0, len(resp.Games.Games))
-	base := "http://localhost:8200/v1/lcu/proxy/lol-game-data/assets/v1"
 	for _, g := range resp.Games.Games {
 		partID := 0
 		for _, p := range g.ParticipantIdentities {
@@ -89,11 +88,11 @@ func ListRecentMatches(limit int) ([]MatchBrief, error) {
 				if id == 0 {
 					continue
 				}
-				items = append(items, fmt.Sprintf("%s/items/%d.png", base, id))
+				items = append(items, models.ItemIconURL(id))
 			}
 			spells := []string{
-				fmt.Sprintf("%s/summoner-spells/%d.png", base, p.Spell1Id),
-				fmt.Sprintf("%s/summoner-spells/%d.png", base, p.Spell2Id),
+				models.SpellIconURL(int(p.Spell1Id)),
+				models.SpellIconURL(int(p.Spell2Id)),
 			}
 			mb := MatchBrief{
 				ID:       g.GameId,
@@ -106,7 +105,7 @@ func ListRecentMatches(limit int) ([]MatchBrief, error) {
 				Gold:     p.Stats.GoldEarned,
 				Time:     time.UnixMilli(g.GameCreation).Format("2006/01/02 15:04"),
 				Level:    p.Stats.ChampLevel,
-				Champion: fmt.Sprintf("%s/champion-icons/%d.png", base, p.ChampionId),
+				Champion: models.ChampionIconURL(int(p.ChampionId)),
 				Spells:   spells,
 				Items:    items,
 				Map:      mapMap(models.MapID(g.MapId)),

@@ -56,7 +56,7 @@ export interface MatchItem {
   map: string;
 }
 
-export function getRecentMatches(limit = 10) {
+export function getRecentMatches(limit = 20) {
   return defHttp.post<MatchItem[]>({
     url: "/v1/lcu/recentMatches",
     params: { limit },

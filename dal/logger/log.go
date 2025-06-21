@@ -33,3 +33,10 @@ func log(lvl zapcore.Level, msg string, keysAndValues ...any) {
 	}
 	global.Logger.Logw(lvl, msg, keysAndValues...)
 }
+func Init() {
+	l, err := zap.NewProduction() // 或 zap.NewDevelopment() 根据需要
+	if err != nil {
+		panic("初始化 logger 失败: " + err.Error())
+	}
+	global.Logger = l.Sugar()
+}

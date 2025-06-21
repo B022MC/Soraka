@@ -1,12 +1,12 @@
 package main
 
 import (
+	"Soraka/dal/logger"
 	example "Soraka/service/example"
 	service "Soraka/service/greet"
 	lcuService "Soraka/service/lcu"
 	"embed"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
 	"net"
@@ -85,35 +85,44 @@ func main() {
 	})
 
 	// start API server for frontend calls
+	//go func() {
+	//	r := gin.Default()
+	//
+	//	// 初始化 LCU 端口和 token
+	//	port, token, err := lcuService.GetLolClientApiInfo()
+	//	if err != nil {
+	//		log.Printf("初始化 LCU 代理失败: %v", err)
+	//		// 这里可以考虑降级处理或延迟初始化
+	//	}
+	//
+	//	var rp *lcuService.RP
+	//	if port > 0 && token != "" {
+	//		rp, err = lcuService.NewRP(port, token)
+	//		if err != nil {
+	//			log.Printf("创建 LCU 反向代理失败: %v", err)
+	//		}
+	//	}
+	//
+	//	api := &Api{
+	//		p: &Prophet{
+	//			LcuActive: true,
+	//			lcuRP:     rp,
+	//		},
+	//	}
+	//
+	//	RegisterRoutes(r, api)
+	//
+	//	if err := r.Run(":8200"); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}()
+	// 初始化 logger
+	logger.Init()
+
+	prophet := NewProphet()
 	go func() {
-		r := gin.Default()
-
-		// 初始化 LCU 端口和 token
-		port, token, err := lcuService.GetLolClientApiInfo()
-		if err != nil {
-			log.Printf("初始化 LCU 代理失败: %v", err)
-			// 这里可以考虑降级处理或延迟初始化
-		}
-
-		var rp *lcuService.RP
-		if port > 0 && token != "" {
-			rp, err = lcuService.NewRP(port, token)
-			if err != nil {
-				log.Printf("创建 LCU 反向代理失败: %v", err)
-			}
-		}
-
-		api := &Api{
-			p: &Prophet{
-				LcuActive: true,
-				lcuRP:     rp,
-			},
-		}
-
-		RegisterRoutes(r, api)
-
-		if err := r.Run(":8200"); err != nil {
-			log.Fatal(err)
+		if err := prophet.Run(); err != nil {
+			log.Fatal("启动 Prophet 失败:", err)
 		}
 	}()
 

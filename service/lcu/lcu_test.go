@@ -1,6 +1,7 @@
 package lcu
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -38,4 +39,26 @@ func TestGetCurrentSummoner(t *testing.T) {
 	}
 
 	t.Logf("✅ SummonerInfo: %+v", info)
+}
+func TestListRecentMatchesSimple(t *testing.T) {
+	port, token, err := GetLolClientApiInfo()
+	if err != nil {
+		t.Fatalf("GetLolClientApiInfo failed: %v", err)
+	}
+
+	InitCli(port, token)
+
+	matches, err := ListRecentMatches(5)
+	if err != nil {
+		t.Fatalf("调用 ListRecentMatches 出错: %v", err)
+	}
+
+	for _, match := range matches {
+		fmt.Printf("MatchID: %d | Result: %s | Mode: %s | Champion: %s\n",
+			match.ID, match.Result, match.Mode, match.Champion)
+		fmt.Printf("Spells: %v\n", match.Spells)
+		fmt.Printf("Items: %v\n", match.Items)
+		fmt.Printf("Map: %s\n", match.Map)
+		fmt.Println("--------------------------")
+	}
 }
