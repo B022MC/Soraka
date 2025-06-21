@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
 import { WailsAPI } from "/#/Soraka/service/lcu";
 import { useUserStore } from "@/store";
@@ -45,24 +45,7 @@ const lcuOnline = ref(false);
 const lcuPort = ref("");
 const lcuToken = ref("");
 
-const loadUserInfo = () => {
-  WailsAPI.GetCurrentSummoner()
-    .then((info: any) => {
-      if (info) {
-        userStore.setInfo({
-          nickname: info.displayName,
-          avatar: `https://127.0.0.1:${lcuPort.value}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
-          region: info.region,
-        });
-      }
-    })
-    .catch((err: any) => {
-      console.error("[loadUserInfo]", err);
-    });
-};
-
 onMounted(() => {
-
   // 监听系统时间事件
   Events.On("time", (time: any) => {
     // console.log("[Event] time 收到:", time);
@@ -110,18 +93,17 @@ onMounted(() => {
       lcuToken.value = "";
     }
   });
-});
-
-watch(lcuOnline, (online) => {
-  if (online && lcuPort.value) {
-    loadUserInfo();
-  }
-});
-
-watch(lcuPort, (port) => {
-  if (lcuOnline.value && port) {
-    loadUserInfo();
-  }
+  // 接收当前召唤师信息
+  Events.On("summonerInfo", (d: any) => {
+    const info = Array.isArray(d.data) ? d.data[0] : d.data;
+    if (info && typeof info === "object") {
+      userStore.setInfo({
+        nickname: info.displayName,
+        avatar: `https://127.0.0.1:${lcuPort.value}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+        region: info.region,
+      });
+    }
+  });
 });
 </script>
 

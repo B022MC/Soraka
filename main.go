@@ -106,7 +106,7 @@ func main() {
 		}
 	}()
 
-	// 实时发送LCU状态与凭证
+	// 实时发送LCU状态、凭证以及当前召唤师信息
 	go func() {
 		var lastStatus bool
 		var lastPort int
@@ -118,10 +118,21 @@ func main() {
 				app.EmitEvent("lcuStatus", status)
 				lastStatus = status
 			}
-			if status && (port != lastPort || token != lastToken) {
-				app.EmitEvent("lcuCreds", lcuService.AuthInfo{Port: port, Token: token})
-				lastPort = port
-				lastToken = token
+			if status {
+				if port != lastPort || token != lastToken {
+					app.EmitEvent("lcuCreds", lcuService.AuthInfo{Port: port, Token: token})
+					lcuService.InitCli(port, token)
+					if summoner, err := lcuService.GetCurrSummoner(); err == nil {
+						info := lcuService.SummonerInfo{
+							DisplayName:   summoner.DisplayName,
+							ProfileIconId: summoner.ProfileIconId,
+							Region:        summoner.TagLine,
+						}
+						app.EmitEvent("summonerInfo", info)
+					}
+					lastPort = port
+					lastToken = token
+				}
 			}
 			time.Sleep(time.Second)
 		}
