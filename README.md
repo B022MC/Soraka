@@ -18,9 +18,10 @@
 
 ## 已实现功能
 
- - 启动时自动从注册表搜索 Riot Client 路径，如未找到则尝试读取《英雄联盟》客户端路径，并发送到前端显示
+- 启动时自动从注册表搜索 Riot Client 路径，如未找到则尝试读取《英雄联盟》客户端路径，并发送到前端显示
 - 客户端路径保存到 `config/clientconfig.json`，下次启动无需再次搜索
 - 托盘菜单与基础窗口控制
+- 最近比赛查询接口 `/v1/lcu/recentMatches`
 
 ## 开发与调试
 
@@ -40,5 +41,3 @@ wails3 build
 ```bash
 wails3 package
 ```
-
-
