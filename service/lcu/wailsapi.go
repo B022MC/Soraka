@@ -1,7 +1,10 @@
 package lcu
 
 import (
+	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 // WailsAPI exposes methods for the frontend via Wails service
@@ -52,10 +55,24 @@ func (WailsAPI) GetCurrentSummoner() (SummonerInfo, error) {
 
 // StartClient attempts to start the League client if required.
 func (WailsAPI) StartClient() error {
-	path, err := FindLolPath()
+	base, err := FindLolPath()
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command(path)
-	return cmd.Start()
+
+	// 常见的 LOL 客户端主程序名称
+	executables := []string{
+		"LeagueClient.exe",
+		"client.exe",
+	}
+
+	for _, exe := range executables {
+		fullPath := filepath.Join(base, exe)
+		if _, err := os.Stat(fullPath); err == nil {
+			cmd := exec.Command(fullPath)
+			return cmd.Start()
+		}
+	}
+
+	return fmt.Errorf("no executable client found in: %s", base)
 }

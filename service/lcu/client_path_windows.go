@@ -10,16 +10,53 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-// FindLolPath attempts to locate the League of Legends executable path from the Windows registry.
 func FindLolPath() (string, error) {
+	path := getLoLPathByRegistry()
+	if path != "" {
+		return path, nil
+	}
+
+	path, err := findLolPathFromUninstall()
+	if err != nil {
+		return "", err
+	}
+	return path, nil
+}
+
+// getLoLPathByRegistry 通过国服路径尝试查找 LOL 安装目录
+func getLoLPathByRegistry() string {
+	key, err := registry.OpenKey(registry.CURRENT_USER, `SOFTWARE\Tencent\LOL`, registry.QUERY_VALUE)
+	if err != nil {
+		return ""
+	}
+	defer key.Close()
+
+	val, _, err := key.GetStringValue("InstallPath")
+	if err != nil || val == "" {
+		return ""
+	}
+
+	path := filepath.Join(val, "TCLS")
+	path = filepath.Clean(path)
+	path = strings.ReplaceAll(path, `\`, `/`)
+
+	// 首字母大写（C:/ 变成 C:/）
+	if len(path) > 1 {
+		path = strings.ToUpper(path[:1]) + path[1:]
+	}
+	return path
+}
+
+// findLolPathFromUninstall 从常见的卸载表注册表中查找 LOL 安装位置
+func findLolPathFromUninstall() (string, error) {
 	roots := []registry.Key{registry.LOCAL_MACHINE, registry.CURRENT_USER}
 	subkeys := []string{
 		`SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall`,
 		`SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`,
 	}
-	for _, r := range roots {
+	for _, root := range roots {
 		for _, sub := range subkeys {
-			k, err := registry.OpenKey(r, sub, registry.READ)
+			k, err := registry.OpenKey(root, sub, registry.READ)
 			if err != nil {
 				continue
 			}
