@@ -106,6 +106,27 @@ func main() {
 		}
 	}()
 
+	// 实时发送LCU状态与凭证
+	go func() {
+		var lastStatus bool
+		var lastPort int
+		var lastToken string
+		for {
+			port, token, err := lcuService.GetLolClientApiInfo()
+			status := err == nil
+			if status != lastStatus {
+				app.EmitEvent("lcuStatus", status)
+				lastStatus = status
+			}
+			if status && (port != lastPort || token != lastToken) {
+				app.EmitEvent("lcuCreds", lcuService.AuthInfo{Port: port, Token: token})
+				lastPort = port
+				lastToken = token
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+
 	// 监听前端事件
 	app.OnEvent("myevent", func(e *application.CustomEvent) {
 		fmt.Println("main监听事件：", e)

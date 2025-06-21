@@ -31,9 +31,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { Events } from "@wailsio/runtime";
-import type { AuthInfo } from "@/api/lcu";
 import { WailsAPI } from "/#/Soraka/service/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
@@ -45,31 +44,24 @@ const clientPath = ref("");
 const lcuOnline = ref(false);
 const lcuPort = ref("");
 const lcuToken = ref("");
-const authInfo = ref<AuthInfo | null>(null);
+
+const loadUserInfo = () => {
+  WailsAPI.GetCurrentSummoner()
+    .then((info: any) => {
+      if (info) {
+        userStore.setInfo({
+          nickname: info.displayName,
+          avatar: `https://127.0.0.1:${lcuPort.value}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
+          region: info.region,
+        });
+      }
+    })
+    .catch((err: any) => {
+      console.error("[loadUserInfo]", err);
+    });
+};
 
 onMounted(() => {
-  // 初始化获取 LCU 凭证
-  WailsAPI.GetAuthInfo()
-    .then((info: AuthInfo) => {
-      authInfo.value = info;
-      lcuOnline.value = true;
-      lcuPort.value = String(info.port);
-      lcuToken.value = info.token;
-    })
-    .catch(() => {
-      lcuOnline.value = false;
-    });
-
-  // 获取当前召唤师信息
-  WailsAPI.GetCurrentSummoner().then((info: any) => {
-    if (info && authInfo.value) {
-      userStore.setInfo({
-        nickname: info.displayName,
-        avatar: `https://127.0.0.1:${authInfo.value.port}/lol-game-data/assets/v1/profile-icons/${info.profileIconId}.jpg`,
-        region: info.region,
-      });
-    }
-  });
 
   // 监听系统时间事件
   Events.On("time", (time: any) => {
@@ -118,6 +110,18 @@ onMounted(() => {
       lcuToken.value = "";
     }
   });
+});
+
+watch(lcuOnline, (online) => {
+  if (online && lcuPort.value) {
+    loadUserInfo();
+  }
+});
+
+watch(lcuPort, (port) => {
+  if (lcuOnline.value && port) {
+    loadUserInfo();
+  }
 });
 </script>
 
