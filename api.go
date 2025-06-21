@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -165,4 +166,16 @@ func (api Api) LcuProxy(c *gin.Context) {
 	path := c.Param("any")
 	c.Request.URL.Path = path
 	api.p.lcuRP.ServeHTTP(c.Writer, c.Request)
+}
+
+func (api Api) GetRecentMatches(c *gin.Context) {
+	app := ginApp.GetApp(c)
+	limitStr := c.DefaultQuery("limit", "10")
+	limit, _ := strconv.Atoi(limitStr)
+	matches, err := lcu.FetchRecentMatches(limit)
+	if err != nil {
+		app.CommonError(err)
+		return
+	}
+	app.Data(matches)
 }

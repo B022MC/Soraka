@@ -128,3 +128,7 @@ func (WailsAPI) StartClient() error {
 
 	return fmt.Errorf("no executable client found in: %s", base)
 }
+
+func (WailsAPI) GetRecentMatches(limit int) ([]MatchHistory, error) {
+	return FetchRecentMatches(limit)
+}
