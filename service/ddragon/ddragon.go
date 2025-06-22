@@ -73,38 +73,44 @@ func UpdateIconCache(port int, token string) error {
 	}
 	return os.WriteFile(vf, []byte(ver), 0644)
 }
-
 func downloadItems(port int, token string) error {
 	url := fmt.Sprintf("%s/lol-game-data/assets/v1/items.json", clientURL(port, token))
+	fmt.Printf("请求 items.json: %s\n", url)
+
 	resp, err := httpCli.Get(url)
 	if err != nil {
-		return err
+		return fmt.Errorf("请求 items.json 失败: %w", err)
 	}
 	defer resp.Body.Close()
-	var data struct {
-		Data map[string]struct {
-			Image struct {
-				Full string `json:"full"`
-			} `json:"image"`
-		} `json:"data"`
+
+	var data []struct {
+		ID       int    `json:"id"`
+		IconPath string `json:"iconPath"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return err
+		return fmt.Errorf("解析 items.json 失败: %w", err)
 	}
+
 	dir := filepath.Join(iconBaseDir, "item")
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		return err
+		return fmt.Errorf("创建目录失败: %w", err)
 	}
-	for _, v := range data.Data {
-		if v.Image.Full == "" {
+
+	for _, item := range data {
+		if item.IconPath == "" {
 			continue
 		}
-		src := fmt.Sprintf("%s/lol-game-data/assets/v1/items/%s", clientURL(port, token), v.Image.Full)
-		dst := filepath.Join(dir, v.Image.Full)
+		src := fmt.Sprintf("%s%s", clientURL(port, token), item.IconPath)
+		fileName := filepath.Base(item.IconPath)
+		dst := filepath.Join(dir, fileName)
+
+		fmt.Printf("下载: %s -> %s\n", src, dst)
 		if err := downloadFile(src, dst); err != nil {
-			return err
+			fmt.Printf("⚠️ 下载失败: %v（继续）\n", err)
+			continue
 		}
 	}
+	fmt.Println("✅ item 图标下载完成")
 	return nil
 }
 

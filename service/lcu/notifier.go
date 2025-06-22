@@ -1,10 +1,10 @@
 package lcu
 
 import (
+	"Soraka/service/ddragon"
 	"fmt"
 	"time"
 
-	ddragon "Soraka/service/ddragon"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 

@@ -1,7 +1,9 @@
 package lcu
 
 import (
+	"Soraka/service/ddragon"
 	"fmt"
+	"log"
 	"testing"
 )
 
@@ -61,4 +63,20 @@ func TestListRecentMatchesSimple(t *testing.T) {
 		fmt.Printf("Map: %s\n", match.Map)
 		fmt.Println("--------------------------")
 	}
+}
+func TestGetLolClientApiInfo(t *testing.T) {
+	// 获取 LCU 客户端 port + token
+	port, token, err := GetLolClientApiInfo()
+	if err != nil {
+		log.Fatalf("获取 LCU 客户端信息失败: %v", err)
+	}
+
+	fmt.Printf("开始更新图标缓存 (port: %d)\n", port)
+
+	// 调用 UpdateIconCache
+	if err := ddragon.UpdateIconCache(port, token); err != nil {
+		log.Fatalf("UpdateIconCache 失败: %v", err)
+	}
+
+	fmt.Println("✅ 图标缓存更新成功！")
 }
