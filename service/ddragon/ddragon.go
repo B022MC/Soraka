@@ -203,6 +203,7 @@ func downloadChampions(port int, token string) error {
 		if err := downloadFile(src, dst); err != nil {
 			return err
 		}
+		ChampionIcons[c.ID] = dst
 	}
 	return nil
 }
@@ -217,6 +218,7 @@ func downloadItems(port int, token string) error {
 		src := fmt.Sprintf("%s%s", clientURL(port, token), item.IconPath)
 		fileName := filepath.Base(item.IconPath)
 		dst := filepath.Join(dir, fileName)
+		ItemIcons[item.ID] = dst
 	var data []struct {
 		ID       int    `json:"id"`
 		IconPath string `json:"iconPath"`
@@ -225,6 +227,7 @@ func downloadItems(port int, token string) error {
 		src := fmt.Sprintf("%s%s", clientURL(port, token), sp.IconPath)
 		fileName := filepath.Base(sp.IconPath)
 		dst := filepath.Join(dir, fileName)
+		SpellIcons[sp.ID] = dst
 
 	var data []struct {
 		ID       int    `json:"id"`
