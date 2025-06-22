@@ -9,11 +9,19 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
-	lcu "Soraka/service/lcu"
 )
 
 const iconBaseDir = "bin/icon"
+
+const (
+	authUserName = "riot"
+	host         = "127.0.0.1"
+	httpScheme   = "https"
+)
+
+func clientURL(port int, token string) string {
+	return fmt.Sprintf("%s://%s:%s@%s:%d", httpScheme, authUserName, token, host, port)
+}
 
 var httpCli = &http.Client{
 	Transport: &http.Transport{
@@ -23,7 +31,7 @@ var httpCli = &http.Client{
 }
 
 func getGameVersion(port int, token string) (string, error) {
-	url := fmt.Sprintf("%s/lol-patch/v1/game-version", lcu.GenerateClientApiUrl(port, token))
+	url := fmt.Sprintf("%s/lol-patch/v1/game-version", clientURL(port, token))
 	resp, err := httpCli.Get(url)
 	if err != nil {
 		return "", err
@@ -67,7 +75,7 @@ func UpdateIconCache(port int, token string) error {
 }
 
 func downloadItems(port int, token string) error {
-	url := fmt.Sprintf("%s/lol-game-data/assets/v1/items.json", lcu.GenerateClientApiUrl(port, token))
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/items.json", clientURL(port, token))
 	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
@@ -91,7 +99,7 @@ func downloadItems(port int, token string) error {
 		if v.Image.Full == "" {
 			continue
 		}
-		src := fmt.Sprintf("%s/lol-game-data/assets/v1/items/%s", lcu.GenerateClientApiUrl(port, token), v.Image.Full)
+		src := fmt.Sprintf("%s/lol-game-data/assets/v1/items/%s", clientURL(port, token), v.Image.Full)
 		dst := filepath.Join(dir, v.Image.Full)
 		if err := downloadFile(src, dst); err != nil {
 			return err
@@ -101,7 +109,7 @@ func downloadItems(port int, token string) error {
 }
 
 func downloadSummoners(port int, token string) error {
-	url := fmt.Sprintf("%s/lol-game-data/assets/v1/summoner-spells.json", lcu.GenerateClientApiUrl(port, token))
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/summoner-spells.json", clientURL(port, token))
 	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
@@ -125,7 +133,7 @@ func downloadSummoners(port int, token string) error {
 		if v.Image.Full == "" {
 			continue
 		}
-		src := fmt.Sprintf("%s/lol-game-data/assets/v1/summoner-spells/%s", lcu.GenerateClientApiUrl(port, token), v.Image.Full)
+		src := fmt.Sprintf("%s/lol-game-data/assets/v1/summoner-spells/%s", clientURL(port, token), v.Image.Full)
 		dst := filepath.Join(dir, v.Image.Full)
 		if err := downloadFile(src, dst); err != nil {
 			return err
@@ -135,7 +143,7 @@ func downloadSummoners(port int, token string) error {
 }
 
 func downloadProfileIcons(port int, token string) error {
-	url := fmt.Sprintf("%s/lol-game-data/assets/v1/profileicon.json", lcu.GenerateClientApiUrl(port, token))
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/profileicon.json", clientURL(port, token))
 	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
@@ -159,7 +167,7 @@ func downloadProfileIcons(port int, token string) error {
 		if v.Image.Full == "" {
 			continue
 		}
-		src := fmt.Sprintf("%s/lol-game-data/assets/v1/profile-icons/%s", lcu.GenerateClientApiUrl(port, token), v.Image.Full)
+		src := fmt.Sprintf("%s/lol-game-data/assets/v1/profile-icons/%s", clientURL(port, token), v.Image.Full)
 		dst := filepath.Join(dir, v.Image.Full)
 		if err := downloadFile(src, dst); err != nil {
 			return err
@@ -169,7 +177,7 @@ func downloadProfileIcons(port int, token string) error {
 }
 
 func downloadRunes(port int, token string) error {
-	url := fmt.Sprintf("%s/lol-game-data/assets/v1/perkstyles.json", lcu.GenerateClientApiUrl(port, token))
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/perkstyles.json", clientURL(port, token))
 	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
@@ -208,7 +216,7 @@ func downloadRunes(port int, token string) error {
 
 func saveRuneIcon(iconPath, base string, port int, token string) error {
 	dst := filepath.Join(base, iconPath)
-	src := fmt.Sprintf("%s/lol-game-data/assets/%s", lcu.GenerateClientApiUrl(port, token), iconPath)
+	src := fmt.Sprintf("%s/lol-game-data/assets/%s", clientURL(port, token), iconPath)
 	return downloadFile(src, dst)
 }
 
