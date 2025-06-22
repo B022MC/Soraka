@@ -119,8 +119,12 @@ func main() {
 	//}()
 	// 初始化 logger
 	logger.Init()
-	if err := ddragon.UpdateIconCache(); err != nil {
-		log.Printf("update icon cache failed: %v", err)
+	if _, _, err := lcuService.GetLolClientApiInfo(); err == nil {
+		if err := ddragon.UpdateIconCache(); err != nil {
+			log.Printf("update icon cache failed: %v", err)
+		}
+	} else if err != lcuService.ErrLolProcessNotFound {
+		log.Printf("check lol client failed: %v", err)
 	}
 
 	prophet := NewProphet()
