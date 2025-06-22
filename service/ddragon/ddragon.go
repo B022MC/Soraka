@@ -1,34 +1,46 @@
 package ddragon
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
+
+	lcu "Soraka/service/lcu"
 )
 
 const iconBaseDir = "bin/icon"
 
-func GetLatestVersion() (string, error) {
-	resp, err := http.Get("https://ddragon.leagueoflegends.com/api/versions.json")
+var httpCli = &http.Client{
+	Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	},
+	Timeout: time.Second * 30,
+}
+
+func getGameVersion(port int, token string) (string, error) {
+	url := fmt.Sprintf("%s/lol-patch/v1/game-version", lcu.GenerateClientApiUrl(port, token))
+	resp, err := httpCli.Get(url)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
-	var vers []string
-	if err := json.NewDecoder(resp.Body).Decode(&vers); err != nil {
+	var ver string
+	if err := json.NewDecoder(resp.Body).Decode(&ver); err != nil {
 		return "", err
 	}
-	if len(vers) == 0 {
+	if ver == "" {
 		return "", fmt.Errorf("no version info")
 	}
-	return vers[0], nil
+	return ver, nil
 }
 
-func UpdateIconCache() error {
-	ver, err := GetLatestVersion()
+func UpdateIconCache(port int, token string) error {
+	ver, err := getGameVersion(port, token)
 	if err != nil {
 		return err
 	}
@@ -39,24 +51,24 @@ func UpdateIconCache() error {
 	if b, err := os.ReadFile(vf); err == nil && string(b) == ver {
 		return nil
 	}
-	if err := downloadItems(ver); err != nil {
+	if err := downloadItems(port, token); err != nil {
 		return err
 	}
-	if err := downloadSummoners(ver); err != nil {
+	if err := downloadSummoners(port, token); err != nil {
 		return err
 	}
-	if err := downloadProfileIcons(ver); err != nil {
+	if err := downloadProfileIcons(port, token); err != nil {
 		return err
 	}
-	if err := downloadRunes(ver); err != nil {
+	if err := downloadRunes(port, token); err != nil {
 		return err
 	}
 	return os.WriteFile(vf, []byte(ver), 0644)
 }
 
-func downloadItems(ver string) error {
-	url := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/data/en_US/item.json", ver)
-	resp, err := http.Get(url)
+func downloadItems(port int, token string) error {
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/items.json", lcu.GenerateClientApiUrl(port, token))
+	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
 	}
@@ -79,7 +91,7 @@ func downloadItems(ver string) error {
 		if v.Image.Full == "" {
 			continue
 		}
-		src := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/img/item/%s", ver, v.Image.Full)
+		src := fmt.Sprintf("%s/lol-game-data/assets/v1/items/%s", lcu.GenerateClientApiUrl(port, token), v.Image.Full)
 		dst := filepath.Join(dir, v.Image.Full)
 		if err := downloadFile(src, dst); err != nil {
 			return err
@@ -88,9 +100,9 @@ func downloadItems(ver string) error {
 	return nil
 }
 
-func downloadSummoners(ver string) error {
-	url := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/data/en_US/summoner.json", ver)
-	resp, err := http.Get(url)
+func downloadSummoners(port int, token string) error {
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/summoner-spells.json", lcu.GenerateClientApiUrl(port, token))
+	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
 	}
@@ -113,7 +125,7 @@ func downloadSummoners(ver string) error {
 		if v.Image.Full == "" {
 			continue
 		}
-		src := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/img/spell/%s", ver, v.Image.Full)
+		src := fmt.Sprintf("%s/lol-game-data/assets/v1/summoner-spells/%s", lcu.GenerateClientApiUrl(port, token), v.Image.Full)
 		dst := filepath.Join(dir, v.Image.Full)
 		if err := downloadFile(src, dst); err != nil {
 			return err
@@ -122,9 +134,9 @@ func downloadSummoners(ver string) error {
 	return nil
 }
 
-func downloadProfileIcons(ver string) error {
-	url := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/data/en_US/profileicon.json", ver)
-	resp, err := http.Get(url)
+func downloadProfileIcons(port int, token string) error {
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/profileicon.json", lcu.GenerateClientApiUrl(port, token))
+	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
 	}
@@ -147,7 +159,7 @@ func downloadProfileIcons(ver string) error {
 		if v.Image.Full == "" {
 			continue
 		}
-		src := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%s", ver, v.Image.Full)
+		src := fmt.Sprintf("%s/lol-game-data/assets/v1/profile-icons/%s", lcu.GenerateClientApiUrl(port, token), v.Image.Full)
 		dst := filepath.Join(dir, v.Image.Full)
 		if err := downloadFile(src, dst); err != nil {
 			return err
@@ -156,9 +168,9 @@ func downloadProfileIcons(ver string) error {
 	return nil
 }
 
-func downloadRunes(ver string) error {
-	url := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/%s/data/en_US/runesReforged.json", ver)
-	resp, err := http.Get(url)
+func downloadRunes(port int, token string) error {
+	url := fmt.Sprintf("%s/lol-game-data/assets/v1/perkstyles.json", lcu.GenerateClientApiUrl(port, token))
+	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
 	}
@@ -177,14 +189,14 @@ func downloadRunes(ver string) error {
 	dir := filepath.Join(iconBaseDir, "runes")
 	for _, t := range trees {
 		if t.Icon != "" {
-			if err := saveRuneIcon(t.Icon, dir); err != nil {
+			if err := saveRuneIcon(t.Icon, dir, port, token); err != nil {
 				return err
 			}
 		}
 		for _, s := range t.Slots {
 			for _, r := range s.Runes {
 				if r.Icon != "" {
-					if err := saveRuneIcon(r.Icon, dir); err != nil {
+					if err := saveRuneIcon(r.Icon, dir, port, token); err != nil {
 						return err
 					}
 				}
@@ -194,9 +206,9 @@ func downloadRunes(ver string) error {
 	return nil
 }
 
-func saveRuneIcon(iconPath, base string) error {
+func saveRuneIcon(iconPath, base string, port int, token string) error {
 	dst := filepath.Join(base, iconPath)
-	src := fmt.Sprintf("https://ddragon.leagueoflegends.com/cdn/img/%s", iconPath)
+	src := fmt.Sprintf("%s/lol-game-data/assets/%s", lcu.GenerateClientApiUrl(port, token), iconPath)
 	return downloadFile(src, dst)
 }
 
@@ -207,7 +219,7 @@ func downloadFile(url, dst string) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0755); err != nil {
 		return err
 	}
-	resp, err := http.Get(url)
+	resp, err := httpCli.Get(url)
 	if err != nil {
 		return err
 	}
