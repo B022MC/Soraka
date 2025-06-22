@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	ddragon "Soraka/service/ddragon"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -14,6 +15,8 @@ func StartNotifier(win *application.WebviewWindow) {
 
 		defer tickerTime.Stop()
 		defer tickerOthers.Stop()
+
+		var connected bool
 
 		for {
 			select {
@@ -35,12 +38,19 @@ func StartNotifier(win *application.WebviewWindow) {
 
 					InitCli(port, token)
 
+					if !connected {
+						if err := ddragon.UpdateIconCache(port, token); err != nil {
+							fmt.Println("[Notifier] icon cache update failed:", err)
+						}
+					}
+
 					if info, err := (WailsAPI{}).GetCurrentSummoner(); err == nil {
 						win.EmitEvent("summonerInfo", info)
 					} else {
 						fmt.Println("[Notifier] 获取召唤师信息失败:", err)
 					}
 				}
+				connected = status
 			}
 		}
 	}()
