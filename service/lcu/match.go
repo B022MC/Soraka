@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"Soraka/dal/lcu/models"
+	ddragon "Soraka/service/ddragon"
 )
 
 type MatchBrief struct {
@@ -88,11 +89,11 @@ func ListRecentMatches(limit int) ([]MatchBrief, error) {
 				if id == 0 {
 					continue
 				}
-				items = append(items, models.ItemIconURL(id))
+				items = append(items, ddragon.ItemIconURL(id))
 			}
 			spells := []string{
-				models.SpellIconURL(int(p.Spell1Id)),
-				models.SpellIconURL(int(p.Spell2Id)),
+				ddragon.SpellIconURL(int(p.Spell1Id)),
+				ddragon.SpellIconURL(int(p.Spell2Id)),
 			}
 			mb := MatchBrief{
 				ID:       g.GameId,
@@ -105,7 +106,7 @@ func ListRecentMatches(limit int) ([]MatchBrief, error) {
 				Gold:     p.Stats.GoldEarned,
 				Time:     time.UnixMilli(g.GameCreation).Format("2006/01/02 15:04"),
 				Level:    p.Stats.ChampLevel,
-				Champion: models.ChampionIconURL(int(p.ChampionId)),
+				Champion: ddragon.ChampionIconURL(int(p.ChampionId)),
 				Spells:   spells,
 				Items:    items,
 				Map:      mapMap(models.MapID(g.MapId)),
