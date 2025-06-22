@@ -2,6 +2,7 @@ package main
 
 import (
 	"Soraka/dal/logger"
+	ddragon "Soraka/service/ddragon"
 	example "Soraka/service/example"
 	service "Soraka/service/greet"
 	lcuService "Soraka/service/lcu"
@@ -118,6 +119,9 @@ func main() {
 	//}()
 	// 初始化 logger
 	logger.Init()
+	if err := ddragon.UpdateIconCache(); err != nil {
+		log.Printf("update icon cache failed: %v", err)
+	}
 
 	prophet := NewProphet()
 	go func() {
