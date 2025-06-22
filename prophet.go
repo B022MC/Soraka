@@ -4,6 +4,7 @@ import (
 	"Soraka/dal/lcu/models"
 	"Soraka/dal/logger"
 	"Soraka/global"
+	"Soraka/service/datadragon"
 	"Soraka/service/lcu"
 	"context"
 	"fmt"
@@ -78,12 +79,18 @@ func NewProphet(opts ...ApplyOption) *Prophet {
 	return p
 }
 func (p *Prophet) Run() error {
+	if err := datadragon.Init(); err != nil {
+		logger.Warn("init datadragon cache failed", err)
+	}
 	p.initGin()
 	return p.notifyQuit()
 }
 func (p *Prophet) Stop() error {
 	if p.cancel != nil {
 		p.cancel()
+	}
+	if err := datadragon.Cleanup(); err != nil {
+		logger.Warn("cleanup datadragon cache failed", err)
 	}
 	// stop all task
 	return nil
