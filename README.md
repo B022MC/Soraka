@@ -36,8 +36,22 @@ wails3 dev
 wails3 build
 ```
 
+### 前端构建说明
+
+运行 `wails3 build` 或 `npm run build` 会在 `frontend/dist` 目录生成前端文件。**注意**：构建结果会在编译 Go 程序时被嵌入。如果在编译后才执行前端构建，需要重新执行 `wails3 build` 或 `go build`，否则运行时可能报告找不到 `index.html`。
+
 如需打包安装包，可执行：
 
 ```bash
 wails3 package
 ```
+
+### 常见问题排查
+
+Windows 环境可能会在启动时输出以下错误：
+
+```
+SetProcessDpiAwarenessContext failed 0: 18446744073709551612 Access is denied.
+```
+
+这是由于系统 DPI 设置权限不足导致，通常不会影响应用正常运行，可忽略。
