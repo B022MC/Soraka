@@ -2,7 +2,6 @@ package lcu
 
 import (
 	"Soraka/internal/dal/lcu/models"
-	"fmt"
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -45,9 +44,9 @@ func ConvertCurrSummonerToSummoner(currSummoner *models.SummonerProfileData) *mo
 	}
 }
 
-func GenerateClientApiUrl(port int, token string) string {
-	return fmt.Sprintf("%s://%s:%s@%s:%d", HttpScheme, AuthUserName, token, Host, port)
-}
-func GenerateClientWsUrl(port int) string {
-	return fmt.Sprintf("%s://%s:%d", WsScheme, Host, port)
-}
+//func GenerateClientWsUrl(port int) string {
+//	return fmt.Sprintf("%s://%s:%d", WsScheme, Host, port)
+//}
+//func GenerateClientApiUrl(port int, token string) string {
+//	return fmt.Sprintf("%s://%s:%s@%s:%d", HttpScheme, AuthUserName, token, Host, port)
+//}

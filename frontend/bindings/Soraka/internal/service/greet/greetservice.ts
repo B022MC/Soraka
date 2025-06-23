@@ -5,24 +5,27 @@
 // @ts-ignore: Unused imports
 import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 
-/**
- * 可被前端调用的方法
- */
-export function Greet(name: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1929083757, name) as any;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as gin$0 from "../../../../github.com/gin-gonic/gin/models.js";
+
+export function Hello(ctx: gin$0.Context | null): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(3728698948, ctx) as any;
     return $resultPromise;
 }
 
-/**
- * 实现 application.Service 接口
- */
 export function Name(): Promise<string> & { cancel(): void } {
     let $resultPromise = $Call.ByID(506809039) as any;
     return $resultPromise;
 }
 
+export function RegisterGin(group: gin$0.IRoutes): Promise<void> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4212446801, group) as any;
+    return $resultPromise;
+}
+
 /**
- * 设置主题（用于测试窗口操作）
+ * 可以扩展更多业务方法
  */
 export function SetTheme(): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(3697324217) as any;

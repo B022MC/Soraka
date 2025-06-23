@@ -1,36 +1,41 @@
-package service
+package greet
 
 import (
-	"fmt"
-
+	greetBiz "Soraka/internal/biz/greet"
+	basicReq "Soraka/internal/dal/req/basic"
+	"Soraka/pkg/response"
+	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-type GreetService struct{}
-
-var mainWindow *application.WebviewWindow
-
-// 实现 application.Service 接口
-func (GreetService) Name() string {
-	return "GreetService"
+type GreetService struct {
+	uc *greetBiz.GreetUseCase
 }
 
-// 可被前端调用的方法
-func (g *GreetService) Greet(name string) string {
-	return "Hello " + name + "!"
-}
-
-// 设置主题（用于测试窗口操作）
-func (g *GreetService) SetTheme() {
-	fmt.Println("执行设置主题函数, PID:", application.Get().GetPID())
-
-	if mainWindow != nil {
-		mainWindow.Restore()
-		mainWindow.Focus()
+func NewGreetService(win *application.WebviewWindow) *GreetService {
+	return &GreetService{
+		uc: greetBiz.NewGreetUseCase(win),
 	}
 }
 
-// 可选：设置窗口引用
-func SetMainWindow(win *application.WebviewWindow) {
-	mainWindow = win
+func (s *GreetService) RegisterGin(group gin.IRoutes) {
+	group.GET("/hello", s.Hello)
+}
+
+func (s *GreetService) Name() string {
+	return "GreetService"
+}
+
+func (s *GreetService) Hello(ctx *gin.Context) {
+	var req basicReq.Hello
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ErrorMsg(ctx, err.Error())
+		return
+	}
+	response.Ok(ctx, "ok", s.uc.Greet(req.Name))
+}
+
+// 可以扩展更多业务方法
+func (s *GreetService) SetTheme() {
+	s.uc.SetTheme()
 }

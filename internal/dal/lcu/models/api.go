@@ -25,28 +25,29 @@ type (
 		Message    string `json:"message"`
 	}
 	CurrSummoner struct {
-		AccountId                   int64  `json:"accountId"`
-		GameName                    string `json:"gameName"`
-		DisplayName                 string `json:"displayName"`
-		InternalName                string `json:"internalName"`
-		NameChangeFlag              bool   `json:"nameChangeFlag"`
-		PercentCompleteForNextLevel int    `json:"percentCompleteForNextLevel"`
-		Privacy                     string `json:"privacy"`
-		ProfileIconId               int    `json:"profileIconId"`
-		Puuid                       string `json:"puuid"`
+		AccountId                   int64  `json:"accountId"`                   // 账号 ID（用于 Riot 内部标识）
+		GameName                    string `json:"gameName"`                    // 游戏内显示名称（不含标签）
+		DisplayName                 string `json:"displayName"`                 // 游戏完整显示名称（可能包含标签）
+		InternalName                string `json:"internalName"`                // 内部标识名称（全小写）
+		NameChangeFlag              bool   `json:"nameChangeFlag"`              // 是否需要修改名字（用于新号或改名提示）
+		PercentCompleteForNextLevel int    `json:"percentCompleteForNextLevel"` // 当前等级进度百分比
+		Privacy                     string `json:"privacy"`                     // 账户隐私设置（如 PUBLIC、PRIVATE）
+		ProfileIconId               int    `json:"profileIconId"`               // 头像图标 ID
+		Puuid                       string `json:"puuid"`                       // Riot 全球唯一玩家标识
 		RerollPoints                struct {
-			CurrentPoints    int `json:"currentPoints"`
-			MaxRolls         int `json:"maxRolls"`
-			NumberOfRolls    int `json:"numberOfRolls"`
-			PointsCostToRoll int `json:"pointsCostToRoll"`
-			PointsToReroll   int `json:"pointsToReroll"`
+			CurrentPoints    int `json:"currentPoints"`    // 当前可用积分
+			MaxRolls         int `json:"maxRolls"`         // 最大重骰次数
+			NumberOfRolls    int `json:"numberOfRolls"`    // 已用重骰次数
+			PointsCostToRoll int `json:"pointsCostToRoll"` // 单次重骰所需积分
+			PointsToReroll   int `json:"pointsToReroll"`   // 下次重骰还需积分
 		} `json:"rerollPoints"`
-		SummonerId       int64  `json:"summonerId"`
-		TagLine          string `json:"tagLine"`
-		SummonerLevel    int    `json:"summonerLevel"`
-		Unnamed          bool   `json:"unnamed"`
-		XpSinceLastLevel int    `json:"xpSinceLastLevel"`
-		XpUntilNextLevel int    `json:"xpUntilNextLevel"`
+		SummonerId       int64  `json:"summonerId"`       // 召唤师 ID（用于游戏内部标识）
+		TagLine          string `json:"tagLine"`          // 标签（例如 #1234）
+		SummonerLevel    int    `json:"summonerLevel"`    // 召唤师等级
+		Unnamed          bool   `json:"unnamed"`          // 是否为未命名（新建角色状态）
+		XpSinceLastLevel int    `json:"xpSinceLastLevel"` // 当前等级已获得经验
+		XpUntilNextLevel int    `json:"xpUntilNextLevel"` // 当前等级升级所需经验
+		AvatarUrl        string `json:"avatarUrl"`
 	}
 	GameListResp struct {
 		CommonResp

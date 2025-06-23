@@ -58,7 +58,7 @@ export interface MatchItem {
 
 export function getRecentMatches(limit = 20) {
   return defHttp.post<MatchItem[]>({
-    url: "/v1/lcu/recentMatches",
+    url: "/lcu/lcuApi/listRecentMatches",
     params: { limit },
   });
 }

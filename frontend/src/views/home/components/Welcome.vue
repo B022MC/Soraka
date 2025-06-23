@@ -9,7 +9,6 @@
         <a-avatar style="padding: 2px" :size="68">
           <img
               :src="userStore.avatar || defaultAvatar"
-              @error="(e) => e.target.src = defaultAvatar"
           />        </a-avatar>
         <div class="welcome">
           <p class="hello">{{ goodTimeText() }}！{{ userStore.nickname }}</p>
@@ -35,7 +34,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
-import { WailsAPI } from "/#/Soraka/internal/service/lcu";
+import { LcuApiService } from "/#/Soraka/internal/service/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 
@@ -48,7 +47,7 @@ const lcuPort = ref("");
 const lcuToken = ref("");
 
 // const loadUserInfo = () => {
-//   WailsAPI.GetCurrentSummoner()
+//   LcuApiService.GetCurrentSummoner()
 //     .then((info: any) => {
 //       if (!info) return;
 //       userStore.setInfo({
@@ -80,7 +79,7 @@ onMounted(() => {
   });
   // loadUserInfo
   // 获取客户端路径
-  WailsAPI.GetClientPath()
+  LcuApiService.GetClientPath()
     .then((p: string) => {
       clientPath.value = p;
     })

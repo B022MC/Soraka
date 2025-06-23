@@ -1,21 +1,16 @@
-//go:build windows
-// +build windows
-
 package process
 
 import (
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"syscall"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
-
-	"Soraka/internal/dal/logger"
 )
 
-// Windows API functions
 var (
 	modKernel32                  = syscall.NewLazyDLL("kernel32.dll")
 	procCloseHandle              = modKernel32.NewProc("CloseHandle")
@@ -26,14 +21,11 @@ var (
 	errNotFoundProcess           = errors.New("未找到进程")
 )
 
-// Some constants from the Windows API
 const (
 	ERROR_NO_MORE_FILES = 0x12
 	MAX_PATH            = 260
 )
 
-// PROCESSENTRY32 is the Windows API structure that contains a process's
-// information.
 type PROCESSENTRY32 struct {
 	Size              uint32
 	CntUsage          uint32
@@ -47,35 +39,21 @@ type PROCESSENTRY32 struct {
 	ExeFile           [MAX_PATH]uint16
 }
 
-// Process is an implementation of Process for Windows.
 type Process struct {
 	pid  int
 	ppid int
 	exe  string
 }
 
-func (p *Process) Pid() int {
-	return p.pid
-}
-
-func (p *Process) PPid() int {
-	return p.ppid
-}
-
-func (p *Process) Executable() string {
-	return p.exe
-}
+func (p *Process) Pid() int           { return p.pid }
+func (p *Process) PPid() int          { return p.ppid }
+func (p *Process) Executable() string { return p.exe }
 
 func newWindowsProcess(e *PROCESSENTRY32) *Process {
-	// Find when the string ends for decoding
 	end := 0
-	for {
-		if e.ExeFile[end] == 0 {
-			break
-		}
+	for e.ExeFile[end] != 0 {
 		end++
 	}
-
 	return &Process{
 		pid:  int(e.ProcessID),
 		ppid: int(e.ParentProcessID),
@@ -83,25 +61,8 @@ func newWindowsProcess(e *PROCESSENTRY32) *Process {
 	}
 }
 
-func findProcess(pid int) (*Process, error) {
-	ps, err := Processes()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, p := range ps {
-		if p.Pid() == pid {
-			return p, nil
-		}
-	}
-
-	return nil, nil
-}
-
 func Processes() ([]*Process, error) {
-	handle, _, _ := procCreateToolhelp32Snapshot.Call(
-		0x00000002,
-		0)
+	handle, _, _ := procCreateToolhelp32Snapshot.Call(0x00000002, 0)
 	if handle < 0 {
 		return nil, syscall.GetLastError()
 	}
@@ -111,83 +72,76 @@ func Processes() ([]*Process, error) {
 	entry.Size = uint32(unsafe.Sizeof(entry))
 	ret, _, _ := procProcess32First.Call(handle, uintptr(unsafe.Pointer(&entry)))
 	if ret == 0 {
-		return nil, fmt.Errorf("Error retrieving process info.")
+		return nil, fmt.Errorf("Error retrieving process info")
 	}
 
-	results := make([]*Process, 0, 50)
+	var results []*Process
 	for {
 		results = append(results, newWindowsProcess(&entry))
-
-		ret, _, _ := procProcess32Next.Call(handle, uintptr(unsafe.Pointer(&entry)))
+		ret, _, _ = procProcess32Next.Call(handle, uintptr(unsafe.Pointer(&entry)))
 		if ret == 0 {
 			break
 		}
 	}
-
 	return results, nil
 }
 
 func GetProcessFullPath(targetName string) (string, error) {
-	var pid int
-	processList, err := Processes()
+	pid, err := findPidByName(targetName)
 	if err != nil {
 		return "", err
 	}
-	for _, processInfo := range processList {
-		if processInfo.Executable() == targetName {
-			pid = processInfo.Pid()
-			break
-		}
-	}
-	if pid == 0 {
-		return "", errNotFoundProcess
-	}
 	hProcess, err := syscall.OpenProcess(syscall.PROCESS_QUERY_INFORMATION, false, uint32(pid))
 	if err != nil {
-		logger.Debug("无法获取到进程handle: ", err)
+		log.Printf("无法获取到进程 handle: %v", err)
 		return "", errNotFoundProcess
 	}
-	buf := [MAX_PATH]uint16{}
-	size := MAX_PATH
-	ret, _, lastErr := queryFullProcessImageName.Call(uintptr(hProcess), 0,
-		uintptr(unsafe.Pointer(&buf)), uintptr(unsafe.Pointer(&size)))
+	defer syscall.CloseHandle(hProcess)
+
+	var buf [MAX_PATH]uint16
+	size := uint32(len(buf))
+	ret, _, lastErr := queryFullProcessImageName.Call(uintptr(hProcess), 0, uintptr(unsafe.Pointer(&buf[0])), uintptr(unsafe.Pointer(&size)))
 	if ret != 1 {
 		errMsg := "none"
 		if lastErr != nil {
 			errMsg = lastErr.Error()
 		}
-		return "", errors.New("获取进程全路径失败:" + errMsg)
+		return "", errors.New("获取进程全路径失败: " + errMsg)
 	}
 	return syscall.UTF16ToString(buf[:]), nil
 }
+
 func GetProcessCommand(targetName string) (string, error) {
-	var pid int
-	processList, err := Processes()
+	pid, err := findPidByName(targetName)
 	if err != nil {
 		return "", err
 	}
-	for _, processInfo := range processList {
-		if processInfo.Executable() == targetName {
-			pid = processInfo.Pid()
-			break
-		}
-	}
-	if pid == 0 {
-		return "", errNotFoundProcess
-	}
 	return GetCmdline(uint32(pid))
 }
+
+func findPidByName(targetName string) (int, error) {
+	processList, err := Processes()
+	if err != nil {
+		return 0, err
+	}
+	for _, processInfo := range processList {
+		if processInfo.Executable() == targetName {
+			return processInfo.Pid(), nil
+		}
+	}
+	return 0, errNotFoundProcess
+}
+
 func GetCmdline(pid uint32) (string, error) {
 	h, err := windows.OpenProcess(windows.PROCESS_QUERY_INFORMATION|windows.PROCESS_VM_READ, false, pid)
 	if err != nil {
 		if e, ok := err.(windows.Errno); ok && e == windows.ERROR_ACCESS_DENIED {
-			return "", nil // 没权限,忽略这个进程
+			return "", nil // 没权限, 忽略
 		}
 		return "", err
 	}
-	defer func() {
-		_ = windows.CloseHandle(h)
-	}()
+	defer windows.CloseHandle(h)
+
 	var pbi struct {
 		ExitStatus                   uint32
 		PebBaseAddress               uintptr
@@ -201,31 +155,33 @@ func GetCmdline(pid uint32) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	var addr uint64
 	d := *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Data: uintptr(unsafe.Pointer(&addr)),
 		Len:  8, Cap: 8}))
-	err = windows.ReadProcessMemory(h, pbi.PebBaseAddress+32,
-		&d[0], uintptr(len(d)), nil)
+	err = windows.ReadProcessMemory(h, pbi.PebBaseAddress+32, &d[0], uintptr(len(d)), nil)
 	if err != nil {
 		return "", err
 	}
+
 	var commandLine windows.NTUnicodeString
-	Len := unsafe.Sizeof(commandLine)
 	d = *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Data: uintptr(unsafe.Pointer(&commandLine)),
-		Len:  int(Len), Cap: int(Len)}))
-	err = windows.ReadProcessMemory(h, uintptr(addr+112),
-		&d[0], Len, nil)
+		Len:  int(unsafe.Sizeof(commandLine)), Cap: int(unsafe.Sizeof(commandLine))}))
+	err = windows.ReadProcessMemory(h, uintptr(addr+112), &d[0], uintptr(len(d)), nil)
 	if err != nil {
 		return "", err
 	}
+
 	cmdData := make([]uint16, commandLine.Length/2)
-	d = *(*[]byte)(unsafe.Pointer(&cmdData))
-	err = windows.ReadProcessMemory(h, uintptr(unsafe.Pointer(commandLine.Buffer)),
-		&d[0], uintptr(commandLine.Length), nil)
+	d = *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Data: uintptr(unsafe.Pointer(&cmdData[0])),
+		Len:  int(commandLine.Length), Cap: int(commandLine.Length)}))
+	err = windows.ReadProcessMemory(h, uintptr(unsafe.Pointer(commandLine.Buffer)), &d[0], uintptr(commandLine.Length), nil)
 	if err != nil {
 		return "", err
 	}
+
 	return windows.UTF16ToString(cmdData), nil
 }

@@ -109,7 +109,7 @@ import { useRouter, useRoute } from "vue-router";
 import routerMap from "@/router/routerMap";
 import { Events } from "@wailsio/runtime";
 import type { AuthInfo } from "@/api/lcu";
-import { WailsAPI } from "/#/Soraka/internal/service/lcu";
+import { LcuApiService } from "/#/Soraka/internal/service/lcu";
 import { useUserStore } from "@/store";
 
 const router = useRouter();
@@ -146,7 +146,7 @@ const handleTool = (type: string) => {
   console.log("工具点击", type);
 };
 onMounted(() => {
-  WailsAPI.GetAuthInfo()
+  LcuApiService.GetAuthInfo()
     .then((info: AuthInfo) => {
       authInfo.value = info;
     })
@@ -156,7 +156,7 @@ onMounted(() => {
   Events.On("lcuStatus", (d: any) => {
     const status = Array.isArray(d.data) ? d.data[0] : d.data;
     if (status) {
-      WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
+      LcuApiService.GetAuthInfo().then((info: AuthInfo) => {
         authInfo.value = info;
       });
     }
