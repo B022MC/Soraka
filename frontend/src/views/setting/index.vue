@@ -19,12 +19,12 @@
             </a-col>
             <a-col :span="8">
               <a-form-item field="concurrency" label="LCU并发数">
-                <a-input-number
-                  v-model="formData.concurrency"
-                  :min="1"
-                  :max="10"
-                  @change="saveConcurrency"
-                />
+<!--                <a-input-number-->
+<!--                  v-model="formData.concurrency"-->
+<!--                  :min="1"-->
+<!--                  :max="10"-->
+<!--                  @change="saveConcurrency"-->
+<!--                />-->
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -128,7 +128,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useAppStore } from "@/store";
 import { System, Window } from "@wailsio/runtime";
-import { GreetService } from "/#/Soraka/service/greet";
+import { GreetService } from "/#/Soraka/internal/service/greet";
 import { Message } from "@arco-design/web-vue";
 const appStore = useAppStore();
 const theme = computed(() => {

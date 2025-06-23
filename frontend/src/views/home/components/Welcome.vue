@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
-import { WailsAPI } from "/#/Soraka/service/lcu";
+import { WailsAPI } from "/#/Soraka/internal/service/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 

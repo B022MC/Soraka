@@ -1,0 +1,58 @@
+{
+  "appName": "lol对局先知",
+  "websiteTitle": "lol.buffge.com",
+  "adaptChatWebsiteTitle": "soraka.com",
+  "projectUrl": "github.com/b022mc/Soraka",
+  "mode": "debug",
+  "log": {
+    "level": "info"
+  },
+  "buffApi": {
+    "url": "https://k2-api.buffge.com:40012/prod/lol",
+    "timeout": 5
+  },
+  "webView": {
+    "indexUrl": "https://lol.buffge.com/dev/client"
+  },
+  "otlp": {
+    "endpointUrl": "",
+    "token": ""
+  },
+  "calcScore": {
+    "enabled": true,
+    "gameMinDuration": 900,
+    "allowQueueIDList": [430, 420, 450, 440, 1700],
+    "firstBlood": [10, 5],
+    "pentaKills": [20],
+    "quadraKills": [10],
+    "tripleKills": [5],
+    "joinTeamRate": [10, 5, 5, 10],
+    "goldEarned": [10, 5, 5, 10],
+    "hurtRank": [10, 5],
+    "money2HurtRateRank": [10, 5],
+    "visionScoreRank": [10, 5],
+    "minionsKilled": [[10, 20], [9, 10], [8, 5]],
+    "killRate": [
+      { "limit": 50, "scoreConf": [[15, 40], [10, 20], [5, 10]] },
+      { "limit": 40, "scoreConf": [[15, 20], [10, 10], [5, 5]] }
+    ],
+    "hurtRate": [
+      { "limit": 40, "scoreConf": [[15, 40], [10, 20], [5, 10]] },
+      { "limit": 30, "scoreConf": [[15, 20], [10, 10], [5, 5]] }
+    ],
+    "assistRate": [
+      { "limit": 50, "scoreConf": [[20, 30], [18, 25], [15, 20], [10, 10], [5, 5]] },
+      { "limit": 40, "scoreConf": [[20, 15], [15, 10], [10, 5], [5, 3]] }
+    ],
+    "adjustKDA": [2, 5],
+    "horse": [
+      { "score": 180, "name": "通天代" },
+      { "score": 150, "name": "小代" },
+      { "score": 125, "name": "上等马" },
+      { "score": 105, "name": "中等马" },
+      { "score": 95,  "name": "下等马" },
+      { "score": 0.0001, "name": "牛马" }
+    ],
+    "mergeMsg": false
+  }
+}

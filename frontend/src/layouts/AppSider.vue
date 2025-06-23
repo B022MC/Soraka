@@ -109,7 +109,7 @@ import { useRouter, useRoute } from "vue-router";
 import routerMap from "@/router/routerMap";
 import { Events } from "@wailsio/runtime";
 import type { AuthInfo } from "@/api/lcu";
-import { WailsAPI } from "/#/Soraka/service/lcu";
+import { WailsAPI } from "/#/Soraka/internal/service/lcu";
 import { useUserStore } from "@/store";
 
 const router = useRouter();
@@ -149,7 +149,6 @@ onMounted(() => {
   WailsAPI.GetAuthInfo()
     .then((info: AuthInfo) => {
       authInfo.value = info;
-      loadUserInfo();
     })
     .catch(() => {
       console.error("failed to get auth info");
@@ -159,7 +158,6 @@ onMounted(() => {
     if (status) {
       WailsAPI.GetAuthInfo().then((info: AuthInfo) => {
         authInfo.value = info;
-        loadUserInfo();
       });
     }
   });

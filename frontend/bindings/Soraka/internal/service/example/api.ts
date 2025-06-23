@@ -6,11 +6,11 @@
 import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 
 export function Hello(name: string): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(1364835943, name) as any;
+    let $resultPromise = $Call.ByID(273124019, name) as any;
     return $resultPromise;
 }
 
 export function ID(): Promise<string> & { cancel(): void } {
-    let $resultPromise = $Call.ByID(2678152140) as any;
+    let $resultPromise = $Call.ByID(3457447112) as any;
     return $resultPromise;
 }

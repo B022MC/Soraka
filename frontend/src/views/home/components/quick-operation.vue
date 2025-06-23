@@ -53,7 +53,7 @@
 import { onMounted } from "vue";
 import { Notification, Message } from "@arco-design/web-vue";
 import { WML } from "@wailsio/runtime";
-import { WailsAPI } from "/#/Soraka/service/lcu";
+import { WailsAPI } from "/#/Soraka/internal/service/lcu";
 onMounted(async () => {
   WML.Reload();
 });
