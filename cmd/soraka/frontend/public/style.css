@@ -16,7 +16,7 @@
     font-style: normal;
     font-weight: 400;
     src: local(""),
-    url("./Inter-Medium.ttf") format("truetype");
+    url("Inter-Medium.ttf") format("truetype");
 }
 
 a {

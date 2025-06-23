@@ -1,6 +1,4 @@
-package app
-
-import "Soraka/internal/global"
+package global
 
 var (
 	APPVersion = "0.1.0"
@@ -10,7 +8,7 @@ var (
 )
 
 func init() {
-	global.SetAppInfo(global.AppInfo{
+	SetAppInfo(AppInfo{
 		Version:   APPVersion,
 		Commit:    Commit,
 		BuildUser: BuildUser,

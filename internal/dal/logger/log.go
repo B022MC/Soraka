@@ -1,10 +1,9 @@
 package logger
 
 import (
+	"Soraka/global"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-
-	"Soraka/internal/global"
 )
 
 func Debug(msg string, keysAndValues ...any) {

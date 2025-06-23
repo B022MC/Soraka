@@ -1,6 +1,7 @@
 package app
 
 import (
+	"Soraka/global"
 	"Soraka/pkg"
 	"fmt"
 	"sync"
@@ -13,7 +14,6 @@ import (
 
 	"Soraka/internal/dal/lcu/models"
 	"Soraka/internal/dal/logger"
-	"Soraka/internal/global"
 	"Soraka/internal/service/lcu"
 )
 

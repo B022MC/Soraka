@@ -1,5 +1,5 @@
 import { defHttp } from '@/utils/http';
-import { FilterParam } from '/@/utils';
+import { FilterParam } from '/src/utils';
 enum Api {
     // getList = '/createcode/product/getList',
     getData= '/wails/httprequest/getData',

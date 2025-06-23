@@ -1,11 +1,10 @@
 package models
 
 import (
+	"Soraka/global"
 	"context"
 
 	"gorm.io/gorm"
-
-	"Soraka/internal/global"
 )
 
 type (

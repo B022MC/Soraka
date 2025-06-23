@@ -1,6 +1,7 @@
 package app
 
 import (
+	"Soraka/global"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,7 +15,6 @@ import (
 	"Soraka/internal/conf"
 	"Soraka/internal/dal/db/models"
 	lcuModels "Soraka/internal/dal/lcu/models"
-	"Soraka/internal/global"
 	"Soraka/internal/service/lcu"
 )
 
@@ -30,7 +30,7 @@ type (
 	}
 )
 
-func (api Api) ProphetActiveMid(c *gin.Context) {
+func (api *Api) ProphetActiveMid(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	if !api.p.LcuActive {
 		app.ErrorMsg("请检查lol客户端是否已启动")
@@ -38,7 +38,7 @@ func (api Api) ProphetActiveMid(c *gin.Context) {
 	}
 	c.Next()
 }
-func (api Api) QueryHorseBySummonerName(c *gin.Context) {
+func (api *Api) QueryHorseBySummonerName(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	d := &summonerNameReq{}
 	if err := c.ShouldBind(d); err != nil {
@@ -82,15 +82,15 @@ func (api Api) QueryHorseBySummonerName(c *gin.Context) {
 	})
 }
 
-func (api Api) CopyHorseMsgToClipBoard(c *gin.Context) {
+func (api *Api) CopyHorseMsgToClipBoard(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	app.Success()
 }
-func (api Api) GetAllConf(c *gin.Context) {
+func (api *Api) GetAllConf(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	app.Data(global.GetClientUserConf())
 }
-func (api Api) UpdateClientConf(c *gin.Context) {
+func (api *Api) UpdateClientConf(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	d := &conf.UpdateClientUserConfReq{}
 	if err := c.ShouldBind(d); err != nil {
@@ -107,17 +107,17 @@ func (api Api) UpdateClientConf(c *gin.Context) {
 	}
 	app.Success()
 }
-func (api Api) DevHand(c *gin.Context) {
+func (api *Api) DevHand(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	app.Data(gin.H{
 		"buffge": 23456,
 	})
 }
-func (api Api) GetAppInfo(c *gin.Context) {
+func (api *Api) GetAppInfo(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	app.Data(global.AppBuildInfo)
 }
-func (api Api) GetLcuAuthInfo(c *gin.Context) {
+func (api *Api) GetLcuAuthInfo(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	port, token, err := lcu.GetLolClientApiInfo()
 	if err != nil {
@@ -130,7 +130,7 @@ func (api Api) GetLcuAuthInfo(c *gin.Context) {
 	})
 }
 
-func (api Api) GetClientPath(c *gin.Context) {
+func (api *Api) GetClientPath(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	path, err := lcu.FindLolPath()
 	if err != nil {
@@ -140,7 +140,7 @@ func (api Api) GetClientPath(c *gin.Context) {
 	app.Data(gin.H{"path": path})
 }
 
-func (api Api) StartClient(c *gin.Context) {
+func (api *Api) StartClient(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	path, err := lcu.FindLolPath()
 	if err != nil {
@@ -154,7 +154,7 @@ func (api Api) StartClient(c *gin.Context) {
 	app.Success()
 }
 
-func (api Api) ListRecentMatches(c *gin.Context) {
+func (api *Api) ListRecentMatches(c *gin.Context) {
 	app := ginApp.GetApp(c)
 	req := &matchListReq{}
 	if err := c.ShouldBind(req); err != nil {
@@ -168,7 +168,7 @@ func (api Api) ListRecentMatches(c *gin.Context) {
 	}
 	app.Data(list)
 }
-func (api Api) LcuProxy(c *gin.Context) {
+func (api *Api) LcuProxy(c *gin.Context) {
 	if api.p == nil {
 		fmt.Println("[错误] api.p 是 nil")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "LCU代理未初始化 [p]"})

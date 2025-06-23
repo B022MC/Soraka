@@ -1,9 +1,10 @@
 package app
 
 import (
+	"Soraka/global"
 	"Soraka/internal/dal/lcu/models"
 	"Soraka/internal/dal/logger"
-	"Soraka/internal/global"
+	"Soraka/internal/router"
 	"Soraka/internal/service/lcu"
 	"context"
 	"fmt"
@@ -167,7 +168,7 @@ func (p *Prophet) initGin() {
 	}
 
 	p.api = &Api{p: p}
-	RegisterRoutes(engine, p.api)
+	router.RegisterRoutes(engine, p.api)
 
 	srv := &http.Server{
 		Addr:    p.opts.httpAddr,
