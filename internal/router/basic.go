@@ -28,6 +28,7 @@ func (r *BasicRouter) InitRouter(root *gin.RouterGroup) {
 }
 
 func (r *BasicRouter) CollectWailsServices(services *[]application.Service) {
-	*services = append(*services, application.NewService(r.greetService))
+	ws := greet.NewWailsService(r.greetService)
+	*services = append(*services, application.NewService(ws))
 	//*services = append(*services, application.NewService(r.lcuApiService))
 }
