@@ -36,6 +36,18 @@ wails3 dev
 wails3 build
 ```
 
+如果使用 `go build`，请确保包含 `production` 构建标签，以便将前端资源嵌入到可执行文件中：
+
+```bash
+go build -tags production ./...
+```
+
+若通过 `Taskfile` 构建，可执行：
+
+```bash
+task build PRODUCTION=true
+```
+
 ### 前端构建说明
 
 运行 `wails3 build` 或 `npm run build` 会在 `frontend/dist` 目录生成前端文件。**注意**：构建结果会在编译 Go 程序时被嵌入。如果在编译后才执行前端构建，需要重新执行 `wails3 build` 或 `go build`，否则运行时可能报告找不到 `index.html`。
