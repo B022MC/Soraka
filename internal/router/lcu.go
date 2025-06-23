@@ -22,5 +22,6 @@ func (r *LcuRouter) InitRouter(root *gin.RouterGroup) {
 	r.lcuApiService.RegisterGin(group)
 }
 func (r *LcuRouter) CollectWailsServices(services *[]application.Service) {
-	*services = append(*services, application.NewService(r.lcuApiService))
+	ws := lcu.NewWailsService(r.lcuApiService)
+	*services = append(*services, application.NewService(ws))
 }
