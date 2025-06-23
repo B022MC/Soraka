@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"io/fs"
 	"log"
 	"net"
 )
@@ -17,6 +18,10 @@ import (
 //
 //go:embed all:frontend/dist
 var assets embed.FS
+
+// distFS is a sub filesystem rooted at the dist directory. It is used by Wails
+// to serve the bundled frontend assets.
+var distFS fs.FS
 
 // 嵌入托盘图标
 //
@@ -37,6 +42,17 @@ func main() {
 	mustCheckPortAvailable("9245") // Vite dev server（或 Wails dev）
 
 	logger := log.Default()
+
+	// Prepare embedded frontend assets. When the project hasn't been built
+	// yet, this directory may be empty which will result in a missing
+	// index.html warning from Wails.
+	var err error
+	distFS, err = fs.Sub(assets, "frontend/dist")
+	if err != nil {
+		logger.Printf("前端资源未找到，尝试在 'frontend/dist' 目录执行 'npm run build'")
+	} else if _, err := fs.ReadFile(distFS, "index.html"); err != nil {
+		logger.Printf("未发现 index.html，需先构建前端资源: npm run build")
+	}
 
 	// 临时 app 创建主窗口
 	tempApp := application.New(application.Options{})
@@ -97,7 +113,7 @@ func main() {
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
 		Services:    services,
 		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(assets),
+			Handler: application.AssetFileServerFS(distFS),
 		},
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,

@@ -38,7 +38,7 @@ wails3 build
 
 ### 前端构建说明
 
-运行 `wails3 build` 或 `npm run build` 会在 `frontend/dist` 目录生成前端文件。若启动应用时提示找不到 `index.html`，请先执行该构建步骤。
+运行 `wails3 build` 或 `npm run build` 会在 `frontend/dist` 目录生成前端文件。**注意**：构建结果会在编译 Go 程序时被嵌入。如果在编译后才执行前端构建，需要重新执行 `wails3 build` 或 `go build`，否则运行时可能报告找不到 `index.html`。
 
 如需打包安装包，可执行：
 
