@@ -36,6 +36,10 @@ wails3 dev
 wails3 build
 ```
 
+### 前端构建说明
+
+运行 `wails3 build` 或 `npm run build` 会在 `frontend/dist` 目录生成前端文件。若启动应用时提示找不到 `index.html`，请先执行该构建步骤。
+
 如需打包安装包，可执行：
 
 ```bash
