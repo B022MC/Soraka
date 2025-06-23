@@ -1,4 +1,4 @@
-package main
+package app
 
 type ApplyOption func(o *options)
 

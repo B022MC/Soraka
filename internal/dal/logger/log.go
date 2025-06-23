@@ -4,7 +4,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"Soraka/global"
+	"Soraka/internal/global"
 )
 
 func Debug(msg string, keysAndValues ...any) {

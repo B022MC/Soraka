@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -11,11 +11,11 @@ import (
 
 	ginApp "Soraka/pkg/gin"
 
-	"Soraka/conf"
-	"Soraka/dal/db/models"
-	lcuModels "Soraka/dal/lcu/models"
-	"Soraka/global"
-	"Soraka/service/lcu"
+	"Soraka/internal/conf"
+	"Soraka/internal/dal/db/models"
+	lcuModels "Soraka/internal/dal/lcu/models"
+	"Soraka/internal/global"
+	"Soraka/internal/service/lcu"
 )
 
 type (

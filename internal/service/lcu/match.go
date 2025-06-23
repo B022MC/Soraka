@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"Soraka/dal/lcu/models"
+	"Soraka/internal/dal/lcu/models"
 )
 
 type MatchBrief struct {

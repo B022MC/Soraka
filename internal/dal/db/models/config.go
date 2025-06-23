@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"Soraka/global"
+	"Soraka/internal/global"
 )
 
 type (

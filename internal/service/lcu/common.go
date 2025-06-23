@@ -1,7 +1,7 @@
 package lcu
 
 import (
-	"Soraka/dal/lcu/models"
+	"Soraka/internal/dal/lcu/models"
 	"fmt"
 	"strconv"
 

@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"Soraka/pkg"
@@ -11,10 +11,10 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
-	"Soraka/dal/lcu/models"
-	"Soraka/dal/logger"
-	"Soraka/global"
-	"Soraka/service/lcu"
+	"Soraka/internal/dal/lcu/models"
+	"Soraka/internal/dal/logger"
+	"Soraka/internal/global"
+	"Soraka/internal/service/lcu"
 )
 
 const (

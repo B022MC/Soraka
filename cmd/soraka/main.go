@@ -1,10 +1,11 @@
 package main
 
 import (
-	"Soraka/dal/logger"
-	example "Soraka/service/example"
-	service "Soraka/service/greet"
-	lcuService "Soraka/service/lcu"
+	backend "Soraka/internal/app"
+	"Soraka/internal/dal/logger"
+	example "Soraka/internal/service/example"
+	service "Soraka/internal/service/greet"
+	lcuService "Soraka/internal/service/lcu"
 	"embed"
 	"fmt"
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -119,7 +120,7 @@ func main() {
 	// 初始化 logger
 	logger.Init()
 
-	prophet := NewProphet()
+	prophet := backend.NewProphet()
 	go func() {
 		if err := prophet.Run(); err != nil {
 			log.Fatal("启动 Prophet 失败:", err)

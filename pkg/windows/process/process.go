@@ -12,7 +12,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"Soraka/dal/logger"
+	"Soraka/internal/dal/logger"
 )
 
 // Windows API functions

@@ -14,8 +14,8 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 
-	"Soraka/dal/lcu/models"
-	"Soraka/dal/logger"
+	"Soraka/internal/dal/lcu/models"
+	"Soraka/internal/dal/logger"
 )
 
 const (

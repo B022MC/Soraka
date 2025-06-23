@@ -1,7 +1,7 @@
 package champion
 
 import (
-	"Soraka/dal/lcu/models"
+	"Soraka/internal/dal/lcu/models"
 )
 
 const (

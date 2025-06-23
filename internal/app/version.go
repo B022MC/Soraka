@@ -1,6 +1,6 @@
-package main
+package app
 
-import "Soraka/global"
+import "Soraka/internal/global"
 
 var (
 	APPVersion = "0.1.0"
