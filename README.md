@@ -45,3 +45,13 @@ wails3 build
 ```bash
 wails3 package
 ```
+
+### 常见问题排查
+
+Windows 环境可能会在启动时输出以下错误：
+
+```
+SetProcessDpiAwarenessContext failed 0: 18446744073709551612 Access is denied.
+```
+
+这是由于系统 DPI 设置权限不足导致，通常不会影响应用正常运行，可忽略。
