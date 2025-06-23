@@ -3,7 +3,6 @@ package main
 import (
 	backend "Soraka/internal/app"
 	"Soraka/internal/dal/logger"
-	example "Soraka/internal/service/example"
 	service "Soraka/internal/service/greet"
 	lcuService "Soraka/internal/service/lcu"
 	"embed"
@@ -37,7 +36,6 @@ func main() {
 		Name:        "SorakaGui",
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
 		Services: []application.Service{
-			application.NewService(&example.API{}),
 			application.NewService(&lcuService.WailsAPI{}),
 			application.NewService(&service.GreetService{}),
 		},

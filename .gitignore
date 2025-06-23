@@ -1,7 +1,7 @@
 .task
 bin
-cmd/soraka/frontend/dist
-cmd/soraka/frontend/node_modules
-cmd/soraka/build/linux/appimage/build
-cmd/soraka/build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
+frontend/dist
+frontend/node_modules
+soraka/build/linux/appimage/build
+soraka/build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
 config/clientconfig.json
