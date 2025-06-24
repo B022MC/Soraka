@@ -2,16 +2,12 @@ package global
 
 import (
 	"context"
-	"log"
-	"os"
-	"sync"
-	"time"
-
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"sync"
 
-	"Soraka/conf"
-	"Soraka/dal/lcu/models"
+	"Soraka/internal/conf"
+	"Soraka/internal/dal/lcu/models"
 )
 
 type (
@@ -137,51 +133,17 @@ var (
 	SqliteDB *gorm.DB
 )
 
-func SetUserMac(userMacHash string) {
-	confMu.Lock()
-	userInfo.MacHash = userMacHash
-	confMu.Unlock()
-}
-func SetCurrSummoner(summoner *models.SummonerProfileData) {
-	confMu.Lock()
-	userInfo.Summoner = summoner
-	confMu.Unlock()
-}
 func GetUserInfo() UserInfo {
 	confMu.Lock()
 	defer confMu.Unlock()
 	return *userInfo
 }
-func Cleanup() {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
-	defer cancel()
-	for name, cleanup := range Cleanups {
-		if name == LogWriterCleanupKey {
-			continue
-		}
-		if err := cleanup(ctx); err != nil {
-			log.Printf("%s cleanup err:%v\n", name, err)
-		}
-	}
-	if fn, ok := Cleanups[LogWriterCleanupKey]; ok {
-		_ = fn(ctx)
-	}
-}
+
 func IsDevMode() bool {
 	return GetEnv() == conf.ModeDebug
 }
-func IsProdMode() bool {
-	return !IsDevMode()
-}
 func GetEnv() conf.Mode {
 	return Conf.Mode
-}
-
-func GetEnvMode() conf.Mode {
-	return os.Getenv(EnvKeyMode)
-}
-func IsEnvModeDev() bool {
-	return GetEnvMode() == conf.ModeDebug
 }
 
 func GetScoreConf() conf.CalcScoreConf {
@@ -189,12 +151,7 @@ func GetScoreConf() conf.CalcScoreConf {
 	defer confMu.Unlock()
 	return Conf.CalcScore
 }
-func SetScoreConf(scoreConf conf.CalcScoreConf) {
-	confMu.Lock()
-	Conf.CalcScore = scoreConf
-	confMu.Unlock()
-	return
-}
+
 func GetClientUserConf() conf.ClientUserConf {
 	confMu.Lock()
 	defer confMu.Unlock()
@@ -238,9 +195,4 @@ func SetClientUserConf(cfg conf.UpdateClientUserConfReq) *conf.ClientUserConf {
 }
 func SetAppInfo(info AppInfo) {
 	AppBuildInfo = info
-}
-func SetCleanup(name string, fn func(c context.Context) error) {
-	cleanupsMu.Lock()
-	Cleanups[name] = fn
-	cleanupsMu.Unlock()
 }

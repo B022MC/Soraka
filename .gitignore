@@ -1,7 +1,8 @@
 .task
 bin
-frontend/dist
+# Frontend build output is now committed for minimal placeholder
+#frontend/dist
 frontend/node_modules
-build/linux/appimage/build
-build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
+soraka/build/linux/appimage/build
+soraka/build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
 config/clientconfig.json

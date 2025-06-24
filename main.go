@@ -1,9 +1,10 @@
 package main
 
 import (
-	example "Soraka/service/example"
-	service "Soraka/service/greet"
-	lcuService "Soraka/service/lcu"
+	"Soraka/internal/proxy"
+	"Soraka/internal/router"
+	"Soraka/internal/server"
+	bdkgin "Soraka/pkg/gin"
 	"embed"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -12,16 +13,17 @@ import (
 	"net"
 )
 
-// 前端构建产物
+// 嵌入前端构建产物
 //
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// 托盘图标
+// 嵌入托盘图标
 //
 //go:embed build/logo.png
 var trayIcon []byte
 
+// 检查端口占用
 func mustCheckPortAvailable(port string) {
 	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
@@ -29,17 +31,28 @@ func mustCheckPortAvailable(port string) {
 	}
 	_ = ln.Close()
 }
+
 func main() {
+	//if !utils.IsRunAsAdmin() {
+	//	err := utils.RelaunchAsAdmin()
+	//	if err != nil {
+	//		fmt.Printf("以管理员身份重新启动失败: %v\n", err)
+	//		os.Exit(1)
+	//	}
+	//	// 当前进程退出，等待管理员权限的进程继续
+	//	os.Exit(0)
+	//}
 	mustCheckPortAvailable("8200") // Gin API
-	mustCheckPortAvailable("9245") // Vite Dev Server
+	mustCheckPortAvailable("9245") //
+	// 初始化业务 Router 并收集服务
+	rootRouter := router.NewRootRouter()
+	var services []application.Service
+	rootRouter.CollectWailsServices(&services)
+
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
 		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
-		Services: []application.Service{
-			application.NewService(&example.API{}),
-			application.NewService(&lcuService.WailsAPI{}),
-			application.NewService(&service.GreetService{}),
-		},
+		Services:    services,
 
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -48,8 +61,8 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 	})
+	logger := log.Default()
 
-	// 创建主窗口
 	mainWin := app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
 		Title:     "Soraka - 游戏大厅",
 		Frameless: true, // 无边框，前端实现拖动
@@ -71,60 +84,53 @@ func main() {
 			DisableFramelessWindowDecorations: false, // 允许拖动阴影
 		},
 	})
+	// 注入 window
+	rootRouter.SetMainWin(mainWin)
+	// 初始化 Gin 引擎
+	engine := bdkgin.NewGin()
+	engine.Use(gin.Logger(), gin.Recovery())
+	rootRouter.InitRouter(&engine.RouterGroup)
 
-	// === 托盘图标设置 ===
+	// 初始化 LCU Proxy
+	prophet := server.NewProphet(logger)
+	proxy.RegisterLcuProxy(engine, prophet)
+
+	// 初始化 HTTP Server
+	httpServer := server.NewHTTPServer("127.0.0.1:8200", true, engine, logger)
+
+	// 启动 Gin 服务
+	go func() {
+		if err := httpServer.StartWithSignal(); err != nil {
+			logger.Printf("HTTP 服务启动失败: %v", err)
+		}
+	}()
+	//// 启动 LCU Proxy
+	go func() {
+		if err := prophet.Run(); err != nil {
+			logger.Printf("LCU Proxy 停止: %v", err)
+		}
+	}()
+	// 启动 Notifier 定时推送任务
+	notifier := server.NewNotifier(mainWin)
+	notifier.Start()
+
+	// 托盘设置
 	tray := app.NewSystemTray()
 	tray.SetLabel("Soraka")
 	tray.SetIcon(trayIcon)
 	tray.SetDarkModeIcon(trayIcon)
-
-	// 双击左键：显示窗口
 	tray.OnDoubleClick(func() {
 		mainWin.Show()
 		mainWin.Focus()
 	})
 
-	// start API server for frontend calls
-	go func() {
-		r := gin.Default()
-
-		// 初始化 LCU 端口和 token
-		port, token, err := lcuService.GetLolClientApiInfo()
-		if err != nil {
-			log.Printf("初始化 LCU 代理失败: %v", err)
-			// 这里可以考虑降级处理或延迟初始化
-		}
-
-		var rp *lcuService.RP
-		if port > 0 && token != "" {
-			rp, err = lcuService.NewRP(port, token)
-			if err != nil {
-				log.Printf("创建 LCU 反向代理失败: %v", err)
-			}
-		}
-
-		api := &Api{
-			p: &Prophet{
-				LcuActive: true,
-				lcuRP:     rp,
-			},
-		}
-
-		RegisterRoutes(r, api)
-
-		if err := r.Run(":8200"); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	lcuService.StartNotifier(mainWin)
-	// 监听前端事件
+	// 前端事件监听示例
 	app.OnEvent("myevent", func(e *application.CustomEvent) {
 		fmt.Println("main监听事件：", e)
 	})
 
-	// 启动应用
+	// 启动 Wails
 	if err := app.Run(); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("应用退出异常: %v", err)
 	}
 }
