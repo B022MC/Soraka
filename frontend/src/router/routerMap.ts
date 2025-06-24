@@ -1,7 +1,7 @@
 const constantRouterMap = [
   {
     path: '/',
-    component: () => import('@/layouts/AppSider.vue'),
+    component: () => import('../layouts/AppSider.vue'),
     redirect: { name: 'home' },
     children: [
       {

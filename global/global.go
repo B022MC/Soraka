@@ -6,8 +6,8 @@ import (
 	"gorm.io/gorm"
 	"sync"
 
-	"Soraka/conf"
-	"Soraka/dal/lcu/models"
+	"Soraka/internal/conf"
+	"Soraka/internal/dal/lcu/models"
 )
 
 type (

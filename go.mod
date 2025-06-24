@@ -5,10 +5,7 @@ go 1.23.3
 toolchain go1.23.10
 
 require (
-	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/bytedance/sonic v1.12.4
-	github.com/gin-contrib/cors v1.7.2
-	github.com/gin-contrib/pprof v1.5.0
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/google/uuid v1.6.0

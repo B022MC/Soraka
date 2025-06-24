@@ -10,7 +10,7 @@
       "esModuleInterop": true,// 是否通过为所有导入模块创建命名空间对象，允许CommonJS和ES模块之间的互操作性
       "ignoreDeprecations": "5.0",//请指定编译器选项与suppressImplicitAnyIndexErrors配合
       "allowSyntheticDefaultImports": true,//是否允许从没有默认导出的模块中默认导入，默认：false。
-      "baseUrl": ".",
+      "baseUrl": "./",
       "paths": {
         "@/*": ["src/*"],
         "/@/*": ["src/*"],

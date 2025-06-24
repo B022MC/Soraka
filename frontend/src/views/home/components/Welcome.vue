@@ -9,7 +9,6 @@
         <a-avatar style="padding: 2px" :size="68">
           <img
               :src="userStore.avatar || defaultAvatar"
-              @error="(e) => e.target.src = defaultAvatar"
           />        </a-avatar>
         <div class="welcome">
           <p class="hello">{{ goodTimeText() }}！{{ userStore.nickname }}</p>
@@ -35,7 +34,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { Events } from "@wailsio/runtime";
-import { WailsAPI } from "/#/Soraka/service/lcu";
+import { LcuApiWails } from "/#/Soraka/internal/wails/lcu";
 import { useUserStore } from "@/store";
 import { goodTimeText } from "@/utils";
 
@@ -46,31 +45,6 @@ const clientPath = ref("");
 const lcuOnline = ref(false);
 const lcuPort = ref("");
 const lcuToken = ref("");
-
-// const loadUserInfo = () => {
-//   WailsAPI.GetCurrentSummoner()
-//     .then((info: any) => {
-//       if (!info) return;
-//       userStore.setInfo({
-//         nickname: info.displayName,
-//         avatar: info.avatar,
-//         region: info.region,
-//         tag: info.tag,
-//         rank: info.rank,
-//         winRate: info.winRate,
-//         wins: info.wins,
-//         losses: info.losses,
-//         totalGames: info.totalGames,
-//         createtime: info.createtime,
-//         level: info.level,
-//         xpSinceLastLevel: info.xpSinceLastLevel,
-//         xpUntilNextLevel: info.xpUntilNextLevel,
-//       });
-//     })
-//     .catch((err) => {
-//       console.error("[GetCurrentSummoner]", err);
-//     });
-// };
 const defaultAvatar = new URL('@/assets/logo.png', import.meta.url).href;
 
 onMounted(() => {
@@ -80,7 +54,7 @@ onMounted(() => {
   });
   // loadUserInfo
   // 获取客户端路径
-  WailsAPI.GetClientPath()
+  LcuApiWails.GetClientPath()
     .then((p: string) => {
       clientPath.value = p;
     })
@@ -117,21 +91,26 @@ onMounted(() => {
 
     if (info && typeof info === "object") {
       console.log("[Event] summonerInfo 收到:", info);
+
       userStore.setInfo({
-        nickname: info.displayName,
-        avatar: info.avatar,
-        region: info.region,
-        tag: info.tag,
-        rank: info.rank,
-        winRate: info.winRate,
-        wins: info.wins,
-        losses: info.losses,
-        totalGames: info.totalGames,
-        createtime: info.createtime,
-        server: info.server,
-        level: info.level,
+        accountId: info.accountId,
+        summonerId: info.summonerId,
+        puuid: info.puuid,
+        nickname: info.gameName || info.displayName,
+        avatar: info.avatarUrl,
+        region: info.region || "",    // 如果后端没传，补空字符串
+        tag: info.tagLine,
+        rank: info.rank || "",        // 可选数据
+        winRate: info.winRate || 0,   // 可选数据
+        wins: info.wins || 0,
+        losses: info.losses || 0,
+        totalGames: info.totalGames || 0,
+        createtime: info.createtime || "",
+        level: info.summonerLevel,
         xpSinceLastLevel: info.xpSinceLastLevel,
         xpUntilNextLevel: info.xpUntilNextLevel,
+        percentCompleteForNextLevel: info.percentCompleteForNextLevel,
+        privacy: info.privacy,
       });
     } else {
       console.warn("[Event] summonerInfo 无效数据:", info);

@@ -1,0 +1,23 @@
+.container[data-v-446eec0f] {
+  padding: 8px;
+  display: flex;
+}
+.container .left-side[data-v-446eec0f] {
+  flex: 1;
+}
+.container .right-side[data-v-446eec0f] {
+  width: 280px;
+  margin-left: 16px;
+}
+.container .card[data-v-446eec0f] {
+  padding: 8px;
+  border-radius: 5px;
+  background: var(--color-bg-1);
+  box-shadow: 0 10px 11px rgb(var(--arcoblue-3), 0.08), 0 6px 4px rgb(var(--arcoblue-3), 0.06), 0 0 0 1px rgb(var(--arcoblue-3), 0.05), 0 2.89797px 2.12518px rgb(var(--arcoblue-3), 0.04), 0 1.87823px 1.37737px rgb(var(--arcoblue-3), 0.03), 0 1.18233px 0.867039px rgb(var(--arcoblue-3), 0.02), 0 0.67932px 0.498168px rgb(var(--arcoblue-3), 0.02), 0 0.298986px 0.219257px rgb(var(--arcoblue-3), 0.01);
+}
+.container[data-v-446eec0f] .arco-form-item {
+  margin-bottom: 10px;
+}
+.container[data-v-446eec0f] .arco-form-item-label-col {
+  margin-bottom: 0px;
+}

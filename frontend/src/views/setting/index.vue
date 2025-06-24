@@ -19,12 +19,12 @@
             </a-col>
             <a-col :span="8">
               <a-form-item field="concurrency" label="LCU并发数">
-                <a-input-number
-                  v-model="formData.concurrency"
-                  :min="1"
-                  :max="10"
-                  @change="saveConcurrency"
-                />
+<!--                <a-input-number-->
+<!--                  v-model="formData.concurrency"-->
+<!--                  :min="1"-->
+<!--                  :max="10"-->
+<!--                  @change="saveConcurrency"-->
+<!--                />-->
               </a-form-item>
             </a-col>
             <a-col :span="8">
@@ -128,7 +128,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useAppStore } from "@/store";
 import { System, Window } from "@wailsio/runtime";
-import { GreetService } from "/#/Soraka/service/greet";
+import { GreetSvcWails } from "/#/Soraka/internal/wails/greet";
 import { Message } from "@arco-design/web-vue";
 const appStore = useAppStore();
 const theme = computed(() => {
@@ -165,7 +165,7 @@ const handleTheme = async () => {
     isdark = false;
   }
   appStore.toggleTheme(isdark);
-  if (isdark) GreetService.SetTheme();
+  if (isdark) GreetSvcWails.SetTheme();
 };
 // 将窗口设置为始终位于顶部。
 const changeSetAlwaysOnTop = (value: any) => {
@@ -193,7 +193,7 @@ const changeSetResizable = (value: any) => {
 };
 
 const saveConcurrency = async (value: number) => {
-  await ClientService.SaveConcurrency(value);
+  // await ClientService.SaveConcurrency(value);
 };
 </script>
 
