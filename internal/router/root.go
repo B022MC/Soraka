@@ -10,22 +10,27 @@ import (
 type RootRouter struct {
 	basicRouter *BasicRouter
 	lcuRouter   *LcuRouter
+	mainWin     *application.WebviewWindow
 }
 
-// NewRootRouter 统一构建各模块实例
-func NewRootRouter(win *application.WebviewWindow) *RootRouter {
-	// 业务服务实例化
-	greetSvc := greet.NewGreetService(win)
-
-	// 子路由实例化
+// 构建 RootRouter，但不传 mainWin
+func NewRootRouter() *RootRouter {
+	greetSvc := greet.NewGreetService() // 先不传 window
 	basicRouter := NewBasicRouter(greetSvc)
 
 	lcuApiSvc := lcu.NewLcuApiService()
 	lcuRouter := NewLcuRouter(lcuApiSvc)
+
 	return &RootRouter{
 		basicRouter: basicRouter,
 		lcuRouter:   lcuRouter,
 	}
+}
+
+// 注入 window
+func (r *RootRouter) SetMainWin(win *application.WebviewWindow) {
+	r.mainWin = win
+	r.basicRouter.SetMainWin(win)
 }
 
 // Gin 注册

@@ -1,17 +1,18 @@
 package router
 
 import (
-	"Soraka/internal/service/lcu"
+	lcuService "Soraka/internal/service/lcu"
+	lcuWails "Soraka/internal/wails/lcu"
 	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 type LcuRouter struct {
-	lcuApiService *lcu.LcuApiService
+	lcuApiService *lcuService.LcuApiService
 }
 
 func NewLcuRouter(
-	lcuApiService *lcu.LcuApiService,
+	lcuApiService *lcuService.LcuApiService,
 ) *LcuRouter {
 	return &LcuRouter{
 		lcuApiService: lcuApiService,
@@ -22,6 +23,6 @@ func (r *LcuRouter) InitRouter(root *gin.RouterGroup) {
 	r.lcuApiService.RegisterGin(group)
 }
 func (r *LcuRouter) CollectWailsServices(services *[]application.Service) {
-	ws := lcu.NewWailsService(r.lcuApiService)
+	ws := lcuWails.NewLcuApiWails(r.lcuApiService)
 	*services = append(*services, application.NewService(ws))
 }

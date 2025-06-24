@@ -1,0 +1,39 @@
+.life-page[data-v-36b89bf0] {
+  padding: 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4f8, #ffffff);
+  color: var(--color-text);
+}
+.section[data-v-36b89bf0] {
+  margin-bottom: 40px;
+}
+.section-title[data-v-36b89bf0] {
+  margin-bottom: 16px;
+  font-weight: bold;
+  font-size: 20px;
+}
+.item-desc[data-v-36b89bf0] {
+  font-size: 13px;
+  color: var(--color-text-2);
+  margin-bottom: 12px;
+}
+.collapse-wrapper[data-v-36b89bf0] {
+  border: none;
+  background: transparent;
+}
+.collapse-item[data-v-36b89bf0] {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(180, 180, 180, 0.35);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.collapse-item .arco-collapse-item-header[data-v-36b89bf0] {
+  padding: 16px;
+  font-weight: 500;
+  font-size: 14px;
+}
+.collapse-item .collapse-body[data-v-36b89bf0] {
+  padding: 16px;
+}

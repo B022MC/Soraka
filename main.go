@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
-	"io/fs"
 	"log"
 	"net"
 )
@@ -18,10 +17,6 @@ import (
 //
 //go:embed all:frontend/dist
 var assets embed.FS
-
-// distFS is a sub filesystem rooted at the dist directory. It is used by Wails
-// to serve the bundled frontend assets.
-var distFS fs.FS
 
 // 嵌入托盘图标
 //
@@ -38,31 +33,45 @@ func mustCheckPortAvailable(port string) {
 }
 
 func main() {
+	//if !utils.IsRunAsAdmin() {
+	//	err := utils.RelaunchAsAdmin()
+	//	if err != nil {
+	//		fmt.Printf("以管理员身份重新启动失败: %v\n", err)
+	//		os.Exit(1)
+	//	}
+	//	// 当前进程退出，等待管理员权限的进程继续
+	//	os.Exit(0)
+	//}
 	mustCheckPortAvailable("8200") // Gin API
-	mustCheckPortAvailable("9245") // Vite dev server（或 Wails dev）
+	mustCheckPortAvailable("9245") //
+	// 初始化业务 Router 并收集服务
+	rootRouter := router.NewRootRouter()
+	var services []application.Service
+	rootRouter.CollectWailsServices(&services)
 
+	app := application.New(application.Options{
+		Name:        "SorakaGui",
+		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
+		Services:    services,
+
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assets),
+		},
+		Mac: application.MacOptions{
+			ApplicationShouldTerminateAfterLastWindowClosed: true,
+		},
+	})
 	logger := log.Default()
 
-	// Prepare embedded frontend assets. When the project hasn't been built
-	// yet, this directory may be empty which will result in a missing
-	// index.html warning from Wails.
-	var err error
-	distFS, err = fs.Sub(assets, "frontend/dist")
-	if err != nil {
-		logger.Printf("前端资源未找到，尝试在 'frontend/dist' 目录执行 'npm run build'")
-	} else if _, err := fs.ReadFile(distFS, "index.html"); err != nil {
-		logger.Printf("未发现 index.html，需先构建前端资源: npm run build")
-	}
+	mainWin := app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
+		Title:     "Soraka - 游戏大厅",
+		Frameless: true, // 无边框，前端实现拖动
+		URL:       "/",
+		//BackgroundColour: application.NewRGB(255, 255, 255),
+		MinWidth:         1280,                                   //最小宽度
+		MinHeight:        800,                                    //最小高度
+		BackgroundColour: application.NewRGBA(255, 255, 255, 90), // 透明度较低以显毛玻璃
 
-	// 临时 app 创建主窗口
-	tempApp := application.New(application.Options{})
-	mainWin := tempApp.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-		Title:            "Soraka - 游戏大厅",
-		Frameless:        true,
-		URL:              "/",
-		MinWidth:         1280,
-		MinHeight:        800,
-		BackgroundColour: application.NewRGBA(255, 255, 255, 90),
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
@@ -72,15 +81,11 @@ func main() {
 			Theme:                             0,
 			BackdropType:                      application.Acrylic,
 			HiddenOnTaskbar:                   false,
-			DisableFramelessWindowDecorations: false,
+			DisableFramelessWindowDecorations: false, // 允许拖动阴影
 		},
 	})
-
-	// 初始化业务 Router 并收集服务
-	rootRouter := router.NewRootRouter(mainWin)
-	var services []application.Service
-	rootRouter.CollectWailsServices(&services)
-
+	// 注入 window
+	rootRouter.SetMainWin(mainWin)
 	// 初始化 Gin 引擎
 	engine := bdkgin.NewGin()
 	engine.Use(gin.Logger(), gin.Recovery())
@@ -99,27 +104,12 @@ func main() {
 			logger.Printf("HTTP 服务启动失败: %v", err)
 		}
 	}()
-
-	// 启动 LCU Proxy
+	//// 启动 LCU Proxy
 	go func() {
 		if err := prophet.Run(); err != nil {
 			logger.Printf("LCU Proxy 停止: %v", err)
 		}
 	}()
-
-	// 初始化 Wails 应用
-	app := application.New(application.Options{
-		Name:        "SorakaGui",
-		Description: "Soraka GUI基础框架帮助开发者快速开发桌面应用",
-		Services:    services,
-		Assets: application.AssetOptions{
-			Handler: application.AssetFileServerFS(distFS),
-		},
-		Mac: application.MacOptions{
-			ApplicationShouldTerminateAfterLastWindowClosed: true,
-		},
-	})
-
 	// 启动 Notifier 定时推送任务
 	notifier := server.NewNotifier(mainWin)
 	notifier.Start()
@@ -138,8 +128,6 @@ func main() {
 	app.OnEvent("myevent", func(e *application.CustomEvent) {
 		fmt.Println("main监听事件：", e)
 	})
-
-	logger.Println("应用启动完成，等待用户操作...")
 
 	// 启动 Wails
 	if err := app.Run(); err != nil {

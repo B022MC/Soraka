@@ -11,20 +11,22 @@ import (
 )
 
 type LcuApiService struct {
-	uc *lcuBiz.LcuApiUseCase
+	uc       *lcuBiz.LcuApiUseCase
+	clientUC *lcuBiz.ClientInfoUseCase
 }
 
-// NewLcuApiService .
+// NewLcuApiService 构建 LcuApiService 实例
 func NewLcuApiService() *LcuApiService {
 	logger := log.Default()
 
-	// 不强制退出，初始化时允许没有客户端
-	port, token, err := lcuBiz.NewClientInfoUseCase().GetLolClientApiInfo()
+	clientUC := lcuBiz.NewClientInfoUseCase()
+
+	port, token, err := clientUC.GetLolClientApiInfo()
 	if err != nil {
 		logger.Printf("[WARN] 初始化时未找到 LCU 客户端: %v", err)
-		// 可以先返回 nil client，或留空，由调用方后续动态重建
 		return &LcuApiService{
-			uc: lcuBiz.NewLcuApiUseCase(logger, nil),
+			uc:       lcuBiz.NewLcuApiUseCase(logger, nil),
+			clientUC: clientUC,
 		}
 	}
 
@@ -32,7 +34,8 @@ func NewLcuApiService() *LcuApiService {
 	uc := lcuBiz.NewLcuApiUseCase(logger, client)
 
 	return &LcuApiService{
-		uc: uc,
+		uc:       uc,
+		clientUC: clientUC,
 	}
 }
 
@@ -45,11 +48,6 @@ func (s *LcuApiService) RegisterGin(group gin.IRoutes) {
 	group.POST("/lcuApi/accept_game", s.AcceptGame)
 }
 
-// Wails 服务名称
-func (s *LcuApiService) Name() string {
-	return "LcuApiService"
-}
-
 func (s *LcuApiService) GetCurrSummoner(ctx *gin.Context) {
 	data, err := s.uc.GetCurrSummoner()
 	if err != nil {
@@ -59,7 +57,7 @@ func (s *LcuApiService) GetCurrSummoner(ctx *gin.Context) {
 	response.Ok(ctx, "获取成功", data)
 }
 func (s *LcuApiService) GetClientPath() (string, error) {
-	return FindLolPath()
+	return s.clientUC.FindLolPath()
 }
 func (s *LcuApiService) ListGamesByPUUID(ctx *gin.Context) {
 	puuid := ctx.Query("puuid")
@@ -110,4 +108,8 @@ func (s *LcuApiService) ListRecentMatches(ctx *gin.Context) {
 		return
 	}
 	response.Ok(ctx, "获取成功", list)
+}
+
+func (s *LcuApiService) StartClient() error {
+	return s.clientUC.OpenClient()
 }

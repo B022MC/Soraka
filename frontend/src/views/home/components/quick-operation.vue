@@ -53,7 +53,7 @@
 import { onMounted } from "vue";
 import { Notification, Message } from "@arco-design/web-vue";
 import { WML } from "@wailsio/runtime";
-import { LcuApiService } from "/#/Soraka/internal/service/lcu";
+import { LcuApiWails } from "/#/Soraka/internal/wails/lcu";
 onMounted(async () => {
   WML.Reload();
 });
@@ -80,7 +80,7 @@ const handleOpen = (val: string) => {
       id: "startclient",
       duration: 0,
     });
-    LcuApiService.StartClient()
+    LcuApiWails.StartClient()
       .then(() => {
         Message.success({
           content: "启动成功",
