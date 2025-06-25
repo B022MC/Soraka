@@ -10927,6 +10927,7 @@ body[arco-theme='dark'] .arco-carousel-indicator-outer .arco-carousel-indicator-
   padding: 0 10px;
   text-align: center;
   pointer-events: none;
+  left: 0;
 }
 .arco-message-list-top {
   top: 40px;
@@ -14825,6 +14826,9 @@ body[arco-theme='dark'] .arco-radio-button::after {
 }
 .arco-virtual-list > .arco-table-element {
   width: auto;
+}
+body[arco-theme='dark'] .arco-table-tr-checked .arco-table-td {
+  background-color: var(--color-neutral-2);
 }
 .arco-icon-hover.arco-tabs-icon-hover::before {
   width: 16px;

@@ -5,6 +5,7 @@ import (
 	"Soraka/internal/service/lcu"
 	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"log"
 )
 
 type RootRouter struct {
@@ -13,7 +14,6 @@ type RootRouter struct {
 	mainWin     *application.WebviewWindow
 }
 
-// 构建 RootRouter，但不传 mainWin
 func NewRootRouter() *RootRouter {
 	greetSvc := greet.NewGreetService() // 先不传 window
 	basicRouter := NewBasicRouter(greetSvc)
@@ -27,7 +27,6 @@ func NewRootRouter() *RootRouter {
 	}
 }
 
-// 注入 window
 func (r *RootRouter) SetMainWin(win *application.WebviewWindow) {
 	r.mainWin = win
 	r.basicRouter.SetMainWin(win)
@@ -40,7 +39,7 @@ func (r *RootRouter) InitRouter(group *gin.RouterGroup) {
 }
 
 // Wails 注册
-func (r *RootRouter) CollectWailsServices(services *[]application.Service) {
+func (r *RootRouter) CollectWailsServices(services *[]application.Service, log *log.Logger) {
 	r.basicRouter.CollectWailsServices(services)
-	r.lcuRouter.CollectWailsServices(services)
+	r.lcuRouter.CollectWailsServices(services, log)
 }

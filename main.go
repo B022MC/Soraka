@@ -33,6 +33,8 @@ func mustCheckPortAvailable(port string) {
 }
 
 func main() {
+	logger := log.Default()
+
 	//if !utils.IsRunAsAdmin() {
 	//	err := utils.RelaunchAsAdmin()
 	//	if err != nil {
@@ -42,12 +44,11 @@ func main() {
 	//	// 当前进程退出，等待管理员权限的进程继续
 	//	os.Exit(0)
 	//}
-	mustCheckPortAvailable("8200") // Gin API
-	mustCheckPortAvailable("9245") //
-	// 初始化业务 Router 并收集服务
+	mustCheckPortAvailable("8200")
+	mustCheckPortAvailable("9245")
 	rootRouter := router.NewRootRouter()
 	var services []application.Service
-	rootRouter.CollectWailsServices(&services)
+	rootRouter.CollectWailsServices(&services, logger)
 
 	app := application.New(application.Options{
 		Name:        "SorakaGui",
@@ -61,7 +62,6 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 	})
-	logger := log.Default()
 
 	mainWin := app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
 		Title:     "Soraka - 游戏大厅",
@@ -81,7 +81,7 @@ func main() {
 			Theme:                             0,
 			BackdropType:                      application.Acrylic,
 			HiddenOnTaskbar:                   false,
-			DisableFramelessWindowDecorations: false, // 允许拖动阴影
+			DisableFramelessWindowDecorations: false,
 		},
 	})
 	// 注入 window

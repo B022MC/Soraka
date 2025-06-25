@@ -3,6 +3,7 @@ package lcu
 import (
 	lcuBiz "Soraka/internal/biz/lcu"
 	lcuReq "Soraka/internal/dal/req/lcu"
+	lcuResp "Soraka/internal/dal/resp/lcu"
 	"Soraka/pkg"
 	"Soraka/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,6 @@ func (s *LcuApiService) RegisterGin(group gin.IRoutes) {
 	group.GET("/lcuApi/curr_summoner", s.GetCurrSummoner)
 	group.GET("/lcuApi/games_by_puuid", s.ListGamesByPUUID)
 	group.GET("/lcuApi/summoner_by_name", s.QuerySummonerByName)
-	group.GET("/lcuApi/listRecentMatches", s.ListRecentMatches)
 	group.POST("/lcuApi/accept_game", s.AcceptGame)
 }
 
@@ -97,19 +97,23 @@ func (s *LcuApiService) AcceptGame(ctx *gin.Context) {
 	}
 	response.Ok(ctx, "已接受对局", "")
 }
-func (s *LcuApiService) ListRecentMatches(ctx *gin.Context) {
-	req := &lcuReq.MatchListReq{}
-	if err := ctx.ShouldBind(req); err != nil {
-		return
-	}
-	list, err := s.uc.ListRecentMatches(req.Limit)
-	if err != nil {
-		response.ErrorMsg(ctx, err.Error())
-		return
-	}
-	response.Ok(ctx, "获取成功", list)
-}
+
+//func (s *LcuApiService) ListRecentMatches(ctx *gin.Context) {
+//	req := &lcuReq.MatchListReq{}
+//	if err := ctx.ShouldBind(req); err != nil {
+//		return
+//	}
+//	list, err := s.uc.ListRecentMatches(req.Limit)
+//	if err != nil {
+//		response.ErrorMsg(ctx, err.Error())
+//		return
+//	}
+//	response.Ok(ctx, "获取成功", list)
+//}
 
 func (s *LcuApiService) StartClient() error {
 	return s.clientUC.OpenClient()
+}
+func (s *LcuApiService) ListRecentMatches(req *lcuReq.MatchListReq) ([]*lcuResp.MatchBrief, error) {
+	return s.uc.ListRecentMatches(req.Limit)
 }

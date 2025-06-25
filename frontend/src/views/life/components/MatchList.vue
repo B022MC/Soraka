@@ -60,8 +60,7 @@
 defineProps<{
   matches: {
     id: string | number
-    result: 'win' | 'lose'
-    champion: string
+    result: string
     level: number
     spells: string[]
     mode: string

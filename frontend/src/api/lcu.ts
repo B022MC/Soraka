@@ -5,8 +5,6 @@ export interface AuthInfo {
   token: string;
 }
 
-// 通过后端代理获取当前召唤师信息
-// 通过后端代理获取当前召唤师信息
 export interface SummonerInfo {
   accountId: number;              // 唯一账号ID
   summonerId: number;             // 唯一召唤师ID

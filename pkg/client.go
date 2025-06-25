@@ -15,7 +15,7 @@ var (
 		Transport: &http.Transport{
 			ForceAttemptHTTP2: true,
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true, // ⚠️ 注意生产环境安全性
+				InsecureSkipVerify: true,
 			},
 		},
 		Timeout: 30 * time.Second,

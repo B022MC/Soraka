@@ -1,14 +1,10 @@
-import { B as ByID, d as defineComponent, r as ref, q as onMounted, O as On, g as resolveComponent, o as openBlock, a as createBlock, b as withCtx, h as createVNode, i as createBaseVNode, m as unref, t as toDisplayString, p as createTextVNode, j as createElementBlock, l as createCommentVNode, R as Reload, k as renderList, F as Fragment, N as Notification, M as Message } from "./index-BYmKbRsy.js";
-import { g as goodTimeText } from "./index-D_y2t71D.js";
-import { u as useUserStore } from "./index-CfrzocCX.js";
+import { d as defineComponent, u as useUserStore, r as ref, s as onMounted, O as On, h as resolveComponent, o as openBlock, a as createBlock, e as withCtx, i as createVNode, j as createBaseVNode, p as unref, t as toDisplayString, q as createTextVNode, k as createElementBlock, m as createCommentVNode, R as Reload, l as renderList, F as Fragment, N as Notification, M as Message } from "./index-BT_C9izJ.js";
+import { G as GetClientPath, S as StartClient } from "./lcuapiwails-IFZpWFl2.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
-function GetClientPath() {
-  let $resultPromise = ByID(4150102446);
-  return $resultPromise;
-}
-function StartClient() {
-  let $resultPromise = ByID(445256185);
-  return $resultPromise;
+function goodTimeText() {
+  const time = /* @__PURE__ */ new Date();
+  const hour = time.getHours();
+  return hour < 9 ? "早上好" : hour <= 11 ? "上午好" : hour <= 13 ? "中午好" : hour <= 18 ? "下午好" : "晚上好";
 }
 const _hoisted_1$2 = ["src"];
 const _hoisted_2$2 = { class: "welcome" };
@@ -61,20 +57,27 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         if (info && typeof info === "object") {
           console.log("[Event] summonerInfo 收到:", info);
           userStore.setInfo({
-            nickname: info.displayName,
-            avatar: info.avatar,
-            region: info.region,
-            tag: info.tag,
-            rank: info.rank,
-            winRate: info.winRate,
-            wins: info.wins,
-            losses: info.losses,
-            totalGames: info.totalGames,
-            createtime: info.createtime,
-            server: info.server,
-            level: info.level,
+            accountId: info.accountId,
+            summonerId: info.summonerId,
+            puuid: info.puuid,
+            nickname: info.gameName || info.displayName,
+            avatar: info.avatarUrl,
+            region: info.region || "",
+            // 如果后端没传，补空字符串
+            tag: info.tagLine,
+            rank: info.rank || "",
+            // 可选数据
+            winRate: info.winRate || 0,
+            // 可选数据
+            wins: info.wins || 0,
+            losses: info.losses || 0,
+            totalGames: info.totalGames || 0,
+            createtime: info.createtime || "",
+            level: info.summonerLevel,
             xpSinceLastLevel: info.xpSinceLastLevel,
-            xpUntilNextLevel: info.xpUntilNextLevel
+            xpUntilNextLevel: info.xpUntilNextLevel,
+            percentCompleteForNextLevel: info.percentCompleteForNextLevel,
+            privacy: info.privacy
           });
         } else {
           console.warn("[Event] summonerInfo 无效数据:", info);
@@ -146,7 +149,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const Welcome = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-6cd11fa4"]]);
+const Welcome = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-148647c7"]]);
 const _hoisted_1$1 = { class: "icon" };
 const _hoisted_2$1 = ["href"];
 const _hoisted_3$1 = { class: "icon" };

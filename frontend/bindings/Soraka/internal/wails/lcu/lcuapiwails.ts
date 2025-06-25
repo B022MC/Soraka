@@ -10,6 +10,10 @@
 // @ts-ignore: Unused imports
 import {Call as $Call, Create as $Create} from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as lcu$0 from "../../dal/resp/lcu/models.js";
+
 /**
  * GetClientPath forwards the call to the underlying service.
  */
@@ -18,7 +22,21 @@ export function GetClientPath(): Promise<string> & { cancel(): void } {
     return $resultPromise;
 }
 
+export function ListRecentMatches(limit: number): Promise<(lcu$0.MatchBrief | null)[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(1081314318, limit) as any;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function StartClient(): Promise<void> & { cancel(): void } {
     let $resultPromise = $Call.ByID(445256185) as any;
     return $resultPromise;
 }
+
+// Private type creation functions
+const $$createType0 = lcu$0.MatchBrief.createFrom;
+const $$createType1 = $Create.Nullable($$createType0);
+const $$createType2 = $Create.Array($$createType1);
