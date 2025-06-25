@@ -2,44 +2,48 @@ import { defineStore } from "pinia";
 import { setToken, getToken, clearToken } from "@/utils/auth";
 
 export interface UserState {
-  accountId?: number;               // 唯一账号ID
-  summonerId?: number;              // 唯一召唤师ID
-  puuid?: string;                   // 唯一玩家标识符
-  nickname?: string;                // 游戏昵称（gameName / displayName）
-  avatar?: string;                  // 头像完整URL
-  region?: string;                  // 区域（如果后端有传）
-  tag?: string;                     // 召唤师标识 #12345 (tagLine)
-  rank?: string;                    // 当前段位（可选）
-  winRate?: number;                 // 胜率（百分比，可选）
-  wins?: number;                    // 胜场（可选）
-  losses?: number;                  // 败场（可选）
-  totalGames?: number;              // 总场次（可选）
-  createtime?: string;              // 创建时间（可选）
-  server?: string;                  // 服务器标识（可选，后端返回的话）
-  level?: number;                   // 等级
-  xpSinceLastLevel?: number;        // 当前等级已获得经验
-  xpUntilNextLevel?: number;        // 到下一级需要经验
-  percentCompleteForNextLevel?: number; // 升级进度百分比
-  privacy?: string;                 // PUBLIC / PRIVATE
+  accountId?: number;
+  summonerId?: number;
+  puuid?: string;
+  nickname?: string;
+  avatar?: string;
+  region?: string;
+  tag?: string;
+  rank?: string;
+  winRate?: number;
+  wins?: number;
+  losses?: number;
+  totalGames?: number;
+  createtime?: string;
+  server?: string;
+  level?: number;
+  xpSinceLastLevel?: number;
+  xpUntilNextLevel?: number;
+  percentCompleteForNextLevel?: number;
+  privacy?: string;
 }
-
 
 const useUserStore = defineStore("user", {
   state: (): UserState => ({
+    accountId: undefined,
+    summonerId: undefined,
+    puuid: undefined,
     nickname: undefined,
     avatar: undefined,
     region: "",
     tag: "",
     rank: "",
-    winRate: undefined,
-    server:"",
-    wins: undefined,
-    losses: undefined,
-    totalGames: undefined,
+    winRate: 0,
+    wins: 0,
+    losses: 0,
+    totalGames: 0,
     createtime: "",
+    server: "",
     level: undefined,
     xpSinceLastLevel: undefined,
     xpUntilNextLevel: undefined,
+    percentCompleteForNextLevel: undefined,
+    privacy: "",
   }),
 
   getters: {
@@ -77,7 +81,39 @@ const useUserStore = defineStore("user", {
     clearloginfo() {
       clearToken();
     },
-  },
+  }
 });
+
+// 持久化配置
+(useUserStore as any).persist = {
+  enabled: true,
+  strategies: [
+    {
+      key: "userStore",
+      storage: localStorage,
+      paths: [
+        "accountId",
+        "summonerId",
+        "puuid",
+        "nickname",
+        "avatar",
+        "region",
+        "tag",
+        "rank",
+        "winRate",
+        "wins",
+        "losses",
+        "totalGames",
+        "createtime",
+        "server",
+        "level",
+        "xpSinceLastLevel",
+        "xpUntilNextLevel",
+        "percentCompleteForNextLevel",
+        "privacy"
+      ]
+    }
+  ]
+};
 
 export default useUserStore;

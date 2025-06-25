@@ -15,39 +15,60 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { getRecentMatches } from "@/api/lcu";
+import { LcuApiWails } from "/#/Soraka/internal/wails/lcu";
 import SummonerHeader from "./components/SummonerHeader.vue";
 import MatchList from "./components/MatchList.vue";
 import MatchFilterHeader from "./components/MatchFilterHeader.vue";
+import {ListRecentMatches} from "/#/Soraka/internal/wails/lcu/lcuapiwails";
 
-const matchList = ref(
-  [] as ReturnType<typeof getRecentMatches> extends Promise<infer R>
-    ? R
-    : never,
-);
+interface MatchBrief {
+  id: number;
+  result: string;
+  mode: string;
+  kills: number;
+  deaths: number;
+  assists: number;
+  cs: number;
+  gold: number;
+  time: string;
+  level: number;
+  champion: string;
+  spells: string[];
+  items: string[];
+  map: string;
+}
+function mapResult(result: string): "win" | "lose" {
+  return result === "胜利" ? "win" : "lose";
+}
+const matchList = ref<MatchBrief[]>([]);
 
-onMounted(async () => {
-  try {
-    matchList.value = await getRecentMatches();
-  } catch (e) {
-    console.error(e);
-  }
-});
-
-// 当前选中的筛选模式
 const selectedMode = ref("全部");
 
-// 筛选后的比赛列表
 const filteredMatches = computed(() => {
   if (selectedMode.value === "全部") return matchList.value;
   return matchList.value.filter((m) => m.mode === selectedMode.value);
 });
 
-// 响应筛选模式变化
 function onFilterChange(mode: string) {
   selectedMode.value = mode;
 }
+
+onMounted(async () => {
+  try {
+    const p = ListRecentMatches(20);
+    const data = await p;
+    matchList.value = (data ?? [])
+        .filter((m): m is MatchBrief => m !== null)
+        .map(m => ({
+          ...m,
+          result: mapResult(m.result)
+        }));
+  } catch (e) {
+    console.error("获取比赛数据失败", e);
+  }
+});
 </script>
+
 
 <style scoped lang="less">
 .life-page {

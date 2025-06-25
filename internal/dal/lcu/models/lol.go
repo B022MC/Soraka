@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"Soraka/const/icon_map"
+	"fmt"
+)
 
 type (
 	GameMode      string // 游戏模式
@@ -191,11 +194,11 @@ const (
 
 // LCU 静态资源路径模板
 const (
-	LCUAssetBase = "http://localhost:8200/v1/lcu/proxy/lol-game-data/assets/v1"
-	ItemIconTpl  = LCUAssetBase + "/items/%d.png"           // 正确路径
-	SpellIconTpl = LCUAssetBase + "/summoner-spells/%d.png" // 正确路径
-	ChampIconTpl = LCUAssetBase + "/champion-icons/%d.png"  // 正确路径
-	MapIconTpl   = LCUAssetBase + "/map-icons/%d.png"       // 如果你有地图图标
+	LCUAssetBase = "http://localhost:8200/lcu/proxy%s"
+	ItemIconTpl  = LCUAssetBase + "/items/%s"                                                      // 正确路径
+	SpellIconTpl = LCUAssetBase + "/summoner-spells/%s"                                            // 正确路径
+	ChampIconTpl = "http://localhost:8200/lcu/proxy/lol-game-data/assets/v1/champion-icons/%d.png" // 正确路径
+	MapIconTpl   = LCUAssetBase + "/map-icons/%d"                                                  // 如果你有地图图标
 )
 
 // 构建物品图标 URL
@@ -203,7 +206,11 @@ func ItemIconURL(itemID int) string {
 	if itemID <= 0 {
 		return ""
 	}
-	return fmt.Sprintf(ItemIconTpl, itemID)
+	filename, ok := icon_map.ItemIconMap[itemID]
+	if !ok {
+		return ""
+	}
+	return fmt.Sprintf(LCUAssetBase, filename)
 }
 
 // 构建召唤师技能图标 URL
@@ -211,7 +218,7 @@ func SpellIconURL(spellID int) string {
 	if spellID <= 0 {
 		return ""
 	}
-	return fmt.Sprintf(SpellIconTpl, spellID)
+	return fmt.Sprintf(LCUAssetBase, icon_map.SpellIconMap[spellID])
 }
 
 // 构建英雄图标 URL
@@ -227,5 +234,5 @@ func MapIconURL(mapID int) string {
 	if mapID <= 0 {
 		return ""
 	}
-	return fmt.Sprintf(MapIconTpl, mapID)
+	return fmt.Sprintf(LCUAssetBase, mapID)
 }

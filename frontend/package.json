@@ -10,12 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@arco-design/web-vue": "^2.56.3",
+    "@arco-design/web-vue": "^2.57.0",
     "axios": "^0.24.0",
     "echarts": "^5.4.0",
     "lodash-es": "^4.17.21",
     "md5": "^2.3.0",
-    "pinia": "^2.0.23",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.3.0",
     "qs": "^6.11.0",
     "vue": "^3.5.13",
     "vue-echarts": "^6.2.3",

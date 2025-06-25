@@ -32,44 +32,6 @@ func NewHTTPServer(addr string, debug bool, handler http.Handler, logger *log.Lo
 	}
 }
 
-//func NewHTTPServer(addr string, debug bool, enablePprof bool, rootRouter *router.RootRouter) *HTTPServer {
-//	if debug {
-//		gin.SetMode(gin.DebugMode)
-//	} else {
-//		gin.SetMode(gin.ReleaseMode)
-//	}
-//
-//	engine := bdkgin.NewGin()
-//	if debug {
-//		engine.Use(gin.LoggerWithFormatter(bdkgin.LogFormatter))
-//	}
-//	if enablePprof {
-//		pprof.RouteRegister(engine.Group(""))
-//	}
-//	engine.Use(cors.New(cors.Config{
-//		AllowOrigins:     []string{"*"},
-//		AllowMethods:     []string{"*"},
-//		AllowHeaders:     []string{"*"},
-//		ExposeHeaders:    []string{"*"},
-//		AllowWebSockets:  true,
-//		AllowCredentials: true,
-//		MaxAge:           12 * time.Hour,
-//	}))
-//	engine.Use(bdkmid.RecoveryWithLogFn(logger.Error))
-//
-//	// 调用路由初始化
-//	rootRouter.InitRouter(&engine.RouterGroup)
-//
-//	return &HTTPServer{
-//		addr: addr,
-//		srv: &http.Server{
-//			Addr:    addr,
-//			Handler: engine,
-//		},
-//		debug: debug,
-//	}
-//}
-
 func (h *HTTPServer) StartWithSignal() error {
 	// 信号监听
 	quit := make(chan os.Signal, 1)

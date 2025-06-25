@@ -1,30 +1,30 @@
-[data-v-6cd11fa4] .arco-statistic-title {
+[data-v-148647c7] .arco-statistic-title {
   margin-bottom: 0;
 }
-.card[data-v-6cd11fa4] {
+.card[data-v-148647c7] {
   background: transparent;
 }
-.card .content[data-v-6cd11fa4] {
+.card .content[data-v-148647c7] {
   padding: 8px 20px;
 }
-.card .content .welcome[data-v-6cd11fa4] {
+.card .content .welcome[data-v-148647c7] {
   margin: 8px 0;
   color: var(--color-neutral-6);
 }
-.card .content .welcome .hello[data-v-6cd11fa4] {
+.card .content .welcome .hello[data-v-148647c7] {
   font-size: 1.25rem;
   color: var(--color-neutral-8);
   margin-bottom: 10px;
 }
-.card .content .welcome .status[data-v-6cd11fa4] {
+.card .content .welcome .status[data-v-148647c7] {
   margin-left: 8px;
 }
-.card .content .welcome .waiting[data-v-6cd11fa4] {
+.card .content .welcome .waiting[data-v-148647c7] {
   display: inline-block;
   position: relative;
   padding-right: 1.4em;
 }
-.card .content .welcome .waiting[data-v-6cd11fa4]::after {
+.card .content .welcome .waiting[data-v-148647c7]::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -35,9 +35,9 @@
   border: 2px solid var(--color-neutral-6);
   border-top-color: transparent;
   border-radius: 50%;
-  animation: spin-6cd11fa4 1s linear infinite;
+  animation: spin-148647c7 1s linear infinite;
 }
-@keyframes spin-6cd11fa4 {
+@keyframes spin-148647c7 {
 to {
     transform: rotate(360deg);
 }

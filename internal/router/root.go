@@ -5,6 +5,7 @@ import (
 	"Soraka/internal/service/lcu"
 	"github.com/gin-gonic/gin"
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"log"
 )
 
 type RootRouter struct {
@@ -40,7 +41,7 @@ func (r *RootRouter) InitRouter(group *gin.RouterGroup) {
 }
 
 // Wails 注册
-func (r *RootRouter) CollectWailsServices(services *[]application.Service) {
+func (r *RootRouter) CollectWailsServices(services *[]application.Service, log *log.Logger) {
 	r.basicRouter.CollectWailsServices(services)
-	r.lcuRouter.CollectWailsServices(services)
+	r.lcuRouter.CollectWailsServices(services, log)
 }

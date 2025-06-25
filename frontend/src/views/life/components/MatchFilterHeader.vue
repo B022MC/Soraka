@@ -30,7 +30,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   matches: {
-    result: 'win' | 'lose'
+    result: string
     kills: number
     deaths: number
     assists: number

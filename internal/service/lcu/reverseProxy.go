@@ -13,8 +13,8 @@ import (
 type (
 	RP struct {
 		proxy *httputil.ReverseProxy
-		token string
-		port  int
+		Token string
+		Port  int
 	}
 )
 
@@ -46,8 +46,8 @@ func NewRP(port int, token string) (*RP, error) {
 
 	return &RP{
 		proxy: proxy,
-		token: token,
-		port:  port,
+		Token: token,
+		Port:  port,
 	}, nil
 }
 func (rp RP) ServeHTTP(w http.ResponseWriter, r *http.Request) {

@@ -99,7 +99,7 @@ func (u *LcuApiUseCase) AcceptGame() error {
 	_, err := u.client.HttpPost("/lol-matchmaking/v1/ready-check/accept", nil)
 	return err
 }
-func (u *LcuApiUseCase) ListRecentMatches(limit int) ([]lcuResp.MatchBrief, error) {
+func (u *LcuApiUseCase) ListRecentMatches(limit int) ([]*lcuResp.MatchBrief, error) {
 	summoner, err := u.GetCurrSummoner()
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (u *LcuApiUseCase) ListRecentMatches(limit int) ([]lcuResp.MatchBrief, erro
 	if err != nil {
 		return nil, err
 	}
-	list := make([]lcuResp.MatchBrief, 0, len(resp.Games.Games))
+	list := make([]*lcuResp.MatchBrief, 0, len(resp.Games.Games))
 	for _, g := range resp.Games.Games {
 		partID := 0
 		for _, p := range g.ParticipantIdentities {
@@ -143,7 +143,7 @@ func (u *LcuApiUseCase) ListRecentMatches(limit int) ([]lcuResp.MatchBrief, erro
 				models.SpellIconURL(int(p.Spell1Id)),
 				models.SpellIconURL(int(p.Spell2Id)),
 			}
-			mb := lcuResp.MatchBrief{
+			mb := &lcuResp.MatchBrief{
 				ID:       g.GameId,
 				Result:   result,
 				Mode:     mapMode(g.GameMode),

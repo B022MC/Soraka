@@ -1,4 +1,4 @@
-import { d as defineComponent, A as reactive, j as createElementBlock, i as createBaseVNode, h as createVNode, b as withCtx, g as resolveComponent, o as openBlock, p as createTextVNode } from "./index-BYmKbRsy.js";
+import { d as defineComponent, v as reactive, k as createElementBlock, j as createBaseVNode, i as createVNode, e as withCtx, h as resolveComponent, o as openBlock, q as createTextVNode } from "./index-BT_C9izJ.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _hoisted_1 = { class: "life-page" };
 const _hoisted_2 = { class: "section" };

@@ -2,105 +2,101 @@
   <a-card class="summoner-header" :bordered="false">
     <!-- 顶部操作按钮 -->
     <div class="actions">
-      <a-button type="outline" size="small" @click="refresh">刷新</a-button>
-      <a-button type="text" size="small">历史战绩</a-button>
+      <a-button type="outline" size="small" @click="onRefresh">刷新</a-button>
+      <a-button type="text" size="small" @click="onShowHistory">历史战绩</a-button>
     </div>
 
-    <!-- 居中头像 + 等级环 -->
-    <div class="top-section">
-      <div class="level-avatar">
-        <a-progress
-            type="circle"
-            :percent="expPercent"
-            :width="88"
-            strokeColor="#00b42a"
-            :format="() => ''"
-            class="avatar-progress"
-        >
-          <a-avatar :size="64">
-            <img :src="userStore.avatar || defaultAvatar" />
-          </a-avatar>
-        </a-progress>
-        <div class="level-text">{{ userStore.level ?? '--' }}</div>
-      </div>
-
-      <div class="name-line">
-        <span class="nickname">{{ userStore.nickname || "未知召唤师" }}</span>
-        <icon-lock class="lock-icon" />
-      </div>
-      <div class="tag-line">#{{ userStore.tag || "00000" }}</div>
+    <!-- 进度环 + 头像 -->
+    <div class="level-avatar">
+      <a-progress
+          type="circle"
+          :percent="expPercent/100"
+          :width="88"
+          strokeColor="#00b42a"
+          :format="() => ''"
+          class="avatar-progress"
+      />
+      <img
+          :src="userStore.avatar || defaultAvatar"
+          class="avatar-img"
+      />
+      <div class="level-text">{{ userStore.level ?? '--' }}</div>
     </div>
 
-    <!-- 段位数据表格 -->
-    <div class="rank-table-section">
-      <a-table
-          :columns="columns"
-          :data="rankData"
-          :pagination="false"
-          size="small"
-          class="rank-table"
+    <!-- 名字 -->
+    <div class="name-line">
+      <span class="nickname">{{ userStore.nickname || '未知召唤师' }}</span>
+      <icon-font
+          v-if="userStore.privacy === 'PRIVATE'"
+          type="icon-Lock"
+          class="lock-icon"
       />
     </div>
+    <div class="tag-line">#{{ userStore.tag || '00000' }}</div>
   </a-card>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useUserStore } from "@/store";
-import { IconLock } from "@arco-design/web-vue/es/icon";
+import { computed, watch } from 'vue';
+import { useUserStore } from '@/store';
 
 const userStore = useUserStore();
+const defaultAvatar = new URL('@/assets/logo.png', import.meta.url).href;
 
-const defaultAvatar = new URL("@/assets/logo.png", import.meta.url).href;
-
-// 模拟经验百分比计算（真实情况你应从 LCU 获取经验）
+// 动态计算经验百分比
 const expPercent = computed(() => {
-  const current = userStore.xpSinceLastLevel || 0;
-  const next = userStore.xpUntilNextLevel || 1;
-  return Math.floor((current / (current + next)) * 100);
+  if (
+      userStore.percentCompleteForNextLevel !== undefined &&
+      userStore.percentCompleteForNextLevel !== null
+  ) {
+    return Math.min(Math.max(userStore.percentCompleteForNextLevel, 0), 100);
+  }
+
+  const current = userStore.xpSinceLastLevel ?? 0;
+  const next = userStore.xpUntilNextLevel ?? 0;
+  const total = current + next;
+
+  if (total > 0) {
+    return Math.min(Math.max((current / total) * 100, 0), 100);
+  }
+
+  return 0;
 });
 
-// 表格字段
-const columns = [
-  { title: "类型", dataIndex: "type" },
-  { title: "总场次", dataIndex: "total" },
-  { title: "胜率", dataIndex: "rate" },
-  { title: "胜场", dataIndex: "wins" },
-  { title: "负场", dataIndex: "loses" },
-  { title: "段位", dataIndex: "rank" },
-  { title: "胜点", dataIndex: "lp" },
-  { title: "赛季最高", dataIndex: "seasonMax" },
-  { title: "上赛季结算", dataIndex: "lastSeason" },
-];
 
-// 静态演示用的数据
-const rankData = [
-  {
-    type: "单 / 双排",
-    total: 9,
-    rate: "22%",
-    wins: 2,
-    loses: 7,
-    rank: "华贵铂金 IV",
-    lp: 78,
-    seasonMax: "华贵铂金 IV",
-    lastSeason: "--",
-  },
-  {
-    type: "灵活排位",
-    total: 36,
-    rate: "41%",
-    wins: 15,
-    loses: 21,
-    rank: "流光翡翠 IV",
-    lp: 98,
-    seasonMax: "流光翡翠 II",
-    lastSeason: "流光翡翠 IV",
-  },
-];
+// 打印初始状态
+console.log('当前 userStore 全部数据:', { ...userStore });
+console.log('当前 privacy:', userStore.privacy);
 
-const refresh = () => {
-  console.log("点击刷新召唤师信息");
+// 监听隐私变化
+watch(
+    () => userStore.privacy,
+    (val) => {
+      console.log('privacy 变化了:', val);
+    },
+    { immediate: true }
+);
+
+// 监听经验相关变化
+watch(
+    () => [userStore.xpSinceLastLevel, userStore.xpUntilNextLevel, userStore.percentCompleteForNextLevel],
+    () => {
+      console.log('经验相关变化了:', {
+        xpSinceLastLevel: userStore.xpSinceLastLevel,
+        xpUntilNextLevel: userStore.xpUntilNextLevel,
+        percentCompleteForNextLevel: userStore.percentCompleteForNextLevel,
+        percent: expPercent.value
+      });
+    },
+    { immediate: true }
+);
+
+const onRefresh = () => {
+  console.log('点击刷新召唤师信息');
+};
+
+const onShowHistory = () => {
+  console.log('点击查看历史战绩');
 };
 </script>
 
@@ -117,58 +113,57 @@ const refresh = () => {
     gap: 8px;
   }
 
-  .top-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 16px;
+  .level-avatar {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto;
 
-    .level-avatar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 6px;
-
-      .avatar-progress {
-        margin-bottom: 4px;
-      }
-
-      .level-text {
-        margin-top: -8px;
-        font-weight: 600;
-        font-size: 16px;
-        color: var(--color-success-6);
-      }
+    .avatar-progress {
+      display: block;
     }
 
-    .name-line {
-      font-size: 20px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-
-      .lock-icon {
-        font-size: 16px;
-        color: var(--color-text-3);
-      }
+    .avatar-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
     }
 
-    .tag-line {
-      font-size: 13px;
-      color: var(--color-text-2);
+    .level-text {
       margin-top: 4px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+      color: #00b42a;
     }
   }
 
-  .rank-table-section {
-    .rank-table {
-      :deep(.arco-table-th), :deep(.arco-table-td) {
-        padding: 6px 8px;
-        font-size: 13px;
-        white-space: nowrap;
-      }
+  .name-line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 20px;
+
+    .lock-icon {
+      font-size: 14px;
+      color: #aaa;
     }
+  }
+
+  .tag-line {
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    margin-top: 2px;
   }
 }
 </style>
