@@ -33,7 +33,6 @@ func NewIconMapDownloader(itemURL, champURL, spellURL string) error {
 	return nil
 }
 
-// 下载 JSON 并解析填充 map
 func downloadAndLoad(url string, target map[int]string, logName string) error {
 	fmt.Printf("[%s] 正在下载: %s\n", logName, url)
 	if url == "" {
@@ -67,7 +66,6 @@ func downloadAndLoad(url string, target map[int]string, logName string) error {
 	return nil
 }
 
-// 获取方法
 func GetItemIcon(id int) (string, bool) {
 	v, ok := ItemIconMap[id]
 	return v, ok
