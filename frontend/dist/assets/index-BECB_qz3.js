@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/AppSider-Cbn_7bkx.js","assets/lcuapiwails-CyABYwR9.js","assets/_plugin-vue_export-helper-1tPrXgE0.js","assets/AppSider-CmfppZYm.css","assets/index-DzV8zyVU.js","assets/index-BdBka1nd.css","assets/index--B15Topm.js","assets/index-C2fVRxUp.css","assets/index-D8p-O63k.js","assets/index-BqyjUUTs.css","assets/index-BYicms0X.js","assets/index-CkMDwxKN.css","assets/index-B4B1NHZZ.js","assets/index-CGxQ-UU5.css","assets/index-JkzChD81.js","assets/index-Bcbwbj1_.css"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/AppSider-ByVaHZXf.js","assets/lcuapiwails-R86df8vF.js","assets/_plugin-vue_export-helper-1tPrXgE0.js","assets/AppSider-CmfppZYm.css","assets/index-DO2QYWYs.js","assets/index-BdBka1nd.css","assets/index-Btss-J6Q.js","assets/index-D-TKeyFR.css","assets/index-BLmmrv-u.js","assets/index-D2AXcIZU.css","assets/index-Ulxxvp4f.js","assets/index-CkMDwxKN.css","assets/index-DgOS7JK_.js","assets/index-CGxQ-UU5.css","assets/index-yu5-u4ig.js","assets/index-Bcbwbj1_.css"])))=>i.map(i=>d[i]);
 (function polyfill() {
   const relList = document.createElement("link").relList;
   if (relList && relList.supports && relList.supports("modulepreload")) {
@@ -10528,13 +10528,13 @@ const __vitePreload = function preload(baseModule, deps, importerUrl) {
 const constantRouterMap = [
   {
     path: "/",
-    component: () => __vitePreload(() => import("./AppSider-Cbn_7bkx.js"), true ? __vite__mapDeps([0,1,2,3]) : void 0),
+    component: () => __vitePreload(() => import("./AppSider-ByVaHZXf.js"), true ? __vite__mapDeps([0,1,2,3]) : void 0),
     redirect: { name: "home" },
     children: [
       {
         path: "/home",
         name: "home",
-        component: () => __vitePreload(() => import("./index-DzV8zyVU.js"), true ? __vite__mapDeps([4,1,2,5]) : void 0),
+        component: () => __vitePreload(() => import("./index-DO2QYWYs.js"), true ? __vite__mapDeps([4,1,2,5]) : void 0),
         meta: {
           title: "启动页",
           icon: "icon-Home"
@@ -10543,7 +10543,7 @@ const constantRouterMap = [
       {
         path: "/life",
         name: "life",
-        component: () => __vitePreload(() => import("./index--B15Topm.js"), true ? __vite__mapDeps([6,1,2,7]) : void 0),
+        component: () => __vitePreload(() => import("./index-Btss-J6Q.js"), true ? __vite__mapDeps([6,1,2,7]) : void 0),
         meta: {
           title: "生涯",
           icon: "icon-Person"
@@ -10552,7 +10552,7 @@ const constantRouterMap = [
       {
         path: "/stats",
         name: "stats",
-        component: () => __vitePreload(() => import("./index-D8p-O63k.js"), true ? __vite__mapDeps([8,2,9]) : void 0),
+        component: () => __vitePreload(() => import("./index-BLmmrv-u.js"), true ? __vite__mapDeps([8,2,9]) : void 0),
         meta: {
           title: "战绩查询",
           icon: "icon-Search"
@@ -10561,7 +10561,7 @@ const constantRouterMap = [
       {
         path: "/match",
         name: "match",
-        component: () => __vitePreload(() => import("./index-BYicms0X.js"), true ? __vite__mapDeps([10,2,11]) : void 0),
+        component: () => __vitePreload(() => import("./index-Ulxxvp4f.js"), true ? __vite__mapDeps([10,2,11]) : void 0),
         meta: {
           title: "对局信息",
           icon: "icon-Game"
@@ -10570,7 +10570,7 @@ const constantRouterMap = [
       {
         path: "/more",
         name: "more",
-        component: () => __vitePreload(() => import("./index-B4B1NHZZ.js"), true ? __vite__mapDeps([12,2,13]) : void 0),
+        component: () => __vitePreload(() => import("./index-DgOS7JK_.js"), true ? __vite__mapDeps([12,2,13]) : void 0),
         meta: {
           title: "其他功能",
           icon: "icon-Wrench"
@@ -10580,7 +10580,7 @@ const constantRouterMap = [
       {
         path: "/setting",
         name: "setting",
-        component: () => __vitePreload(() => import("./index-JkzChD81.js"), true ? __vite__mapDeps([14,2,15]) : void 0),
+        component: () => __vitePreload(() => import("./index-yu5-u4ig.js"), true ? __vite__mapDeps([14,2,15]) : void 0),
         meta: {
           title: "设置",
           icon: "icon-xitong",
@@ -114660,7 +114660,7 @@ const IconFont = Icon.addFromIconFontCn({
   src: "https://at.alicdn.com/t/c/font_4954474_cghrq9lcye6.js"
 });
 const IconFont$1 = /* @__PURE__ */ defineComponent({
-  name: "icon-font",
+  name: "IconFont",
   props: {
     type: { type: String, required: true },
     size: { type: Number, default: 18 }
@@ -114668,10 +114668,10 @@ const IconFont$1 = /* @__PURE__ */ defineComponent({
   setup(props) {
     const appStore = useAppStore();
     const dynamicType = computed(() => {
-      if (props.type.endsWith("_white") || props.type.endsWith("_black")) {
+      if (/_white$|_black$/.test(props.type)) {
         return props.type;
       }
-      const suffix = appStore.theme === "dark" ? "white" : "black";
+      const suffix = appStore.getTheme === "dark" ? "white" : "black";
       return `${props.type}_${suffix}`;
     });
     return () => h(IconFont, {

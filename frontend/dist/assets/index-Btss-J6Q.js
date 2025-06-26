@@ -1,5 +1,5 @@
-import { d as defineComponent, u as useUserStore, c as computed, r as ref, o as onMounted, w as watch, h as resolveComponent, i as openBlock, a as createBlock, e as withCtx, k as createBaseVNode, j as createVNode, s as createTextVNode, q as unref, t as toDisplayString, p as createCommentVNode, l as createElementBlock, m as renderList, n as normalizeClass, F as Fragment } from "./index-DR7AVCif.js";
-import { a as GetRankSummary, L as ListRecentMatches } from "./lcuapiwails-CyABYwR9.js";
+import { d as defineComponent, u as useUserStore, c as computed, r as ref, o as onMounted, w as watch, h as resolveComponent, i as openBlock, a as createBlock, e as withCtx, k as createBaseVNode, j as createVNode, s as createTextVNode, q as unref, t as toDisplayString, p as createCommentVNode, l as createElementBlock, m as renderList, n as normalizeClass, F as Fragment } from "./index-BECB_qz3.js";
+import { a as GetRankSummary, L as ListRecentMatches } from "./lcuapiwails-R86df8vF.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _hoisted_1$3 = { class: "actions" };
 const _hoisted_2$3 = { class: "level-avatar" };
@@ -152,7 +152,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const SummonerHeader = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-29a3bcaa"]]);
+const SummonerHeader = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-b0c9bd40"]]);
 const _hoisted_1$2 = { class: "match-scroll-list" };
 const _hoisted_2$2 = { class: "match-content" };
 const _hoisted_3$1 = { class: "left" };

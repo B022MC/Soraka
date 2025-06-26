@@ -1,24 +1,24 @@
-.summoner-header[data-v-29a3bcaa] {
+.summoner-header[data-v-b0c9bd40] {
   padding: 16px;
   position: relative;
 }
-.summoner-header .actions[data-v-29a3bcaa] {
+.summoner-header .actions[data-v-b0c9bd40] {
   position: absolute;
   top: 12px;
   right: 16px;
   display: flex;
   gap: 8px;
 }
-.summoner-header .level-avatar[data-v-29a3bcaa] {
+.summoner-header .level-avatar[data-v-b0c9bd40] {
   position: relative;
   width: 88px;
   height: 88px;
   margin: 0 auto;
 }
-.summoner-header .level-avatar .avatar-progress[data-v-29a3bcaa] {
+.summoner-header .level-avatar .avatar-progress[data-v-b0c9bd40] {
   display: block;
 }
-.summoner-header .level-avatar .avatar-img[data-v-29a3bcaa] {
+.summoner-header .level-avatar .avatar-img[data-v-b0c9bd40] {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -29,14 +29,14 @@
   transform: translate(-50%, -50%);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
-.summoner-header .level-avatar .level-text[data-v-29a3bcaa] {
+.summoner-header .level-avatar .level-text[data-v-b0c9bd40] {
   margin-top: 4px;
   text-align: center;
   font-weight: bold;
   font-size: 14px;
   color: #00b42a;
 }
-.summoner-header .name-line[data-v-29a3bcaa] {
+.summoner-header .name-line[data-v-b0c9bd40] {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,25 +45,26 @@
   font-size: 16px;
   margin-top: 20px;
 }
-.summoner-header .name-line .lock-icon[data-v-29a3bcaa] {
+.summoner-header .name-line .lock-icon[data-v-b0c9bd40] {
   font-size: 14px;
   color: #aaa;
 }
-.summoner-header .tag-line[data-v-29a3bcaa] {
+.summoner-header .tag-line[data-v-b0c9bd40] {
   font-size: 12px;
   color: #888;
   text-align: center;
   margin-top: 2px;
 }
-.rank-table[data-v-29a3bcaa] {
+.rank-table[data-v-b0c9bd40] {
   margin-top: 30px;
 }
-.rank-table[data-v-29a3bcaa] .arco-table-th {
+.rank-table[data-v-b0c9bd40] .arco-table-th {
   font-weight: 600;
   text-align: center;
-  background: #fafafa;
+  background: var(--table-header-bg);
+  transition: background 0.3s ease;
 }
-.rank-table[data-v-29a3bcaa] .arco-table-td {
+.rank-table[data-v-b0c9bd40] .arco-table-td {
   text-align: center;
   padding: 6px 8px;
 }

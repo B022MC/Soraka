@@ -1,4 +1,4 @@
-import { d as defineComponent, l as createElementBlock, k as createBaseVNode, i as openBlock } from "./index-DR7AVCif.js";
+import { d as defineComponent, l as createElementBlock, k as createBaseVNode, i as openBlock } from "./index-BECB_qz3.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _hoisted_1 = { class: "life-page" };
 const _sfc_main = /* @__PURE__ */ defineComponent({
@@ -12,7 +12,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const index = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-2c8e4605"]]);
+const index = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-ae3c8da1"]]);
 export {
   index as default
 };

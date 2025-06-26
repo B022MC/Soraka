@@ -1,25 +1,16 @@
 <template>
-  <div class="stats-page">
-    <SearchFilterHeader @filter-change="" />
-    <SearchList :matches="matches" />
+  <div class="search-filter-header">
+    <!-- 筛选组件内容以后填充 -->
+    123123
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import SearchFilterHeader from './components/SearchFilterHeader.vue';
-import SearchList from './components/SearchList.vue';
-
-const matches = ref([]);
-
-
-onMounted(() => {
-  // 初始化加载战绩数据
-});
+// 以后在这里写 props, emits, 数据逻辑
 </script>
 
 <style scoped>
-.stats-page {
-  padding: 16px;
+.search-filter-header {
+  padding: 8px 0;
 }
 </style>
