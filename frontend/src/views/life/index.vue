@@ -15,16 +15,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { LcuApiWails } from "/#/Soraka/internal/wails/lcu";
 import SummonerHeader from "./components/SummonerHeader.vue";
 import MatchList from "./components/MatchList.vue";
 import MatchFilterHeader from "./components/MatchFilterHeader.vue";
-import {ListRecentMatches} from "/#/Soraka/internal/wails/lcu/lcuapiwails";
+import { ListRecentMatches } from "/#/Soraka/internal/wails/lcu/lcuapiwails";
 
 interface MatchBrief {
   id: number;
   result: string;
   mode: string;
+  mode_detail:string;
   kills: number;
   deaths: number;
   assists: number;
@@ -37,11 +37,7 @@ interface MatchBrief {
   items: string[];
   map: string;
 }
-function mapResult(result: string): "win" | "lose" {
-  return result === "胜利" ? "win" : "lose";
-}
 const matchList = ref<MatchBrief[]>([]);
-
 const selectedMode = ref("全部");
 
 const filteredMatches = computed(() => {
@@ -55,18 +51,14 @@ function onFilterChange(mode: string) {
 
 onMounted(async () => {
   try {
-    const p = ListRecentMatches(20);
-    const data = await p;
-    matchList.value = (data ?? [])
-        .filter((m): m is MatchBrief => m !== null)
-        .map(m => ({
-          ...m,
-          result: mapResult(m.result)
-        }));
-  } catch (e) {
-    console.error("获取比赛数据失败", e);
+    const res = await ListRecentMatches(9);
+    console.log("[ListRecentMatches 返回数据]", res);
+    matchList.value = res.filter((m): m is MatchBrief => m !== null);
+  } catch (err) {
+    console.error("[ListRecentMatches 请求出错]", err);
   }
 });
+
 </script>
 
 
@@ -74,8 +66,7 @@ onMounted(async () => {
 .life-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 32px); // 16px padding * 2
-  //height: 100vh; // 填满视口
+  height: calc(100vh - 32px);
   padding: 16px;
   box-sizing: border-box;
   background: var(--color-bg-1);

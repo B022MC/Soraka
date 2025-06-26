@@ -40,3 +40,11 @@ func (w *LcuApiWails) ListRecentMatches(limit int) []*lcuResp.MatchBrief {
 	}
 	return list
 }
+func (w *LcuApiWails) GetRankSummary() []*lcuResp.RankSummary {
+	list, err := w.svc.GetRankSummary()
+	if err != nil {
+		log.Fatalf("获取段位失败：%v", err)
+		return nil
+	}
+	return list
+}

@@ -1,0 +1,21 @@
+global:
+  proxy_icon_url:
+    profile_icons: "/lcu/proxy/lol-game-data/assets/v1/profile-icons/"
+    champion_icons: "/lcu/proxy/lol-game-data/assets/v1/champion-icons/"
+    spell_icons: "/lcu/proxy/lol-game-data/assets/v1/summoner-spells/"
+  proxy_json_url:
+    item_json: "http://localhost:8200/lcu/proxy/lol-game-data/assets/v1/items.json"
+    spell_json: "http://localhost:8200/lcu/proxy/lol-game-data/assets/v1/summoner-spells.json"
+    champ_json: "http://localhost:8200/lcu/proxy/lol-game-data/assets/v1/champions.json"
+
+server:
+  http:
+    network: "tcp"
+    addr: ":8200"
+    timeout: "5s"
+
+data:
+  database:
+    driver: "sqlite"
+    source: "./Soraka.db"
+    alias: "default"

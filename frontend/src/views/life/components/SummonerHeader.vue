@@ -33,17 +33,29 @@
       />
     </div>
     <div class="tag-line">#{{ userStore.tag || '00000' }}</div>
+    <div class="rank-table-section">
+      <a-table
+          :columns="columns"
+          :data="rankData"
+          :pagination="false"
+          size="small"
+          row-key="type"
+          class="rank-table"
+          :bordered="true"
+      >
+      </a-table>
+    </div>
   </a-card>
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, watch, ref, onMounted } from 'vue';
 import { useUserStore } from '@/store';
+import { GetRankSummary } from "/#/Soraka/internal/wails/lcu/lcuapiwails";
 
 const userStore = useUserStore();
 const defaultAvatar = new URL('@/assets/logo.png', import.meta.url).href;
 
-// 动态计算经验百分比
 const expPercent = computed(() => {
   if (
       userStore.percentCompleteForNextLevel !== undefined &&
@@ -63,10 +75,49 @@ const expPercent = computed(() => {
   return 0;
 });
 
+const columns = [
+  { title: "类型", dataIndex: "type", align: "center" },
+  { title: "总场次", dataIndex: "total", align: "center" },
+  { title: "胜率", dataIndex: "rate", align: "center" },
+  { title: "胜场", dataIndex: "wins", align: "center" },
+  { title: "负场", dataIndex: "loses", align: "center" },
+  { title: "段位", dataIndex: "rank", align: "center" },
+  { title: "胜点", dataIndex: "lp", align: "center" },
+  { title: "赛季最高", dataIndex: "seasonMax", align: "center" },
+  { title: "上赛季结算", dataIndex: "lastSeason", align: "center" },
+];
 
-// 打印初始状态
-console.log('当前 userStore 全部数据:', { ...userStore });
-console.log('当前 privacy:', userStore.privacy);
+
+// 用 ref 存 rank 数据
+const rankData = ref<any[]>([]);
+
+// 请求排位数据
+const loadRankData = async () => {
+  try {
+    console.log("开始获取排位数据...");
+    const res = await GetRankSummary();
+    console.log("获取排位数据成功:", res);
+    rankData.value = res;
+  } catch (err) {
+    console.error("获取排位数据失败:", err);
+    rankData.value = [];  // 清空或保留之前数据视需求而定
+  }
+};
+
+// 页面初始化加载
+onMounted(() => {
+  loadRankData();
+});
+
+// 点击刷新时重新加载
+const onRefresh = () => {
+  console.log('点击刷新召唤师信息');
+  loadRankData();
+};
+
+const onShowHistory = () => {
+  console.log('点击查看历史战绩');
+};
 
 // 监听隐私变化
 watch(
@@ -90,14 +141,6 @@ watch(
     },
     { immediate: true }
 );
-
-const onRefresh = () => {
-  console.log('点击刷新召唤师信息');
-};
-
-const onShowHistory = () => {
-  console.log('点击查看历史战绩');
-};
 </script>
 
 <style scoped lang="less">
@@ -164,6 +207,21 @@ const onShowHistory = () => {
     color: #888;
     text-align: center;
     margin-top: 2px;
+  }
+}
+.rank-table {
+  margin-top: 30px;
+
+  :deep(.arco-table-th) {
+    font-weight: 600;
+    text-align: center;
+    background: var(--table-header-bg);
+    transition: background 0.3s ease;
+  }
+
+  :deep(.arco-table-td) {
+    text-align: center;
+    padding: 6px 8px;
   }
 }
 </style>

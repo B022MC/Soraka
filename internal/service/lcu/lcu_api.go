@@ -117,3 +117,6 @@ func (s *LcuApiService) StartClient() error {
 func (s *LcuApiService) ListRecentMatches(req *lcuReq.MatchListReq) ([]*lcuResp.MatchBrief, error) {
 	return s.uc.ListRecentMatches(req.Limit)
 }
+func (s *LcuApiService) GetRankSummary() ([]*lcuResp.RankSummary, error) {
+	return s.uc.GetRankSummary()
+}

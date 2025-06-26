@@ -1,12 +1,13 @@
 package global
 
 import (
+	"Soraka/internal/conf/app"
+	"Soraka/internal/conf/client"
 	"context"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"sync"
 
-	"Soraka/internal/conf"
 	"Soraka/internal/dal/lcu/models"
 )
 
@@ -37,7 +38,7 @@ const (
 var (
 	cleanupsMu                      = &sync.Mutex{}
 	defaultShouldAutoOpenBrowserCfg = true
-	DefaultClientUserConf           = conf.ClientUserConf{
+	DefaultClientUserConf           = client.ClientUserConf{
 		AutoAcceptGame:                 false,
 		AutoPickChampID:                0,
 		AutoBanChampID:                 0,
@@ -49,8 +50,8 @@ var (
 		ShouldInGameSaveMsgToClipBoard: true,
 		ShouldAutoOpenBrowser:          &defaultShouldAutoOpenBrowserCfg,
 	}
-	DefaultAppConf = conf.AppConf{
-		CalcScore: conf.CalcScoreConf{
+	DefaultAppConf = app.AppConf{
+		CalcScore: app.CalcScoreConf{
 			Enabled:            true,
 			GameMinDuration:    900,
 			AllowQueueIDList:   []int{430, 420, 450, 440, 1700},
@@ -68,7 +69,7 @@ var (
 				{9, 10},
 				{8, 5},
 			},
-			KillRate: []conf.RateItemConf{
+			KillRate: []app.RateItemConf{
 				{Limit: 50, ScoreConf: [][2]float64{
 					{15, 40},
 					{10, 20},
@@ -80,7 +81,7 @@ var (
 					{5, 5},
 				}},
 			},
-			HurtRate: []conf.RateItemConf{
+			HurtRate: []app.RateItemConf{
 				{Limit: 40, ScoreConf: [][2]float64{
 					{15, 40},
 					{10, 20},
@@ -92,7 +93,7 @@ var (
 					{5, 5},
 				}},
 			},
-			AssistRate: []conf.RateItemConf{
+			AssistRate: []app.RateItemConf{
 				{Limit: 50, ScoreConf: [][2]float64{
 					{20, 30},
 					{18, 25},
@@ -108,7 +109,7 @@ var (
 				}},
 			},
 			AdjustKDA: [2]float64{2, 5},
-			Horse: [6]conf.HorseScoreConf{
+			Horse: [6]app.HorseScoreConf{
 				{Score: 180, Name: "通天代"},
 				{Score: 150, Name: "小代"},
 				{Score: 125, Name: "上等马"},
@@ -121,8 +122,8 @@ var (
 	}
 	userInfo       = &UserInfo{}
 	confMu         = sync.Mutex{}
-	Conf           = new(conf.AppConf)
-	ClientUserConf = new(conf.ClientUserConf)
+	Conf           = new(app.AppConf)
+	ClientUserConf = new(client.ClientUserConf)
 	Logger         *zap.SugaredLogger
 	Cleanups       = make(map[string]func(c context.Context) error)
 	AppBuildInfo   = AppInfo{}
@@ -140,25 +141,25 @@ func GetUserInfo() UserInfo {
 }
 
 func IsDevMode() bool {
-	return GetEnv() == conf.ModeDebug
+	return GetEnv() == app.ModeDebug
 }
-func GetEnv() conf.Mode {
+func GetEnv() app.Mode {
 	return Conf.Mode
 }
 
-func GetScoreConf() conf.CalcScoreConf {
+func GetScoreConf() app.CalcScoreConf {
 	confMu.Lock()
 	defer confMu.Unlock()
 	return Conf.CalcScore
 }
 
-func GetClientUserConf() conf.ClientUserConf {
+func GetClientUserConf() client.ClientUserConf {
 	confMu.Lock()
 	defer confMu.Unlock()
 	data := *ClientUserConf
 	return data
 }
-func SetClientUserConf(cfg conf.UpdateClientUserConfReq) *conf.ClientUserConf {
+func SetClientUserConf(cfg client.UpdateClientUserConfReq) *client.ClientUserConf {
 	confMu.Lock()
 	defer confMu.Unlock()
 	if cfg.AutoAcceptGame != nil {

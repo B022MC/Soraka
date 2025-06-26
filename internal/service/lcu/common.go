@@ -1,7 +1,7 @@
 package lcu
 
 import (
-	"Soraka/internal/dal/lcu/models"
+	lcuModel "Soraka/internal/model/lcu"
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -23,9 +23,9 @@ func GetLolClientApiInfo() (int, string, error) {
 
 }
 
-func ConvertCurrSummonerToSummoner(currSummoner *models.SummonerProfileData) *models.Summoner {
+func ConvertCurrSummonerToSummoner(currSummoner *lcuModel.SummonerProfileData) *lcuModel.Summoner {
 	summonerLevel, _ := strconv.Atoi(currSummoner.Lol.Level)
-	return &models.Summoner{
+	return &lcuModel.Summoner{
 		AccountId:                   currSummoner.SummonerId,
 		GameName:                    currSummoner.GameName,
 		TagLine:                     currSummoner.GameTag,
