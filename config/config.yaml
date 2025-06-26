@@ -1,6 +1,0 @@
-global:
-  proxy_icon_url:
-    profile_icons: "/lcu/proxy/lol-game-data/assets/v1/profile-icons/"
-    champion_icons: "/lcu/proxy/lol-game-data/assets/v1/champion-icons/"
-  proxy_json_url:
-    item_json: "http://localhost:8200/lcu/proxy/lol-game-data/assets/v1/items.json"

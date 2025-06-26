@@ -18,7 +18,7 @@
               </div>
               <div class="info-wrapper">
                 <span class="result" :class="match.result">{{ match.result === 'win' ? '胜利' : '失败' }}</span>
-                <span class="mode">{{ match.mode }}</span>
+                <span class="mode">{{ match.mode_detail }}</span>
                 <div class="spells">
                   <img v-for="(spell, idx) in match.spells" :key="idx" :src="spell" class="spell-icon" />
                 </div>
@@ -64,6 +64,7 @@ defineProps<{
     level: number
     spells: string[]
     mode: string
+    mode_detail:string
     kills: number
     deaths: number
     assists: number
@@ -72,6 +73,7 @@ defineProps<{
     items: string[]
     map: string
     time: string
+    champion: string
   }[]
 }>()
 </script>

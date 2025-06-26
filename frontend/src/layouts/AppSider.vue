@@ -108,7 +108,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import routerMap from "@/router/routerMap";
 import { Events } from "@wailsio/runtime";
-import type { AuthInfo } from "@/api/lcu";
+import { LcuApiWails } from "/#/Soraka/internal/wails/lcu";
 import { useUserStore } from "@/store";
 
 const router = useRouter();
@@ -117,15 +117,20 @@ const current = ref(route.name);
 const collapsed = ref(false);
 const userStore = useUserStore();
 
-const menulist = computed(
-  () => routerMap.find((item) => item.path === "/")?.children || [],
-);
-const authInfo = ref<AuthInfo | null>(null);
+const sysTime = ref("");
+const clientPath = ref("");
+const lcuOnline = ref(false);
+const lcuPort = ref("");
+const lcuToken = ref("");
 const defaultAvatar = new URL('@/assets/logo.png', import.meta.url).href;
 
+const menulist = computed(
+    () => routerMap.find((item) => item.path === "/")?.children || [],
+);
+
 watch(
-  () => route.name,
-  (name) => (current.value = name),
+    () => route.name,
+    (name) => (current.value = name),
 );
 
 const menuHandle = (key: string) => {
@@ -144,23 +149,66 @@ const handleSetting = () => {
 const handleTool = (type: string) => {
   console.log("工具点击", type);
 };
-// onMounted(() => {
-//   LcuApiService.GetAuthInfo()
-//     .then((info: AuthInfo) => {
-//       authInfo.value = info;
-//     })
-//     .catch(() => {
-//       console.error("failed to get auth info");
-//     });
-//   Events.On("lcuStatus", (d: any) => {
-//     const status = Array.isArray(d.data) ? d.data[0] : d.data;
-//     if (status) {
-//       LcuApiService.GetAuthInfo().then((info: AuthInfo) => {
-//         authInfo.value = info;
-//       });
-//     }
-//   });
-// });
+
+onMounted(() => {
+  // 系统时间
+  Events.On("time", (time: any) => {
+    sysTime.value = Array.isArray(time.data) ? time.data[0] : time.data;
+  });
+
+  // 获取客户端路径
+  LcuApiWails.GetClientPath()
+      .then((p: string) => {
+        clientPath.value = p;
+      })
+      .catch(() => {
+        clientPath.value = "";
+      });
+
+  // LCU 状态
+  Events.On("lcuStatus", (d: any) => {
+    const payload = Array.isArray(d.data) ? d.data[0] : d.data;
+    if (typeof payload?.status === "boolean") {
+      lcuOnline.value = payload.status;
+    }
+  });
+
+  // LCU 凭证
+  Events.On("lcuCreds", (d: any) => {
+    const payload = Array.isArray(d.data) ? d.data[0] : d.data;
+    if (typeof payload?.port === "number" && typeof payload?.token === "string") {
+      lcuPort.value = payload.port.toString();
+      lcuToken.value = payload.token;
+    }
+  });
+
+  // 召唤师信息
+  Events.On("summonerInfo", (d: any) => {
+    const info = Array.isArray(d.data) ? d.data[0] : d.data;
+    if (info && typeof info === "object") {
+      userStore.setInfo({
+        accountId: info.accountId,
+        summonerId: info.summonerId,
+        puuid: info.puuid,
+        nickname: info.gameName || info.displayName,
+        avatar: info.avatarUrl,
+        region: info.region || "",
+        tag: info.tagLine,
+        rank: info.rank || "",
+        winRate: info.winRate || 0,
+        wins: info.wins || 0,
+        losses: info.losses || 0,
+        totalGames: info.totalGames || 0,
+        createtime: info.createtime || "",
+        level: info.summonerLevel,
+        xpSinceLastLevel: info.xpSinceLastLevel,
+        xpUntilNextLevel: info.xpUntilNextLevel,
+        percentCompleteForNextLevel: info.percentCompleteForNextLevel,
+        privacy: info.privacy,
+      });
+    }
+  });
+});
 </script>
 
 <style scoped lang="less">

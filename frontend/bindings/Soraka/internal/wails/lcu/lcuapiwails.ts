@@ -22,10 +22,19 @@ export function GetClientPath(): Promise<string> & { cancel(): void } {
     return $resultPromise;
 }
 
+export function GetRankSummary(): Promise<(lcu$0.RankSummary | null)[]> & { cancel(): void } {
+    let $resultPromise = $Call.ByID(4148630304) as any;
+    let $typingPromise = $resultPromise.then(($result: any) => {
+        return $$createType2($result);
+    }) as any;
+    $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
+    return $typingPromise;
+}
+
 export function ListRecentMatches(limit: number): Promise<(lcu$0.MatchBrief | null)[]> & { cancel(): void } {
     let $resultPromise = $Call.ByID(1081314318, limit) as any;
     let $typingPromise = $resultPromise.then(($result: any) => {
-        return $$createType2($result);
+        return $$createType5($result);
     }) as any;
     $typingPromise.cancel = $resultPromise.cancel.bind($resultPromise);
     return $typingPromise;
@@ -37,6 +46,9 @@ export function StartClient(): Promise<void> & { cancel(): void } {
 }
 
 // Private type creation functions
-const $$createType0 = lcu$0.MatchBrief.createFrom;
+const $$createType0 = lcu$0.RankSummary.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = lcu$0.MatchBrief.createFrom;
+const $$createType4 = $Create.Nullable($$createType3);
+const $$createType5 = $Create.Array($$createType4);

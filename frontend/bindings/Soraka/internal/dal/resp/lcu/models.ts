@@ -9,6 +9,7 @@ export class MatchBrief {
     "id": number;
     "result": string;
     "mode": string;
+    "mode_detail": string;
     "kills": number;
     "deaths": number;
     "assists": number;
@@ -31,6 +32,9 @@ export class MatchBrief {
         }
         if (!("mode" in $$source)) {
             this["mode"] = "";
+        }
+        if (!("mode_detail" in $$source)) {
+            this["mode_detail"] = "";
         }
         if (!("kills" in $$source)) {
             this["kills"] = 0;
@@ -73,16 +77,69 @@ export class MatchBrief {
      * Creates a new MatchBrief instance from a string or object.
      */
     static createFrom($$source: any = {}): MatchBrief {
-        const $$createField11_0 = $$createType0;
         const $$createField12_0 = $$createType0;
+        const $$createField13_0 = $$createType0;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("spells" in $$parsedSource) {
-            $$parsedSource["spells"] = $$createField11_0($$parsedSource["spells"]);
+            $$parsedSource["spells"] = $$createField12_0($$parsedSource["spells"]);
         }
         if ("items" in $$parsedSource) {
-            $$parsedSource["items"] = $$createField12_0($$parsedSource["items"]);
+            $$parsedSource["items"] = $$createField13_0($$parsedSource["items"]);
         }
         return new MatchBrief($$parsedSource as Partial<MatchBrief>);
+    }
+}
+
+export class RankSummary {
+    "type": string;
+    "total": number;
+    "rate": string;
+    "wins": number;
+    "loses": number;
+    "rank": string;
+    "lp": number;
+    "seasonMax": string;
+    "lastSeason": string;
+
+    /** Creates a new RankSummary instance. */
+    constructor($$source: Partial<RankSummary> = {}) {
+        if (!("type" in $$source)) {
+            this["type"] = "";
+        }
+        if (!("total" in $$source)) {
+            this["total"] = 0;
+        }
+        if (!("rate" in $$source)) {
+            this["rate"] = "";
+        }
+        if (!("wins" in $$source)) {
+            this["wins"] = 0;
+        }
+        if (!("loses" in $$source)) {
+            this["loses"] = 0;
+        }
+        if (!("rank" in $$source)) {
+            this["rank"] = "";
+        }
+        if (!("lp" in $$source)) {
+            this["lp"] = 0;
+        }
+        if (!("seasonMax" in $$source)) {
+            this["seasonMax"] = "";
+        }
+        if (!("lastSeason" in $$source)) {
+            this["lastSeason"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RankSummary instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RankSummary {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new RankSummary($$parsedSource as Partial<RankSummary>);
     }
 }
 
