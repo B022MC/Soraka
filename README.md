@@ -6,15 +6,20 @@
 
 ```
 .
-├── build/                # 打包与任务脚本
-├── config/               # 配置文件目录
-├── frontend/             # 前端 Vue3 代码
-├── service/              # Go 后端服务
-├── main.go               # 应用入口
-└── Taskfile.yml          # 开发辅助任务
+├── build/          # 打包与任务脚本，包含各平台配置
+├── config/         # 配置文件目录
+├── const/          # 常量及映射表
+├── frontend/       # 前端 Vue3 代码
+├── global/         # 全局变量及版本信息
+├── internal/       # 核心业务代码（服务、路由等）
+├── openwindow/     # 打开新窗口的示例
+├── pkg/            # 公共库及工具
+├── utils/          # 其他辅助工具
+├── main.go         # 应用入口
+└── Taskfile.yml    # 开发辅助任务
 ```
 
-`config` 目录中包含 `clientconfig.default.json`，为默认配置。用户修改后会生成 `clientconfig.json` 保存在本地，不会被纳入版本控制。
+`config` 目录下的 `config.json`、`config.yaml` 为应用配置，修改后的文件不会被纳入版本控制。
 
 ## 已实现功能
 
